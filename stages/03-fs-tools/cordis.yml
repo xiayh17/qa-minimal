@@ -1,0 +1,41 @@
+# Stage 03 — Workspace Reader: the first real Tool
+#
+# Same Agent spine as Stage 01, plus the FS capability seam:
+#   dsh-fs-local        Provider: implements ctx.fs (reads/writes the real filesystem)
+#   dsh-fs-observation-policy  tracks which files the model has observed
+#   dsh-tool-fs         Consumer: read_file / write_file tool schemas on ctx.tools
+#
+# This is the Service Definition / Provider / Consumer pattern:
+#   - dsh-fs (the abstract interface) is already in the root closure
+#   - dsh-fs-local fills the Provider role (gives ctx.fs a backend)
+#   - dsh-tool-fs fills the Consumer role (gives the model the tool schema)
+#   Only when BOTH are mounted does the model gain the ability to read files.
+- name: '@deepseek-ai/dsh-llm'
+- name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      local-anthropic:
+        displayName: Local Gateway
+        api: anthropic-messages
+        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'
+        apiKeyEnv: QA_API_KEY
+        models:
+          - id: deepseek-v4-pro
+            contextWindow: 1000000
+          - id: deepseek-v4-flash
+            contextWindow: 1000000
+- name: '@deepseek-ai/dsh-session'
+- name: '@deepseek-ai/dsh-system-prompt'
+  config:
+    persona: You are a helpful coding assistant. Read files when asked about code. Answer concisely.
+- name: '@deepseek-ai/dsh-tools'
+- name: '@deepseek-ai/dsh-agent'
+- name: '@deepseek-ai/dsh-agent-loop'
+  config:
+    agents: []
+- name: '@deepseek-ai/dsh-fs-local'
+  config:
+    cwd: !!js process.cwd()
+- name: '@deepseek-ai/dsh-fs-observation-policy'
+- name: '@deepseek-ai/dsh-tool-fs'
+- name: ./driver.mjs

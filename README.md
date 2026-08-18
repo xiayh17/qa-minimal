@@ -15,15 +15,15 @@
                               ▲
                      Plan / Goal / Skill
                               ▲
-                  Sandbox / Permission
+                  Sandbox / Permission          ← L5 (已实现)
                               ▲
-                        Shell / FS
+                        Shell / FS             ← L3-L4 (已实现)
                               ▲
-                   Session Persistence
+                   Session Persistence          ← L2 (已实现)
                               ▲
-                         Agent Loop          ← L1 (已实现)
+                         Agent Loop             ← L1 (已实现)
                               ▲
-                   LLM + Adapter + Driver     ← L0 (已实现)
+                   LLM + Adapter + Driver       ← L0 (已实现)
                               ▲
                          qa-minimal
 ```
@@ -43,10 +43,13 @@ chmod 600 .env
 
 # 运行
 set -a && source .env && set +a
-node run.mjs 0 "解释 CAP 定理"           # L0: 裸 LLM 调用
-node run.mjs 1 --trace "解释 CAP 定理"   # L1: Agent + 事件流
-node run.mjs 2 "记住编号 31415"          # L2: 持久化
-node run.mjs 2 --resume <session-id> "编号是多少？"  # L2: 跨进程恢复
+node run.mjs 0 "解释 CAP 定理"               # L0: 裸 LLM 调用
+node run.mjs 1 --trace "解释 CAP 定理"        # L1: Agent + 事件流
+node run.mjs 2 "记住编号 31415"              # L2: 持久化
+node run.mjs 2 --resume <session-id> "编号？" # L2: 跨进程恢复
+node run.mjs 3 "Read fixtures/demo-project/src/calculator.js and explain"  # L3: 读文件
+node run.mjs 4 "Fix the divide-by-zero bug in fixtures/demo-project"       # L4: 跑命令
+node run.mjs 5 'Write "hello" to ../outside.txt'                            # L5: 被沙箱拒绝
 ```
 
 ## 已实现的层级
@@ -56,9 +59,9 @@ node run.mjs 2 --resume <session-id> "编号是多少？"  # L2: 跨进程恢复
 | **L0** | Raw LLM | `dsh-llm` + 适配器 + 驱动 | 沉默——没有 session 事件 | ✅ |
 | **L1** | Agent | `session` + `system-prompt` + `tools` + `agent` + `agent-loop` | `turn/start → step/start → request → assistant/chunk → assistant/message → step/end → turn/end` | ✅ |
 | **L2** | Persistent Agent | `session-persistence-jsonl` + `checkpoint-policy` | 同 L1 + 退出后 `--resume` 可恢复 | ✅ |
-| L3 | Workspace Reader | FS seam + local provider + read/search tools | 能读文件 | 📋 |
-| L4 | Coding Agent | subprocess + shell + bash tool | 能跑命令 | 📋 |
-| L5 | Safe Agent | sandbox + approval + permission | 同一命令被拒绝/审批 | 📋 |
+| **L3** | Workspace Reader | `fs-local` + `fs-observation-policy` + `tool-fs` | `tool/call` → `tool/result`（模型调用 read_file 读取真实文件） | ✅ |
+| **L4** | Coding Agent | `subprocess` + `shell-env` + `bash-local` + `tool-bash` | `tool/call`（bash）→ `tool/result`（exit code）——模型读文件、改 bug、跑测试 | ✅ |
+| **L5** | Safe Agent | `sandbox-local` + `sandbox-policy` + `user-approval` | 同一 bash 命令写工作区外 → `Operation not permitted`（沙箱拒绝） | ✅ |
 | L6–L11 | → Full Product | 见 [docs/ladder.md](docs/ladder.md) | | 📋 |
 
 ## 固定测试套件
@@ -100,6 +103,21 @@ node run.mjs 1 --trace "解释 CAP 定理"
 
 L0 的沉默和 L1 的事件流对比，就是"调模型"和"运行 Agent"的区别。
 
+## L4 → L5：能力 ⊥ 权限
+
+```sh
+# L4: 无沙箱——写工作区外文件，成功
+node run.mjs 4 'Write "hello" to ../outside.txt using bash'
+# ✓ wrote ../outside.txt
+
+# L5: 有沙箱——同一命令，被拒绝
+node run.mjs 5 'Write "hello" to ../outside.txt using bash'
+# ✗ Operation not permitted
+# [sandbox: file access denied under workspace-write mode]
+```
+
+同一模型、同一工具、同一问题。唯一区别是安全层——这证明"能执行"和"被允许执行"是两个独立的插件层。
+
 ## 仓库结构
 
 ```
@@ -107,7 +125,10 @@ stages/             每级一个目录，同时存在、可 diff
   00-llm-stream/    L0: 3 插件，裸 ctx.llm.stream()
   01-agent-loop/    L1: +5 插件，最小 Agent 闭包
   02-persistence/   L2: +2 插件，JSONL 持久化 + resume
-fixtures/           固定测试项目（L3+ 用）
+  03-fs-tools/     L3: +3 插件，FS 能力缝 (Provider + Consumer)
+  04-shell/        L4: +4 插件，Shell 能力缝 (bash tool)
+  05-safety/       L5: +4 插件，沙箱 + 审批 (capability ⊥ permission)
+fixtures/           固定测试项目（calculator.js，含待修 bug）
 docs/
   ladder.md         完整 12 级路线图
   plugin-map.md     Harness 能力包地图
