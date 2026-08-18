@@ -1,0 +1,33 @@
+{
+  "name": "qa-minimal",
+  "version": "0.1.0",
+  "description": "Minimal 3-plugin Q&A over @deepseek-ai/dsh-llm",
+  "main": "start.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node start.mjs"
+  },
+  "keywords": [],
+  "author": "xiayh17",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/cordis-plugin-include": "^1.0.6",
+    "@deepseek-ai/cordis-plugin-loader": "^1.0.2",
+    "@deepseek-ai/dsh-llm": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm-deepseek": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm-pi-ai": "0.1.0-rc.6"
+  },
+  "bin": {
+    "qa-minimal": "./start.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiayh17/qa-minimal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiayh17/qa-minimal/issues"
+  },
+  "homepage": "https://github.com/xiayh17/qa-minimal#readme"
+}

@@ -1,0 +1,18 @@
+# 最小一问一答：抽象 LLM 服务 + 多供应商适配器 + 本地驱动插件。
+# 路由 local-anthropic 走 Anthropic Messages 线协议；端点和 key 都不落盘在配置里，
+# 适配器逐请求从环境变量解析（见 baseURL 的 !!js 表达式与 apiKeyEnv）。
+- name: '@deepseek-ai/dsh-llm'
+- name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      local-anthropic:
+        displayName: Local Gateway
+        api: anthropic-messages
+        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'
+        apiKeyEnv: QA_API_KEY
+        models:
+          - id: deepseek-v4-pro
+            contextWindow: 1000000
+          - id: deepseek-v4-flash
+            contextWindow: 1000000
+- name: ./qa-plugin.mjs
