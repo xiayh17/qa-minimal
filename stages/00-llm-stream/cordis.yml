@@ -1,6 +1,8 @@
-# 最小一问一答：抽象 LLM 服务 + 多供应商适配器 + 本地驱动插件。
-# 路由 local-anthropic 走 Anthropic Messages 线协议；端点和 key 都不落盘在配置里，
-# 适配器逐请求从环境变量解析（见 baseURL 的 !!js 表达式与 apiKeyEnv）。
+# Stage 00 — Raw LLM (control group)
+#
+# 3 plugins: abstract LLM service + multi-provider adapter + local driver.
+# No agent-loop, no sessions, no tools. One ctx.llm.stream() call, one answer, exit.
+# This is the permanent control group — all later stages grow FROM here.
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -15,4 +17,4 @@
             contextWindow: 1000000
           - id: deepseek-v4-flash
             contextWindow: 1000000
-- name: ./qa-plugin.mjs
+- name: ./driver.mjs
