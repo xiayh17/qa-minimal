@@ -1,21 +1,19 @@
-# Stage 05 — Safe Agent: capability ⊥ permission
+# Stage 05 — Sandboxed Agent: capability ⊥ permission
 #
-# Same Agent + FS + Shell as Stage 04, but now sandboxed.
-# The model, the tools, the question are identical — what changes is the
-# safety layer wrapping the SAME capabilities:
+# L5 = L4 + Sandbox.  Every plugin from Stage 04 is still here — FS tools,
+# shell, search, persistence, resume — but now the FS and bash providers
+# switch from *-local to *-sandbox variants, wrapped by a sandbox layer.
 #
 #   dsh-sandbox-local       the sandbox boundary
-#   dsh-sandbox-policy      mode: workspace-write (writes confined to cwd)
-#   dsh-user-approval       auto-allow (headless: no terminal to ask)
-#   dsh-permission-presets  ties sandbox + approval together
+#   dsh-sandbox-policy      mode: workspace-write (writes confined to workspace)
+#   dsh-fs-sandbox          wraps dsh-fs-local with sandbox enforcement
+#   dsh-bash-sandbox        wraps dsh-bash-local with sandbox enforcement
 #
-# FS and bash providers switch from *-local to *-sandbox:
-#   dsh-fs-sandbox   wraps dsh-fs-local with sandbox enforcement
-#   dsh-bash-sandbox wraps dsh-bash-local with sandbox enforcement
+# This stage demonstrates SANDBOX ENFORCEMENT only.  Approval and permission
+# presets are a separate capability closure — they arrive in Stage 06.
 #
-# The teaching point: "can execute" and "is allowed to execute" are two
-# independent plugin layers. Stage 04 could but wasn't allowed; Stage 05
-# can but ISN'T allowed (outside the workspace).
+# The persona is frozen (byte-for-byte identical to L4) so the L4→L5 A/B
+# experiment is truly single-variable: only the safety layer changes.
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -33,21 +31,24 @@
 - name: '@deepseek-ai/dsh-session'
 - name: '@deepseek-ai/dsh-system-prompt'
   config:
+    # FROZEN — byte-for-byte identical to L4 (A/B single-variable requirement)
     persona: You are a coding agent. Read files, run commands, fix bugs. Be concise.
 - name: '@deepseek-ai/dsh-tools'
 - name: '@deepseek-ai/dsh-agent'
 - name: '@deepseek-ai/dsh-agent-loop'
   config:
     agents: []
-# ── safety layer (new in L5) ──────────────────────────────────────────
+# ── persistence (inherited from L2) ──────────────────────────────────
+- name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config:
+    root: ./sessions
+- name: '@deepseek-ai/dsh-session-checkpoint-policy'
+# ── sandbox layer (new in L5) ────────────────────────────────────────
 - name: '@deepseek-ai/dsh-sandbox-local'
 - name: '@deepseek-ai/dsh-sandbox-policy'
   config:
     mode: workspace-write
-    workspaceRoot: !!js process.cwd()
-- name: '@deepseek-ai/dsh-user-approval'
-  config:
-    policy: never
+    workspaceRoot: !!js process.env.QA_WORKSPACE ?? process.cwd()
 # ── sandboxed FS (replaces dsh-fs-local from L3/L4) ───────────────────
 - name: '@deepseek-ai/dsh-fs-sandbox'
 - name: '@deepseek-ai/dsh-fs-observation-policy'
@@ -61,4 +62,6 @@
     timeoutMs: 60000
 - name: '@deepseek-ai/dsh-tool-bash'
   disabled: !!js process.platform === 'win32'
+# ── FS search tools (inherited from L4) ──────────────────────────────
+- name: '@deepseek-ai/dsh-tool-fs-search'
 - name: ./driver.mjs

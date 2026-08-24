@@ -3,9 +3,11 @@
 # Same Q&A as Stage 00, but now through the full Agent spine:
 #   session + system-prompt + tools (empty registry) + agent + agent-loop
 #
-# The model, the gateway, the question are identical to Stage 00.
+# Same user task, same provider, same model as Stage 00.
 # What changes is the MACHINERY around the LLM call:
 #   a session log, turn/step boundaries, an agent identity.
+# (dsh-system-prompt also injects a default Harness identity, so the
+#  actual request is not byte-for-byte identical — but the user task is.)
 #
 # No tools are registered — dsh-tools is an empty registry.
 # The model cannot call tools; it can only answer from knowledge.

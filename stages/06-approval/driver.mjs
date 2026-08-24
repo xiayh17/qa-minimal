@@ -1,16 +1,20 @@
 /**
- * Stage 05 driver: Sandboxed Agent.
+ * Stage 06 driver: Approval & Permission Presets Agent.
  *
- * L5 = L4 + Sandbox.  The agent can still read/write/edit files, run bash,
- * search, and resume — but now the sandbox denies writes outside the
- * workspace.  The default question asks the model to write to ../outside.txt
- * — the sandbox should deny it.
+ * L6 = L5 + Approval.  The agent is still sandboxed, but now the approval
+ * gate is active.  When the sandbox denies an operation, the model can
+ * escalate with a justification string; the approval gate (ctx.approval)
+ * then asks for user authorization.
  *
- * The persona is byte-for-byte identical to Stage 04, making the L4→L5
- * comparison a true single-variable A/B experiment.
+ * In headless mode there is no terminal to ask, so the approval resolves
+ * to "rejected" — the model sees the denial and reports it.  In an
+ * interactive session the user would see the request and can grant
+ * one-time access (allowed-once), after which the operation executes.
  *
- * Runs in a disposable temp workspace so the out-of-workspace write
- * (../outside.txt) is safely contained even when L4 succeeds.
+ * The default question is the same ../outside.txt write as L4/L5, making
+ * the L4→L5→L6 progression a true single-variable experiment.
+ *
+ * Runs in a disposable temp workspace.
  */
 import { randomUUID } from 'node:crypto'
 import { SessionId } from '@deepseek-ai/dsh-session'
@@ -37,8 +41,8 @@ async function run(ctx) {
 
   const trace = process.env.QA_TRACE === '1'
   const question = process.env.QA_QUESTION
-    || 'Write the text "hello" to a file at ../outside.txt using the bash tool, '
-       + 'then read it back to confirm. Report exactly what happened.'
+    || 'Write the text "hello" to a file at ../outside.txt using the bash tool. '
+       + 'If the sandbox denies it, explain why and report what happened.'
   const model = process.env.QA_MODEL || 'deepseek-v4-flash'
   const resumeId = process.env.QA_RESUME
 

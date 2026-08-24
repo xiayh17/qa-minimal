@@ -1,0 +1,80 @@
+# Stage 06 — Approval & Permission Presets
+#
+# L6 = L5 + Approval.  Every plugin from Stage 05 is still here — sandbox,
+# FS, shell, search, persistence, resume — plus the approval gate and
+# permission preset switcher:
+#
+#   dsh-user-approval        approval gate: policy = ask
+#   dsh-permission-presets   combines sandbox/mode + approval/policy into
+#                            user-selectable presets (workspace-write,
+#                            danger-full-access, etc.)
+#
+# The three-stage demonstration:
+#   L4: write ../outside.txt → succeeds (no sandbox)
+#   L5: write ../outside.txt → sandbox denies (no escalation path)
+#   L6: write ../outside.txt → sandbox denies → model escalates with
+#        justification → approval gate asks → allowed-once → executes
+#
+# dsh-tool-bash supports sandbox_permissions + justification in sandbox
+# mode: after a sandbox denial, the model can retry with a broader
+# permission request and a justification string.  The approval gate
+# (ctx.approval) can then grant a one-time authorization.
+#
+# The persona is frozen (byte-for-byte identical to L4/L5) so the
+# L4→L5→L6 progression is a true single-variable experiment.
+- name: '@deepseek-ai/dsh-llm'
+- name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      local-anthropic:
+        displayName: Local Gateway
+        api: anthropic-messages
+        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'
+        apiKeyEnv: QA_API_KEY
+        models:
+          - id: deepseek-v4-pro
+            contextWindow: 1000000
+          - id: deepseek-v4-flash
+            contextWindow: 1000000
+- name: '@deepseek-ai/dsh-session'
+- name: '@deepseek-ai/dsh-system-prompt'
+  config:
+    # FROZEN — byte-for-byte identical to L4/L5 (A/B single-variable requirement)
+    persona: You are a coding agent. Read files, run commands, fix bugs. Be concise.
+- name: '@deepseek-ai/dsh-tools'
+- name: '@deepseek-ai/dsh-agent'
+- name: '@deepseek-ai/dsh-agent-loop'
+  config:
+    agents: []
+# ── persistence (inherited from L2) ──────────────────────────────────
+- name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config:
+    root: ./sessions
+- name: '@deepseek-ai/dsh-session-checkpoint-policy'
+# ── sandbox layer (inherited from L5) ────────────────────────────────
+- name: '@deepseek-ai/dsh-sandbox-local'
+- name: '@deepseek-ai/dsh-sandbox-policy'
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.env.QA_WORKSPACE ?? process.cwd()
+# ── approval + permission presets (new in L6) ────────────────────────
+- name: '@deepseek-ai/dsh-user-approval'
+  config:
+    policy: ask
+- name: '@deepseek-ai/dsh-permission-presets'
+# ── sandboxed FS (inherited from L5) ─────────────────────────────────
+- name: '@deepseek-ai/dsh-fs-sandbox'
+- name: '@deepseek-ai/dsh-fs-observation-policy'
+- name: '@deepseek-ai/dsh-tool-fs'
+# ── sandboxed shell (inherited from L5) ──────────────────────────────
+- name: '@deepseek-ai/dsh-subprocess-local'
+- name: '@deepseek-ai/dsh-shell-env'
+- name: '@deepseek-ai/dsh-bash-sandbox'
+  disabled: !!js process.platform === 'win32'
+  config:
+    timeoutMs: 60000
+- name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+# ── FS search tools (inherited from L4) ──────────────────────────────
+- name: '@deepseek-ai/dsh-tool-fs-search'
+- name: ./driver.mjs

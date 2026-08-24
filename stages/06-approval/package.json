@@ -1,5 +1,5 @@
 {
-  "name": "stage-05-safety",
+  "name": "stage-06-approval",
   "version": "0.2.0",
   "private": true,
   "type": "module",
@@ -24,6 +24,8 @@
     "@deepseek-ai/dsh-tool-bash": "0.1.0-rc.6",
     "@deepseek-ai/dsh-tool-fs-search": "0.1.0-rc.6",
     "@deepseek-ai/dsh-sandbox-local": "0.1.0-rc.6",
-    "@deepseek-ai/dsh-sandbox-policy": "0.1.0-rc.6"
+    "@deepseek-ai/dsh-sandbox-policy": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-user-approval": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-permission-presets": "0.1.0-rc.6"
   }
 }

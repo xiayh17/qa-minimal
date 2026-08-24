@@ -49,3 +49,8 @@ Session                            Session
 Swap the JSONL provider for SQLite and the loop never notices.
 That's the capability-seam pattern: the loop depends on the Session
 *service*, not on any specific storage backend.
+
+> **L3–L6 all inherit this persistence layer.** Every stage above L2
+> keeps `session-persistence-jsonl` + `session-checkpoint-policy` mounted,
+> so the agent can still resume across process restarts at every level.
+> The ladder is strictly cumulative: L(n) ⊇ L(n-1).

@@ -7,6 +7,9 @@
 # The agent-loop itself is unchanged. Memory is NOT inside the loop —
 # it's a separate capability seam (session persistence) that the loop
 # happens to write to. Swap JSONL for SQLite and the loop never notices.
+#
+# This is the foundation for all later stages: L3–L6 inherit these two
+# plugins so the agent can always resume across process restarts.
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:

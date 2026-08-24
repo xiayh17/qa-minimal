@@ -26,7 +26,16 @@ capability seam: Service Definition → Provider → Consumer.
 | Package | Backend |
 |---|---|
 | `dsh-session-persistence-jsonl` | append-only JSONL file |
-| `dsh-session-query-sqlite` | SQLite full-text search (opt-in) |
+| `dsh-session-persistence-sqlite` | SQLite event store (opt-in) |
+
+## Session query / search (separate capability family)
+
+| Package | Role |
+|---|---|
+| `dsh-session-query-sqlite` | SQLite full-text search over session history |
+
+> `session-query` is NOT a persistence backend — it is a retrieval capability
+> that sits on top of whichever persistence backend is mounted.
 
 ## Filesystem (Definition + Provider + Consumer)
 
@@ -34,8 +43,8 @@ capability seam: Service Definition → Provider → Consumer.
 |---|---|
 | `dsh-fs-sandbox` / `dsh-fs-local` | Provider: implements `ctx.fs` |
 | `dsh-fs-observation-policy` | policy: observed-file tracking |
-| `dsh-tool-fs` | Consumer: `read_file` / `write_file` tool schemas |
-| `dsh-tool-fs-search` | Consumer: `file_search` tool schema |
+| `dsh-tool-fs` | Consumer: `read` / `write` / `edit` tool schemas |
+| `dsh-tool-fs-search` | Consumer: `glob` / `grep` tool schemas (depends on `ctx.subprocess`) |
 
 ## Shell (Definition + Provider + Consumer)
 
@@ -51,8 +60,13 @@ capability seam: Service Definition → Provider → Consumer.
 |---|---|
 | `dsh-sandbox-local` | sandbox boundary |
 | `dsh-sandbox-policy` | read-only / workspace-write / danger-full-access |
-| `dsh-user-approval` | approval gate |
-| `dsh-permission-presets` | permission preset switcher |
+| `dsh-user-approval` | approval gate (policy: `never` = deny before asking; `ask` = prompt user) |
+| `dsh-permission-presets` | combines `sandbox/mode` + `approval/policy` into user-selectable presets |
+
+> `dsh-user-approval` with `policy: never` does NOT auto-allow — it denies
+> the request *before* it reaches interactive approval. This is the L5
+> behavior (sandbox enforcement only). `policy: ask` triggers the approval
+> prompt — this is the L6 behavior.
 
 ## Delegation
 
@@ -79,7 +93,12 @@ Service Definition  (the abstract interface — e.g. ctx.llm, ctx.fs, ctx.shell)
        └── Consumer  (a tool that uses the service — e.g. dsh-tool-fs, dsh-tool-bash)
 ```
 
-Adding a Provider alone gives the service a backend but the model can't call it.
-Adding a Consumer alone gives the model a tool schema but nothing executes it.
-Both together form a capability. This is why Stage 03 (FS) adds THREE plugins,
-not one.
+Provider makes the service appear on `ctx` (e.g. `ctx.fs`). Consumer declares
+a dependency on that service via `inject`. When the dependency is satisfied,
+Consumer activates and registers tool schemas onto `ctx.tools`. Without the
+Provider, the Consumer stays pending. Without the Consumer, the service works
+but the model has no tool to call it. Both together form a capability.
+
+This is why Stage 03 (FS) adds THREE plugins, not one — and why adding a
+Consumer alone (e.g. mounting `dsh-tool-fs` without `dsh-fs-local`) does NOT
+give the model a tool: the Consumer waits for `ctx.fs` and never activates.

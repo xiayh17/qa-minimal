@@ -1,5 +1,14 @@
-/** Stage 04 driver: same Agent pattern. The question asks the model to fix a bug
- *  and verify — forcing it to read, edit, and run a command. */
+/**
+ * Stage 04 driver: Shell / Process Execution Agent.
+ *
+ * L4 = L3 + Shell.  The agent can still read/write/edit files and resume
+ * across restarts, and now it can also run real bash commands and search
+ * with glob/grep.  The default question asks the model to fix a bug and
+ * verify — forcing it to read, edit, and run a command.
+ *
+ * Runs in a disposable temp workspace so file edits and the out-of-workspace
+ * write (../outside.txt) never pollute the git-tracked fixture tree.
+ */
 import { randomUUID } from 'node:crypto'
 import { SessionId } from '@deepseek-ai/dsh-session'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
@@ -25,11 +34,12 @@ async function run(ctx) {
 
   const trace = process.env.QA_TRACE === '1'
   const question = process.env.QA_QUESTION
-    || 'Read fixtures/demo-project/src/calculator.js, find the divide-by-zero bug, '
+    || 'Read src/calculator.js, find the divide-by-zero bug, '
        + 'fix it by adding a guard for b === 0 that throws an Error, '
-       + 'then run: node -e "const c = require(\'./fixtures/demo-project/src/calculator\'); '
+       + 'then run: node -e "const c = require(\'./src/calculator\'); '
        + 'try { c.divide(1,0) } catch(e) { console.log(e.message) }" to verify.'
   const model = process.env.QA_MODEL || 'deepseek-v4-flash'
+  const resumeId = process.env.QA_RESUME
 
   if (trace) {
     ctx.on('session/event', (_session, event) => {
@@ -37,11 +47,20 @@ async function run(ctx) {
     })
   }
 
-  const { agent } = await ctx.agents.create({
-    sessionId: SessionId(`qa-${randomUUID()}`),
-    meta: { cwd: process.cwd() },
-    agentOptions: { provider: ROUTE, model },
-  })
+  let agent
+  if (resumeId) {
+    if (trace) console.log(`  [trace] resuming session ${resumeId}`)
+    agent = (await ctx.agents.resume({
+      resumeSessionId: SessionId(resumeId),
+      agentOptions: { provider: ROUTE, model },
+    })).agent
+  } else {
+    agent = (await ctx.agents.create({
+      sessionId: SessionId(`qa-${randomUUID()}`),
+      meta: { cwd: process.cwd() },
+      agentOptions: { provider: ROUTE, model },
+    })).agent
+  }
   await agent.whenIdle()
 
   if (trace) console.log(`  [trace] agent ready · session ${agent.session.id}`)
@@ -51,6 +70,9 @@ async function run(ctx) {
     source: { kind: 'user' },
   }))
   await agent.whenIdle()
+
+  const sessions = ctx.get('sessions')
+  if (sessions !== undefined) await sessions.flush(agent.session)
 
   const lastAssistant = [...agent.session.events]
     .reverse()

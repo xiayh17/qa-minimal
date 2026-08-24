@@ -2,8 +2,10 @@
 
 The most important conceptual jump in the entire lab: **LLM ≠ Agent**.
 
-Same model, same gateway, same question as Stage 00. But now the call goes
+Same user task, same provider, same model as Stage 00. But now the call goes
 through the full Agent spine: `session → system-prompt → tools → agent → agent-loop`.
+(Note: `dsh-system-prompt` injects a default Harness identity, so the actual
+request is not byte-for-byte identical to L0 — but the user task is.)
 
 ## What changed from Stage 00
 
