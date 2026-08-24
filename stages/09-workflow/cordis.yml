@@ -1,0 +1,255 @@
+# Stage 09 — Workflow Agent
+#
+# L9 = L8 + long-task runtime closure.  Every plugin from Stage 06 is still
+# here — sandbox, approval, FS, shell, search, persistence, resume — plus
+# the L7 stateful-task closure (todo / plan-mode / goal / workspace over the
+# storage stack), the L8 multi-agent closure (subagent registry + spawn/fork
+# providers + jobs + job tools), and the L9 workflow closure:
+#
+#   dsh-workflow                      workflow seam (abstract — see below)
+#   dsh-workflow-worker-thread        the concrete engine: executes a
+#                                     model-written orchestration script in
+#                                     a fresh worker thread
+#   dsh-tool-ralph                    `ralph` tool: fresh-agent loop over the
+#                                     workflow + subagent seams (one fresh
+#                                     structured-output child per round)
+#   dsh-token-meter                   ctx.tokenMeter: per-session token
+#                                     accounting folded from the event log
+#   dsh-compaction                    compaction seam (abstract — see below)
+#   dsh-compaction-basic              token-meter-driven compaction engine:
+#                                     auto-compacts when pressure crosses
+#                                     thresholdRatio of the context window
+#   dsh-compaction-tool-result-pruner deterministic oversized tool-result
+#                                     pruning (head + marker + tail)
+#
+# The architectural step: conversation → task runtime.  Up to L8 the session
+# is a conversation that grows unboundedly; L9 makes long multi-round tasks
+# sustainable — tokenMeter measures context pressure, compaction-basic folds
+# old surface events into a summary node, the pruner bounds oversized tool
+# results, and ralph runs a bounded fresh-agent loop over a real workflow
+# engine.
+#
+# Seam pattern note (not gaps): dsh-jobs, dsh-compaction and dsh-workflow
+# are abstract Service Definitions.  Each is listed (disabled) so the
+# closure stays visible in inspect/diff, while exactly one concrete
+# implementation carries the runtime — dsh-jobs-local, dsh-compaction-basic
+# and dsh-workflow-worker-thread respectively.  Mounting the abstract entry
+# alongside its implementation fails loudly: dsh-jobs' constructor rejects
+# direct mounting by design; the other two would duplicate-register their
+# service name.
+#
+# One inherited entry deviates from its Stage 06 source:
+#   - dsh-tool-fs-search carries a config block here.  The rc.6 schema made
+#     `sampleOverCapGlobResults` a required key; Stage 06's yml predates
+#     that requirement and cannot be modified from this stage.
+#
+# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the whole
+# L4→L9 progression remains a single-variable experiment.
+- name: '@deepseek-ai/dsh-llm'
+- name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      local-anthropic:
+        displayName: Local Gateway
+        api: anthropic-messages
+        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'
+        apiKeyEnv: QA_API_KEY
+        models:
+          - id: deepseek-v4-pro
+            contextWindow: 1000000
+          - id: deepseek-v4-flash
+            contextWindow: 1000000
+- name: '@deepseek-ai/dsh-session'
+- name: '@deepseek-ai/dsh-system-prompt'
+  config:
+    # FROZEN — byte-for-byte identical to L4/L5 (A/B single-variable requirement)
+    persona: You are a coding agent. Read files, run commands, fix bugs. Be concise.
+- name: '@deepseek-ai/dsh-tools'
+- name: '@deepseek-ai/dsh-agent'
+- name: '@deepseek-ai/dsh-agent-loop'
+  config:
+    agents: []
+# ── persistence (inherited from L2) ──────────────────────────────────
+- name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config:
+    root: ./sessions
+- name: '@deepseek-ai/dsh-session-checkpoint-policy'
+# ── sandbox layer (inherited from L5) ────────────────────────────────
+- name: '@deepseek-ai/dsh-sandbox-local'
+- name: '@deepseek-ai/dsh-sandbox-policy'
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.env.QA_WORKSPACE ?? process.cwd()
+# ── approval + permission presets (inherited from L6) ────────────────
+- name: '@deepseek-ai/dsh-user-approval'
+  config:
+    policy: ask
+- name: '@deepseek-ai/dsh-permission-presets'
+# ── sandboxed FS (inherited from L5) ─────────────────────────────────
+- name: '@deepseek-ai/dsh-fs-sandbox'
+- name: '@deepseek-ai/dsh-fs-observation-policy'
+- name: '@deepseek-ai/dsh-tool-fs'
+# ── sandboxed shell (inherited from L5) ──────────────────────────────
+- name: '@deepseek-ai/dsh-subprocess-local'
+- name: '@deepseek-ai/dsh-shell-env'
+- name: '@deepseek-ai/dsh-bash-sandbox'
+  disabled: !!js process.platform === 'win32'
+  config:
+    timeoutMs: 60000
+- name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+# ── FS search tools (inherited from L4) ──────────────────────────────
+- name: '@deepseek-ai/dsh-tool-fs-search'
+  # DEVIATION from the Stage 06 entry (which carries no config): the rc.6
+  # schema added the required boolean `sampleOverCapGlobResults`, so a
+  # config-less mount now fails validation at load.  Stage 06's own yml
+  # predates rc.6 and is frozen by the stage-isolation rule, so the key is
+  # supplied here.  `true` = an over-cap glob result is sampled across
+  # top-level entries (spans the tree) instead of returning the
+  # modification-time-ordered head.
+  config:
+    sampleOverCapGlobResults: true
+# ── stateful task agent (new in L7) ──────────────────────────────────
+- name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    # Required boolean (no default in the schema).  `true` allows several
+    # todos `in_progress` at once — honest now that L8 subagents and
+    # background jobs make genuinely parallel work possible.
+    allowParallelInProgress: true
+- name: '@deepseek-ai/dsh-user-questions'
+  # No config.  Provides ctx.userQuestions — the ask-the-user seam that
+  # dsh-plan-mode's exit_plan_mode review consumes via ctx.get(...) (a soft
+  # lookup, so plan-mode loads without it; mounting it makes the review
+  # flow real).
+- name: '@deepseek-ai/dsh-plan-mode'
+  config:
+    # Required non-empty string: the deployment-owned guidance section shown
+    # in each model request while plan mode is active.
+    section: Plan mode is active. Do not make changes yet — explore, then present a complete plan via exit_plan_mode.
+- name: '@deepseek-ai/dsh-goal'
+  config:
+    # Schema default made explicit: a goal may drive at most this many
+    # autonomous continuation rounds before it must complete or block.
+    defaultMaxGoalRounds: 256
+- name: '@deepseek-ai/dsh-tool-goal'
+  config:
+    # Schema default made explicit: after this many consecutive autonomous
+    # rounds without progress the goal is marked blocked instead of looping.
+    blockedAfterConsecutiveRounds: 3
+# dsh-workspace injects ["storageDomain", "sessionPersistence"].  The latter
+# comes from dsh-session-persistence-jsonl above; the former is provided by
+# the three-layer storage stack mounted here (hub → backend → form), listed
+# in data-dependency order:
+- name: '@deepseek-ai/dsh-storage'
+  # No config.  The storage HUB (ctx.storage): backends register under
+  # `storage.backend`, data forms mount on it.  Nothing works without it.
+- name: '@deepseek-ai/dsh-storage-sqlite'
+  config:
+    # Required: database file path.  Parent directories are created by the
+    # backend itself (mkdir recursive in openDatabase), so nesting under the
+    # stage's sessions root is safe in the disposable temp workspace.
+    path: ./sessions/workspace.db
+    # journalMode defaults to "wal".
+- name: '@deepseek-ai/dsh-storage-domain'
+  config:
+    # Required: which registered hub backend serves the domain form.  Must
+    # match the name dsh-storage-sqlite registers under — "sqlite".
+    backend: sqlite
+    # routes defaults to {} (every domain uses the default backend).
+  # Provides ctx.storageDomain — the service dsh-workspace injects.
+- name: '@deepseek-ai/dsh-workspace'
+  # No config.  Durable workspace registry (ctx.workspaceRegistry) over the
+  # domain form; bootstraps its initial order from the session-persistence
+  # header index on first start.
+# ── multi-agent (new in L8) ──────────────────────────────────────────
+- name: '@deepseek-ai/dsh-subagent'
+- name: '@deepseek-ai/dsh-subagent-spawn-in-process'
+  # No config: providerName defaults to "spawn" — a fresh child with no
+  # parent history (inheritsParentContext = false), structured output
+  # supported.  This is the provider `subagent` and `ralph` route to below.
+  # (The shared run driver it imports, dsh-subagent-in-process-driver, is a
+  # pure library — startInProcessRun — not a mountable plugin.)
+- name: '@deepseek-ai/dsh-subagent-fork-in-process'
+  # No config: providerName defaults to "fork" — the child inherits the
+  # parent's session history up to the fork point.
+- name: '@deepseek-ai/dsh-tool-subagent'
+  config:
+    # Required string: which registered subagent provider the `subagent`
+    # tool routes to.  Children inherit the parent's provider/model unless
+    # agentOptions overrides them (left unset — same routed model).
+    provider: spawn
+- name: '@deepseek-ai/dsh-tool-subagent'
+  config:
+    # Second instance → the `subagent_fork` tool over the fork provider.
+    # One plugin instance binds exactly one provider to one tool name, so
+    # exposing both transports requires two distinctly named instances.
+    provider: fork
+    toolName: subagent_fork
+# DISABLED — abstract seam: dsh-jobs is the Service Definition for
+# ctx.jobs; its constructor throws by design ("load an implementation such
+# as dsh-jobs-local instead").  The closure is listed here, the runtime
+# comes from dsh-jobs-local below.
+- name: '@deepseek-ai/dsh-jobs'
+  disabled: true
+- name: '@deepseek-ai/dsh-jobs-local'
+  # No config: maxConcurrentJobsPerOwner defaults to 10.  Mounting the
+  # registry is what turns the subagent tool's background mode on
+  # (ctx.get("jobs") resolves instead of throwing).
+- name: '@deepseek-ai/dsh-tool-jobs'
+  # No config: inject ["tools", "jobs", "systemPrompt"] is fully satisfied;
+  # defaults — waitTimeoutMs 30s, maxWaitTimeoutMs 600s, completionDelivery
+  # "wakeup", maxConsecutiveWakes 3.  Registers the model-facing job_output /
+  # job_kill controls for background subagent runs.
+# ── workflow / long-task runtime (new in L9) ─────────────────────────
+# DISABLED — abstract seam: dsh-workflow is the Service Definition for
+# ctx.workflowEngine.  Mounting it alongside the concrete engine below
+# would duplicate-register the "workflowEngine" service (same pattern as
+# dsh-jobs / dsh-compaction).  Listed for closure visibility.
+- name: '@deepseek-ai/dsh-workflow'
+  disabled: true
+- name: '@deepseek-ai/dsh-workflow-worker-thread'
+  # No config: inject ["subagents"] is satisfied; defaults — provider
+  # "spawn" (matches ralph's subagentProvider below), maxTotalAgents 1000,
+  # maxItemsPerCall 4096, syncTimeoutMs 5000, disposeGraceMs 5000.  This is
+  # the engine that gives ctx.workflowEngine a real start(): scripts run in
+  # a fresh worker thread.
+- name: '@deepseek-ai/dsh-tool-ralph'
+  config:
+    # Must name a FRESH provider (inheritsParentContext = false) with
+    # structured-output support — "spawn" qualifies, "fork" is rejected
+    # by requireFreshProvider at execution time.
+    subagentProvider: spawn
+    # Deployment ceiling for ralph rounds (schema default 256); one fresh
+    # child agent is started per round, carrying only the immutable
+    # objective plus the previous bounded handoff.
+    maxRounds: 256
+  # inject ["tools", "workflowEngine", "subagents", "systemPrompt"] is now
+  # fully satisfied — ralph is live, not a hollow seam.
+- name: '@deepseek-ai/dsh-token-meter'
+  # No config — the schema is empty and rejects every key ("no settings
+  # are supported").  The meter folds token usage from the session log and
+  # answers context-pressure queries for the compaction engine.
+# DISABLED — abstract seam: dsh-compaction is the Service Definition for
+# ctx.compaction.  Unlike dsh-jobs its constructor does not guard, but
+# mounting it alongside dsh-compaction-basic fails with duplicate service
+# "compaction" — exactly one implementation per context.  Listed for
+# closure visibility; the engine below carries the runtime.
+- name: '@deepseek-ai/dsh-compaction'
+  disabled: true
+- name: '@deepseek-ai/dsh-compaction-basic'
+  config:
+    # All values below are the schema defaults, made explicit for reading.
+    # Compact when measured pressure reaches 80% of the routed model's
+    # contextWindow (see dsh-llm-pi-ai above: 1,000,000 tokens)...
+    thresholdRatio: 0.8
+    # ...and keep the most recent ~16% of the window verbatim; everything
+    # older is folded into one summary node.
+    retainRatio: 0.16
+    # auto = between-step pressure checks + request-overflow recovery.
+    # summarizationProvider/summarizationModel stay unset (empty pair =
+    # reuse the compacted agent's own routed provider/model).
+    auto: true
+- name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+  # No config: deterministic pruning defaults — tool results over
+  # thresholdChars 8192 are replaced by head 4096 + marker + tail 1024.
+- name: ./driver.mjs

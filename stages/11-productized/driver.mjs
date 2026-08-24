@@ -1,0 +1,97 @@
+/**
+ * Stage 11 driver: Productized Agent.
+ *
+ * L11 = L10 + product configuration.  The agent inherits everything below
+ * it — sandbox, approval, todos, plan mode, goals, workspace registry,
+ * subagents, jobs, a real workflow engine, token metering, compaction,
+ * retry, invariants, session projections — and adds the product-config
+ * seam with live providers: dsh-settings-file serves ctx.settings from a
+ * watched settings.yaml, dsh-credentials-local serves ctx.credentials
+ * (process environment layered over .credentials.yaml).
+ *
+ * The driver itself is unchanged from L6 onward on purpose: the model
+ * route and apiKeyEnv reference still read the same, but every request
+ * now resolves QA_API_KEY through ctx.credentials, and dsh-llm-pi-ai's
+ * provider table doubles as the hot-swappable `llm-pi-ai` settings
+ * namespace.  Composition became product config without the driver
+ * noticing — that is the point of the stage.
+ *
+ * The default question is the same fix-the-bug task used across the
+ * ladder, keeping the run comparable with earlier stages.
+ *
+ * Runs in a disposable temp workspace.
+ */
+import { randomUUID } from 'node:crypto'
+import { SessionId } from '@deepseek-ai/dsh-session'
+import { createUserMessage } from '@deepseek-ai/dsh-llm'
+
+export const inject = ['llm', 'agents']
+
+const ROUTE = 'local-anthropic'
+
+export function apply(ctx) {
+  let done = false
+  const kick = () => {
+    if (done) return
+    if (!ctx.llm.listProviders().some((p) => p.id === ROUTE)) return
+    done = true
+    void run(ctx)
+  }
+  ctx.on('llm/adapters-updated', kick)
+  kick()
+}
+
+async function run(ctx) {
+  await ctx.get('loader')?.await()
+
+  const trace = process.env.QA_TRACE === '1'
+  const question = process.env.QA_QUESTION
+    || 'Fix the divide-by-zero bug in src/calculator.js and run the tests to verify.'
+  const model = process.env.QA_MODEL || 'deepseek-v4-flash'
+  const resumeId = process.env.QA_RESUME
+
+  if (trace) {
+    ctx.on('session/event', (_session, event) => {
+      console.log(`  [trace] ${event.type}`)
+    })
+  }
+
+  let agent
+  if (resumeId) {
+    if (trace) console.log(`  [trace] resuming session ${resumeId}`)
+    agent = (await ctx.agents.resume({
+      resumeSessionId: SessionId(resumeId),
+      agentOptions: { provider: ROUTE, model },
+    })).agent
+  } else {
+    agent = (await ctx.agents.create({
+      sessionId: SessionId(`qa-${randomUUID()}`),
+      meta: { cwd: process.cwd() },
+      agentOptions: { provider: ROUTE, model },
+    })).agent
+  }
+  await agent.whenIdle()
+
+  if (trace) console.log(`  [trace] agent ready · session ${agent.session.id}`)
+
+  agent.followup(createUserMessage({
+    content: [{ type: 'text', text: question }],
+    source: { kind: 'user' },
+  }))
+  await agent.whenIdle()
+
+  const sessions = ctx.get('sessions')
+  if (sessions !== undefined) await sessions.flush(agent.session)
+
+  const lastAssistant = [...agent.session.events]
+    .reverse()
+    .find((e) => e.type === 'assistant/message')
+  const text = lastAssistant?.data?.message?.content
+    ?.filter((b) => b.type === 'text')
+    ?.map((b) => b.text)
+    ?.join('') || '(no response)'
+
+  console.log(text)
+  console.log(`── session: ${agent.session.id} ──`)
+  process.exit(0)
+}

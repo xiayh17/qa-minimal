@@ -47,6 +47,7 @@ if (argv.length === 0) {
   console.error('       qa-minimal inspect <stage>')
   console.error('       qa-minimal diff <stage-a> <stage-b>')
   console.error('stages: 0=llm-stream  1=agent-loop  2=persistence  3=fs-tools  4=shell  5=safety  6=approval')
+  console.error('        7=stateful-tasks  8=multi-agent  9=workflow  10=operable  11=productized')
   process.exit(1)
 }
 

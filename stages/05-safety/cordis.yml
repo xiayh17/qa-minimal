@@ -64,4 +64,7 @@
   disabled: !!js process.platform === 'win32'
 # ── FS search tools (inherited from L4) ──────────────────────────────
 - name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    # required key since 0.1.0-rc.6 (see Stage 04)
+    sampleOverCapGlobResults: true
 - name: ./driver.mjs

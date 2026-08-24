@@ -1,0 +1,246 @@
+# Stage 11 — Productized
+#
+# L11 = L10 + product configuration.  Every plugin from Stage 06 is still
+# here — sandbox, approval, FS, shell, search, persistence, resume — plus
+# the accumulated closures of L7 (stateful tasks), L8 (multi-agent),
+# L9 (workflow + context management) and L10 (operability), and finally
+# the product-config seam, now with real providers:
+#
+#   dsh-settings-file      file-backed settings provider: one user-editable
+#                          settings.yaml whose per-namespace sections layer
+#                          OVER each plugin's composition base — edit the
+#                          file and watchers re-resolve live (watch: true)
+#   dsh-credentials-local  file-backed credential provider: the live
+#                          process environment layered over a managed
+#                          .credentials.yaml document
+#
+# Architecture concept: composition → product config.  Until L10 the model
+# route, the API-key reference and the sandbox/approval mode were frozen
+# into this file — changing them meant editing the composition.  With the
+# two providers mounted, dsh-llm-pi-ai's already-wired consumers go live:
+# installSettingsSection() turns its `llm-pi-ai` namespace (providers,
+# models, retryPolicy) into a hot-swappable user document, and every model
+# request resolves `apiKeyEnv: QA_API_KEY` through ctx.credentials
+# (per-operation resolution, so a rotated secret reaches the very next
+# request without restarting any plugin).
+#
+# The abstract seams (dsh-settings, dsh-credentials) stay DISABLED under
+# the same rule as dsh-jobs and dsh-compaction below: the provider extends
+# the abstract class and registers the same service name, and cordis
+# registers one service per name — mounting both fails the boot.
+#
+# Still open at 0.1.0-rc.6: the roadmap's preset / bundle / HMR have no
+# standalone npm packages in this release — they live inside the dsh CLI's
+# `dsh-base` profile bundle.  What this stage closes is the product-config
+# seam itself: settings and credentials are real services now.
+#
+# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the whole
+# L4→L11 progression remains a single-variable experiment.
+- name: '@deepseek-ai/dsh-llm'
+- name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      local-anthropic:
+        displayName: Local Gateway
+        api: anthropic-messages
+        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'
+        apiKeyEnv: QA_API_KEY
+        models:
+          - id: deepseek-v4-pro
+            contextWindow: 1000000
+          - id: deepseek-v4-flash
+            contextWindow: 1000000
+- name: '@deepseek-ai/dsh-session'
+- name: '@deepseek-ai/dsh-system-prompt'
+  config:
+    # FROZEN — byte-for-byte identical to L4/L5 (A/B single-variable requirement)
+    persona: You are a coding agent. Read files, run commands, fix bugs. Be concise.
+- name: '@deepseek-ai/dsh-tools'
+- name: '@deepseek-ai/dsh-agent'
+- name: '@deepseek-ai/dsh-agent-loop'
+  config:
+    agents: []
+# ── persistence (inherited from L2) ──────────────────────────────────
+- name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config:
+    root: ./sessions
+- name: '@deepseek-ai/dsh-session-checkpoint-policy'
+# ── sandbox layer (inherited from L5) ────────────────────────────────
+- name: '@deepseek-ai/dsh-sandbox-local'
+- name: '@deepseek-ai/dsh-sandbox-policy'
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.env.QA_WORKSPACE ?? process.cwd()
+# ── approval + permission presets (inherited from L6) ────────────────
+- name: '@deepseek-ai/dsh-user-approval'
+  config:
+    policy: ask
+- name: '@deepseek-ai/dsh-permission-presets'
+# ── sandboxed FS (inherited from L5) ─────────────────────────────────
+- name: '@deepseek-ai/dsh-fs-sandbox'
+- name: '@deepseek-ai/dsh-fs-observation-policy'
+- name: '@deepseek-ai/dsh-tool-fs'
+# ── sandboxed shell (inherited from L5) ──────────────────────────────
+- name: '@deepseek-ai/dsh-subprocess-local'
+- name: '@deepseek-ai/dsh-shell-env'
+- name: '@deepseek-ai/dsh-bash-sandbox'
+  disabled: !!js process.platform === 'win32'
+  config:
+    timeoutMs: 60000
+- name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+# ── FS search tools (inherited from L4) ──────────────────────────────
+# NOTE: rc.6 made sampleOverCapGlobResults a REQUIRED key (no schema
+# default) — L4–L6 predate that change and no longer boot as-is.  true =
+# an over-cap glob result is sampled across top-level directories instead
+# of truncated to the modification-time head.  Every other cap keeps its
+# schema default.
+- name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: true
+# ── stateful tasks (new in L7) ───────────────────────────────────────
+# todo_write: whole-list task tracking over the session log.
+# allowParallelInProgress is a REQUIRED deployment choice (no schema
+# default): true because this stage mounts subagent and job tooling that
+# legitimately fan out concurrent work.
+- name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true
+# ctx.userQuestions service: the question-asking seam plan-mode's
+# exit_plan_mode review reads through ctx.get("userQuestions").  The
+# service is the registry plus a validating ask(); no UI provider is
+# registered in this headless composition, so ask() fails loud with
+# NO_PROVIDER instead of blocking forever.
+- name: '@deepseek-ai/dsh-user-questions'
+# Logged plan mode (ctx.planMode): per-agent plan state, a plan:policy
+# prompt section, the /plan command, and a user-reviewed exit tool.
+# `section` is REQUIRED and must be non-empty — it is deployment-owned
+# guidance narrated while plan mode is active.  The exit tool's review
+# step asks through the user-questions seam mounted above.
+- name: '@deepseek-ai/dsh-plan-mode'
+  config:
+    section: Plan mode is read-only. Explore with read-only tools, then present one concrete plan and wait for user review before any edit or command.
+- name: '@deepseek-ai/dsh-goal'
+- name: '@deepseek-ai/dsh-tool-goal'
+# Storage provider chain for the workspace registry: the hub (ctx.storage)
+# names backends, the sqlite backend serves the kv facet, and the domain
+# data form mounts schema-validated KV domains and provides
+# ctx.storageDomain — the service dsh-workspace injects.  sqlite `path`
+# and the domain `backend` route are both REQUIRED keys; defaults are
+# taken everywhere else (journalMode wal, no per-domain routes).
+- name: '@deepseek-ai/dsh-storage'
+- name: '@deepseek-ai/dsh-storage-sqlite'
+  config:
+    path: ./storage.sqlite
+- name: '@deepseek-ai/dsh-storage-domain'
+  config:
+    backend: sqlite
+# Durable workspace registry (ctx.workspaceRegistry): validated session
+# attachment over the domain data form.  Startup waits for
+# sessionPersistence so an unavailable peer can never be mistaken for an
+# empty history.
+- name: '@deepseek-ai/dsh-workspace'
+# ── multi-agent (new in L8) ──────────────────────────────────────────
+# dsh-subagent is the concrete named-provider registry (ctx.subagents);
+# the spawn/fork backends register provider routes into it, both driven by
+# the shared in-process run driver (a library, not a plugin).
+- name: '@deepseek-ai/dsh-subagent'
+- name: '@deepseek-ai/dsh-subagent-spawn-in-process'
+- name: '@deepseek-ai/dsh-subagent-fork-in-process'
+# The delegation tool; `provider` is REQUIRED and names the spawn route —
+# a fresh child agent per delegation (fork inherits the parent's completed
+# turns instead, reachable via the fork route).
+- name: '@deepseek-ai/dsh-tool-subagent'
+  config:
+    provider: spawn
+- name: '@deepseek-ai/dsh-tool-subagent'
+  config:
+    # Second instance → the `subagent_fork` tool over the fork provider
+    # (one instance binds one provider to one tool name).
+    provider: fork
+    toolName: subagent_fork
+# DISABLED by design: dsh-jobs is the ABSTRACT job-registry seam and its
+# constructor throws when instantiated directly ("load an implementation
+# such as dsh-jobs-local instead").  dsh-jobs-local extends it and
+# provides ctx.jobs, so the abstract entry must not be mounted.
+- name: '@deepseek-ai/dsh-jobs'
+  disabled: true
+- name: '@deepseek-ai/dsh-jobs-local'
+# Model-facing job control (job_output / job_list / job_kill) over
+# ctx.jobs; all four config keys take their schema defaults (30s wait,
+# wakeup delivery, max 3 consecutive wakes).
+- name: '@deepseek-ai/dsh-tool-jobs'
+# ── workflow + context management (new in L9) ────────────────────────
+# DISABLED: dsh-workflow is the abstract seam declaration — the
+# worker-thread engine below extends it and registers the same
+# "workflowEngine" service, and cordis registers one service per name.
+# The entry stays here to document the Definition side of the seam.
+- name: '@deepseek-ai/dsh-workflow'
+  disabled: true
+# The real engine: executes model-written orchestration scripts in a
+# worker thread, bridging agent() calls back to ctx.subagents.  Defaults
+# route every child through the spawn backend (provider: spawn).
+- name: '@deepseek-ai/dsh-workflow-worker-thread'
+- name: '@deepseek-ai/dsh-tool-ralph'
+# ctx.tokenMeter: replay-aware token measurement.  Both context-management
+# consumers below inject it.
+- name: '@deepseek-ai/dsh-token-meter'
+# DISABLED: dsh-compaction is the abstract seam declaration — same
+# one-service-per-name rule; the engine below provides ctx.compaction.
+# compaction-basic runs with schema defaults; automatic pressure/overflow
+# compaction stays off (auto defaults to false) because it needs a
+# summarization route configured.
+- name: '@deepseek-ai/dsh-compaction'
+  disabled: true
+- name: '@deepseek-ai/dsh-compaction-basic'
+# Model-free head/middle/tail pruning of oversized tool results
+# (character budgets defaulted; injects tokenMeter).
+- name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+# ── operability (new in L10) ─────────────────────────────────────────
+# Provider-routed retry on the agent loop's request-recovery extension
+# point.  Config is intentionally empty (the schema rejects every key):
+# the policy lives under each provider entry in dsh-llm-pi-ai, and a
+# provider without one resolves the default — mode normal, maxRetries 2 —
+# so mounting this plugin alone arms bounded retry for the frozen route.
+- name: '@deepseek-ai/dsh-llm-retry'
+# Invariant registry (ctx.invariants).  The root service installs no
+# checks itself; each package's ./invariant companion registers them.
+# No companions are mounted in this stage, so the registry is armed but
+# silent.
+- name: '@deepseek-ai/dsh-invariants'
+# DISABLED at rc.6: dsh-session-telemetry is a contract-only package — it
+# exports the SessionTelemetryBackend class and the capture coordinator as
+# named exports, with no plugin entry (no default export, no apply), so
+# the loader rejects it as "invalid plugin".  A concrete backend package
+# would compose the coordinator.
+- name: '@deepseek-ai/dsh-session-telemetry'
+  disabled: true
+# The projection registry (ctx.sessionProjections) — the provider
+# dsh-session-stats injects, so the stats unit below now activates instead
+# of staying pending.
+- name: '@deepseek-ai/dsh-session-projection'
+# Whole-log counts/wall-times projection, registered as the sessionStats
+# unit on the projection registry.
+- name: '@deepseek-ai/dsh-session-stats'
+# ── product config (new in L11) ──────────────────────────────────────
+# The two abstract seams stay DISABLED under the one-service-per-name
+# rule: each provider below extends its abstract class and registers the
+# same service ("settings" / "credentials").  The entries remain in the
+# composition — visible to inspect/diff — as the Definition side of the
+# product-config seam.
+- name: '@deepseek-ai/dsh-settings'
+  disabled: true
+- name: '@deepseek-ai/dsh-credentials'
+  disabled: true
+# The providers that make the seam real.  Both follow the persistence
+# convention (root: ./sessions): an explicit `path` inside the disposable
+# workspace instead of the $DSH_HOME default, and watch: true (default) so
+# an external edit re-resolves live.  dsh-home-paths and dsh-atomic-write
+# are libraries these providers import, not plugins — nothing to mount.
+- name: '@deepseek-ai/dsh-settings-file'
+  config:
+    path: ./settings.yaml
+- name: '@deepseek-ai/dsh-credentials-local'
+  config:
+    path: ./.credentials.yaml
+- name: ./driver.mjs

@@ -1,0 +1,197 @@
+# Stage 08 — Multi-Agent
+#
+# L8 = L7 + Delegation.  Every plugin from Stage 06 is still here — sandbox,
+# approval, FS, shell, search, persistence, resume — plus the two capability
+# closures that grew in between:
+#
+#   L7 — Stateful Task Agent:
+#     dsh-tool-todo        model-facing todo_write (whole-list replacement)
+#     dsh-user-questions   user-questions seam (ctx.userQuestions) backing the
+#                          exit_plan_mode review
+#     dsh-plan-mode        logged plan/mode state + exit_plan_mode review
+#     dsh-goal             event-sourced same-session goal domain (ctx.goals)
+#     dsh-tool-goal        model-facing get/create/update_goal tools
+#     dsh-storage          storage hub (ctx.storage) — backend registry
+#     dsh-storage-sqlite   SQLite backend, registers as backend "sqlite"
+#     dsh-storage-domain   domain data form, provides ctx.storageDomain
+#     dsh-workspace        workspace entity registry (ctx.workspaceRegistry)
+#
+#   L8 — Multi-Agent:
+#     dsh-subagent                  subagent registry: ctx.subagents, the
+#                                   process-singleton seam ("Agent as a provider")
+#     dsh-subagent-spawn-in-process provider "spawn": fresh child, no history
+#     dsh-subagent-fork-in-process  provider "fork":  child seeded with the
+#                                   parent's completed turns
+#     dsh-tool-subagent             model-facing delegation tool; mounted twice
+#                                   (subagent → spawn, subagent_fork → fork)
+#     dsh-jobs                      ABSTRACT background-job registry seam —
+#                                   its constructor throws by design when
+#                                   mounted directly, so it is listed disabled
+#     dsh-jobs-local                process-local ctx.jobs implementation
+#     dsh-tool-jobs                 model-facing job control (job_list /
+#                                   job_output / job_kill + completion notices)
+#
+# Architecture concept: Agent as a provider.  The subagent seam is a registry
+# of named providers; spawn/fork decide HOW the child runs, the delegation
+# tool decides THAT the model can ask for one.  Changing the provider changes
+# transport without changing the execution contract.  Both in-process
+# providers share @deepseek-ai/dsh-subagent-in-process-driver — a plain
+# library (no plugin exports), so there is nothing to mount for it.
+#
+# Observable behavior (with --trace): a subagent delegation appears as
+# tool/call (subagent) → the child's own session events (turn/start …) →
+# tool/result carrying only the child's final message back to the parent.
+# The child's intermediate steps never enter the parent's history.
+#
+# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the
+# progression remains a true single-variable experiment.
+- name: '@deepseek-ai/dsh-llm'
+- name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      local-anthropic:
+        displayName: Local Gateway
+        api: anthropic-messages
+        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'
+        apiKeyEnv: QA_API_KEY
+        models:
+          - id: deepseek-v4-pro
+            contextWindow: 1000000
+          - id: deepseek-v4-flash
+            contextWindow: 1000000
+- name: '@deepseek-ai/dsh-session'
+- name: '@deepseek-ai/dsh-system-prompt'
+  config:
+    # FROZEN — byte-for-byte identical to L4/L5/L6 (A/B single-variable requirement)
+    persona: You are a coding agent. Read files, run commands, fix bugs. Be concise.
+- name: '@deepseek-ai/dsh-tools'
+- name: '@deepseek-ai/dsh-agent'
+- name: '@deepseek-ai/dsh-agent-loop'
+  config:
+    agents: []
+# ── persistence (inherited from L2) ──────────────────────────────────
+- name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config:
+    root: ./sessions
+- name: '@deepseek-ai/dsh-session-checkpoint-policy'
+# ── sandbox layer (inherited from L5) ────────────────────────────────
+- name: '@deepseek-ai/dsh-sandbox-local'
+- name: '@deepseek-ai/dsh-sandbox-policy'
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.env.QA_WORKSPACE ?? process.cwd()
+# ── approval + permission presets (inherited from L6) ────────────────
+- name: '@deepseek-ai/dsh-user-approval'
+  config:
+    policy: ask
+- name: '@deepseek-ai/dsh-permission-presets'
+# ── sandboxed FS (inherited from L5) ─────────────────────────────────
+- name: '@deepseek-ai/dsh-fs-sandbox'
+- name: '@deepseek-ai/dsh-fs-observation-policy'
+- name: '@deepseek-ai/dsh-tool-fs'
+# ── sandboxed shell (inherited from L5) ──────────────────────────────
+- name: '@deepseek-ai/dsh-subprocess-local'
+- name: '@deepseek-ai/dsh-shell-env'
+- name: '@deepseek-ai/dsh-bash-sandbox'
+  disabled: !!js process.platform === 'win32'
+  config:
+    timeoutMs: 60000
+- name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+# ── FS search tools (inherited from L4) ──────────────────────────────
+- name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    # DEVIATION from Stage 06 (which carries no config here): the rc.6 schema
+    # made sampleOverCapGlobResults a REQUIRED key, so the inherited bare
+    # entry now fails config validation.  true = an over-cap glob result is
+    # sampled across top-level entries (spans the tree instead of one
+    # subtree); the small fixture workspace never hits the cap either way.
+    sampleOverCapGlobResults: true
+# ── stateful tasks (new in L7) ───────────────────────────────────────
+- name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    # Required by the plugin's schema (no default).  true because this stage
+    # can fan out concurrent subagents — several tasks may legitimately be
+    # in_progress at once; false would enforce the single-active discipline.
+    allowParallelInProgress: true
+- name: '@deepseek-ai/dsh-user-questions'
+  # The user-questions seam (ctx.userQuestions): a Service class with no
+  # config.  dsh-plan-mode's exit_plan_mode review asks through it
+  # (ctx.get('userQuestions')).  Headless there is no UI provider, so a
+  # review simply cannot be answered — same headless posture as approval.
+- name: '@deepseek-ai/dsh-plan-mode'
+  config:
+    # Required, non-empty (unknown keys fail at load): the guidance section
+    # rendered at prompt order 50 while plan mode is active.
+    section: |
+      You are in plan mode. Explore and design before presenting the complete
+      plan through exit_plan_mode.
+- name: '@deepseek-ai/dsh-goal'
+  config:
+    defaultMaxGoalRounds: 256   # the schema default, written out for visibility
+- name: '@deepseek-ai/dsh-tool-goal'
+  # blockedAfterConsecutiveRounds defaults to 3; no override needed here.
+- name: '@deepseek-ai/dsh-storage'
+  # Storage hub (ctx.storage): the backend registry the domain form and its
+  # backends key off.  A Service class, no config.
+- name: '@deepseek-ai/dsh-storage-sqlite'
+  config:
+    # Backend registers on the hub under the fixed name "sqlite".  path is
+    # required (':memory:' allowed); a file keeps workspace records durable
+    # next to the session logs inside the disposable run root.
+    path: ./storage/domain.db
+    # journalMode defaults to 'wal'.
+- name: '@deepseek-ai/dsh-storage-domain'
+  config:
+    # Domain data form: provides ctx.storageDomain once its backend is
+    # registered.  `backend` is required (no universally correct medium);
+    # route every domain to the sqlite backend above.
+    backend: sqlite
+    # routes: per-domain overrides, default {} — nothing to override here.
+- name: '@deepseek-ai/dsh-workspace'
+  # Workspace entity registry.  inject = ['storageDomain', 'sessionPersistence']
+  # is now fully satisfied: storageDomain by the domain form above,
+  # sessionPersistence inherited from L2.
+# ── multi-agent (new in L8) ──────────────────────────────────────────
+- name: '@deepseek-ai/dsh-subagent'
+  # The seam itself: registers ctx.subagents, the process-singleton registry
+  # of named subagent providers, plus the delegation-depth vocabulary and the
+  # subagent/start ↔ subagent/end lifecycle events.
+- name: '@deepseek-ai/dsh-subagent-spawn-in-process'
+  # Provider "spawn" (default providerName): fresh child Agent in this
+  # process — own session, inherits cwd/model, sees NO parent history.
+- name: '@deepseek-ai/dsh-subagent-fork-in-process'
+  # Provider "fork" (default providerName): same in-process run mechanics as
+  # spawn, but the child's session is seeded with the parent's completed
+  # turns (the contiguous prefix ending at the last turn/end).
+- name: '@deepseek-ai/dsh-tool-subagent'
+  config:
+    # First instance → the `subagent` tool over the spawn provider.
+    # Defaults kept: backgroundMode one-shot (foreground unless the model
+    # passes run_in_background), maxDepth 3, background calls enabled.
+    # The tool registers only while its provider exists — with spawn mounted
+    # above, the `subagent` schema appears in the parent's tool registry.
+    provider: spawn
+- name: '@deepseek-ai/dsh-tool-subagent'
+  config:
+    # Second instance → the `subagent_fork` tool over the fork provider.
+    # One plugin instance binds exactly one provider to one tool name, so
+    # exposing both transports requires two distinctly named instances.
+    provider: fork
+    toolName: subagent_fork
+- name: '@deepseek-ai/dsh-jobs'
+  disabled: true
+  # dsh-jobs is the ABSTRACT job-registry contract: mounting it directly
+  # throws by design ("load an implementation such as dsh-jobs-local
+  # instead").  It is listed here, disabled, so the closure stays visible
+  # in inspect/diff; the concrete registry below provides ctx.jobs.
+- name: '@deepseek-ai/dsh-jobs-local'
+  # Process-local JobRegistry (default maxConcurrentJobsPerOwner: 10).
+- name: '@deepseek-ai/dsh-tool-jobs'
+  # Model-facing job control: job_list / job_output / job_kill plus
+  # completion notices; also attaches the per-owner job controller that
+  # ctx.jobs.start() requires, which is what makes one-shot BACKGROUND
+  # subagent delegation (run_in_background: true) collectable.
+  # Config defaults kept: waitTimeoutMs 30s, maxWaitTimeoutMs 600s,
+  # completionDelivery 'wakeup', maxConsecutiveWakes 3.
+- name: ./driver.mjs

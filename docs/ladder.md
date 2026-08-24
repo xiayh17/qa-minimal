@@ -49,6 +49,9 @@ upper levels inherit all plugins from lower levels and add one new closure.
 | **L11** | Productized | settings + credentials + preset + bundle + HMR | hot-swap model/key/mode | composition → product config |
 | **L12** | Full Product | host + API + client + Web UI | CLI → API → Web | one capability graph, many entry points |
 
+> Status: L0–L11 implemented (`stages/00`–`stages/11`). L12 (host/API/Web
+> surfaces) lives in the full `dsh` CLI and is out of this lab's scope.
+
 ## The behavior outcome matrix
 
 Every level runs the same seven tasks (A–G). What changes is the **behavior
@@ -56,15 +59,18 @@ outcome** — not a simple pass/fail, because "denied by sandbox" and "asks
 approval" are correct results, not failures. This separates *capability*
 from *policy*.
 
-| Task | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 |
-|---|---|---|---|---|---|---|---|---|
-| A. Answer a knowledge question | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| B. Remember this turn's info | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| C. Resume after restart | unsupported | unsupported | persists | persists | persists | persists | persists | persists |
-| D. Read a project file | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
-| E. Run tests and edit files | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
-| F. Write outside workspace | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval |
-| G. Delegate to a sub-agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds |
+| Task | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 | L11 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A. Answer a knowledge question | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| B. Remember this turn's info | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| C. Resume after restart | unsupported | unsupported | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists |
+| D. Read a project file | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| E. Run tests and edit files | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| F. Write outside workspace | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval |
+| G. Track multi-step work (todo/plan/goal) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
+| H. Delegate to a sub-agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
+| I. Long-running task (ralph/compaction) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds |
+| J. Retry transient failure + stats | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds |
 
 ### Reading the matrix
 

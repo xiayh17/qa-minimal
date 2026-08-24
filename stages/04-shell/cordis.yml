@@ -63,4 +63,8 @@
   disabled: !!js process.platform === 'win32'
 # ── FS search tools (new in L4 — depends on ctx.subprocess) ──────────
 - name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    # required key since 0.1.0-rc.6: sample over-cap glob results across
+    # top-level dirs instead of truncating (irrelevant for the tiny fixture)
+    sampleOverCapGlobResults: true
 - name: ./driver.mjs

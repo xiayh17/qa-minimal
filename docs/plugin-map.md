@@ -76,14 +76,65 @@ capability seam: Service Definition → Provider → Consumer.
 | `dsh-subagent-spawn-in-process` | spawn backend (fresh child) |
 | `dsh-subagent-fork-in-process` | fork backend (inherits history) |
 | `dsh-tool-subagent` | Consumer: `subagent` / `subagent_fork` tools |
+| `dsh-jobs` | ABSTRACT background-job seam (constructor throws by design) |
+| `dsh-jobs-local` | Provider: process-local `ctx.jobs` |
+| `dsh-tool-jobs` | Consumer: `job_list` / `job_output` / `job_kill` |
 
-## Context management
+> Both spawn/fork providers import `dsh-subagent-in-process-driver`, a pure
+> library (not a mountable plugin). `dsh-tool-subagent` binds one provider to
+> one tool name per instance — mount it twice to expose both transports.
+
+## Task state (todo / plan / goal / workspace)
 
 | Package | Role |
 |---|---|
+| `dsh-tool-todo` | Consumer: `todo_write` over the session event log |
+| `dsh-plan-mode` | per-agent plan mode + `exit_plan_mode` review flow |
+| `dsh-user-questions` | seam: `ctx.userQuestions` (headless → `NO_PROVIDER`) |
+| `dsh-goal` | Service: event-sourced same-session goal state |
+| `dsh-tool-goal` | Consumer: `create_goal` / `get_goal` / `update_goal` |
+| `dsh-storage` | hub: `ctx.storage` named-backend registry |
+| `dsh-storage-sqlite` | Provider: SQLite backend (`node:sqlite`) |
+| `dsh-storage-domain` | Provider: domain data-form routing (`ctx.storageDomain`) |
+| `dsh-workspace` | workspace entity registry (`ctx.workspaceRegistry`) |
+
+## Workflow / context management
+
+| Package | Role |
+|---|---|
+| `dsh-workflow` | ABSTRACT workflow seam (`ctx.workflowEngine`) |
+| `dsh-workflow-worker-thread` | Provider: worker-thread engine |
+| `dsh-tool-ralph` | Consumer: fresh-agent ralph loop |
 | `dsh-token-meter` | token counting + context projection |
-| `dsh-compaction-basic` | conversation compaction |
+| `dsh-compaction` | ABSTRACT compaction seam |
+| `dsh-compaction-basic` | Provider: token-meter-driven LLM summarization |
 | `dsh-compaction-tool-result-pruner` | oversized tool-result pruning |
+
+> Abstract seams (`dsh-jobs`, `dsh-compaction`, `dsh-workflow`) register the
+> same service name as their concrete provider — mount exactly one
+> implementation, list the abstract entry disabled for visibility.
+
+## Operability
+
+| Package | Role |
+|---|---|
+| `dsh-llm-retry` | retry policy hook (`llm/retry` events; policy lives under each LLM provider's config) |
+| `dsh-invariants` | runtime assertion registry |
+| `dsh-session-projection` | projection registry (activates stats + todo/plan/goal projections) |
+| `dsh-session-stats` | session statistics unit |
+| `dsh-session-telemetry` | contract-only seam (needs a backend, e.g. OTel) |
+
+## Product config
+
+| Package | Role |
+|---|---|
+| `dsh-settings` | ABSTRACT settings seam (`ctx.settings`) |
+| `dsh-settings-file` | Provider: YAML file + watch hot-reload |
+| `dsh-credentials` | ABSTRACT credentials seam (`ctx.credentials`) |
+| `dsh-credentials-local` | Provider: env + local YAML credential resolution |
+
+> Preset / bundle / HMR have no standalone npm packages at this version —
+> they live in the dsh CLI's `dsh-base` profile bundle.
 
 ## The seam pattern
 

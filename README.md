@@ -9,11 +9,9 @@
 ## 生长树
 
 ```
-                         Full Harness
+                    Workflow / Subagent            ← L8/L9 (已实现)
                               ▲
-                    Workflow / Subagent
-                              ▲
-                     Plan / Goal / Skill
+                     Plan / Goal / Todo            ← L7 (已实现)
                               ▲
               Approval / Permission          ← L6 (已实现)
                               ▲
@@ -31,6 +29,9 @@
                               ▲
                          qa-minimal
 ```
+
+L10（Operable：retry / telemetry / stats）与 L11（Productized：settings /
+credentials 热切换）是横切层，作用于整张能力图而非单个闭包，未画在树中。
 
 每一级严格满足 **L(n) ⊇ L(n-1)**：上层继承下层的全部插件，只新增一个能力闭包。
 
@@ -57,6 +58,11 @@ node run.mjs 3 "Read src/calculator.js and explain"  # L3: 读/写文件
 node run.mjs 4 "Fix the divide-by-zero bug in src/calculator.js"  # L4: 跑命令
 node run.mjs 5 'Write "hello" to ../outside.txt'      # L5: 被沙箱拒绝
 node run.mjs 6 'Write "hello" to ../outside.txt'      # L6: 请求审批
+node run.mjs 7 "用 todo 跟踪修复 src/calculator.js 的 bug"   # L7: todo/plan/goal 状态
+node run.mjs 8 "Delegate investigating src/calculator.js to a subagent"  # L8: 委派
+node run.mjs 9 --trace "<一个需要多轮迭代的长任务>"            # L9: ralph 循环 + compaction
+node run.mjs 10 --trace "Fix the divide-by-zero bug in src/calculator.js"  # L10: llm/retry 事件
+node run.mjs 11 "Fix the divide-by-zero bug in src/calculator.js"          # L11: settings/credentials 热切换
 
 # 观察能力图怎样生长
 node run.mjs inspect 5                        # 查看某级挂载的全部插件
@@ -77,22 +83,30 @@ node run.mjs diff 4 5                         # 对比两级之间的插件差�
 | **L4** | Shell / Process | `subprocess` + `shell-env` + `bash-local` + `tool-bash` + `tool-fs-search` | `tool/call`（bash）→ `tool/result`（exit code）+ glob/grep 搜索 | ✅ |
 | **L5** | Sandboxed Agent | `sandbox-local` + `sandbox-policy` + `fs-sandbox` + `bash-sandbox` | 同一 bash 命令写工作区外 → sandbox 拒绝 | ✅ |
 | **L6** | Approval & Permission | `user-approval` + `permission-presets` | 越界写入 → sandbox 拒绝 → 模型 escalate → 审批请求 | ✅ |
-| L7–L11 | → Full Product | 见 [docs/ladder.md](docs/ladder.md) | | 📋 |
+| **L7** | Stateful Task Agent | `tool-todo` + `plan-mode` + `goal` + `tool-goal` + `workspace`（+ 支撑：`user-questions`、`storage` + `storage-sqlite` + `storage-domain`） | `todo/write`、`goal/*` 事件；exit_plan_mode 评审流 | ✅ |
+| **L8** | Multi-Agent | `subagent` + `subagent-spawn/fork-in-process` + `tool-subagent`×2 + `jobs-local` + `tool-jobs` | `subagent` / `subagent_fork` / `job_*` 工具出现，真实委派 | ✅ |
+| **L9** | Workflow Agent | `workflow-worker-thread` + `tool-ralph` + `token-meter` + `compaction-basic` + `compaction-tool-result-pruner` | ralph fresh-agent 循环；token 计量驱动 compaction | ✅ |
+| **L10** | Operable Harness | `llm-retry` + `invariants` + `session-projection` + `session-stats` | `llm/retry` → `llm/retry-started`；session 统计激活 | ✅ |
+| **L11** | Productized | `settings-file` + `credentials-local` | `settings.yaml` watch 热重载；`ctx.credentials` 真实解析密钥 | ✅ |
+| L12 | Full Product | host + API + client + Web UI（见 [docs/ladder.md](docs/ladder.md)） | | 📋 |
 
 ## 行为结果矩阵
 
 每个 Level 跑同一套任务（A–G 七项）。变的不是题目，是插件图。
 矩阵不用 ✓/✗，而是标注**行为结果**——"能力"和"策略"是两个独立维度。
 
-| 任务 | L0 | L1 | L2 | L3 | L4 | L5 | L6 |
-|---|---|---|---|---|---|---|---|
-| A. 回答知识问题 | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| B. 记住本轮信息 | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| C. 重启后继续会话 | unsupported | unsupported | persists | persists | persists | persists | persists |
-| D. 阅读项目文件 | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
-| E. 运行测试并改文件 | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds |
-| F. 写工作区外文件 | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval |
-| G. 委派子 Agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported |
+| 任务 | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 | L11 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A. 回答知识问题 | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| B. 记住本轮信息 | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| C. 重启后继续会话 | unsupported | unsupported | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists |
+| D. 阅读项目文件 | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| E. 运行测试并改文件 | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| F. 写工作区外文件 | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval |
+| G. 跟踪多步任务 (todo/plan/goal) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
+| H. 委派子 Agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
+| I. 长任务运行 (ralph/compaction) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds |
+| J. 瞬时故障自愈 (retry) + 可测量 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds |
 
 > **L5 的 F 标为 `denied-by-sandbox`——这正是该 stage 的测试 PASS。**
 > 被安全拒绝本身就是正确行为，不是"失败"。L6 的 F 标为
@@ -180,6 +194,11 @@ stages/             每级一个目录，同时存在、可 diff
   04-shell/         L4: +5 插件，Shell 能力缝 (bash + glob/grep)
   05-safety/        L5: +4 插件，Sandbox 强制执行
   06-approval/      L6: +2 插件，Approval + Permission Presets
+  07-stateful-tasks/ L7: +9 插件，todo / plan-mode / goal / workspace
+  08-multi-agent/   L8: +7 插件，subagent (spawn/fork) + jobs
+  09-workflow/      L9: +7 插件，workflow 引擎 + ralph + compaction
+  10-operable/      L10: +5 插件，retry + invariants + stats
+  11-productized/   L11: +4 插件，settings + credentials 热切换
 lib/
   workspace.mjs     一次性临时工作区（L3+ 使用）
 fixtures/           固定测试项目（calculator.js，含待修 bug）
