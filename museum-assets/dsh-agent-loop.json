@@ -1,0 +1,6 @@
+{
+  "short": "dsh-agent-loop",
+  "lore": "驱动 turn 和 step：发模型请求、执行工具、把结果写回会话。L1 它带着空工具表也能跑；后面每一级换工具、换 provider，换的都不是它。",
+  "anim": "loop-arc",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"24\" cy=\"24\" r=\"13\" opacity=\"0.25\"/><path d=\"M37 24a13 13 0 0 0-6.5-11.3\"><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 24 24\" to=\"360 24 24\" dur=\"3s\" repeatCount=\"indefinite\"/></path></svg>"
+}

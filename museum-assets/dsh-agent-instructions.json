@@ -1,0 +1,6 @@
+{
+  "short": "dsh-agent-instructions",
+  "lore": "把 AGENTS.md / CLAUDE.md 指令链折进会话历史，会话开始模型先读到项目规则。它和 system prompt 并列工作，L7 起挂载；换一个项目目录，换的只是这条链。",
+  "anim": "book-page",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M24 10v28\"/><path d=\"M24 14h-12v24h12\"/><path d=\"M24 14h12v24h-12\" opacity=\"0.4\"/><path d=\"M24 14h12\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 14;-150 24 14;-150 24 14;0 24 14\" keyTimes=\"0;0.45;0.75;1\" dur=\"3.2s\" repeatCount=\"indefinite\"/></path></svg>"
+}

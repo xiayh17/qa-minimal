@@ -1,0 +1,5 @@
+{
+  "short": "dsh-tool-todo",
+  "lore": "给模型 todo_write：每次调用整表替换任务列表。列表不落额外文件，通过会话事件持久化，--resume 后还在。",
+  "anim": "plan-check"
+}

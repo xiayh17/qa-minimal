@@ -1,0 +1,6 @@
+{
+  "short": "dsh-jobs",
+  "lore": "定义后台 job 注册表的抽象契约（ctx.jobs）。直接挂载会按设计抛错，运行时由 dsh-jobs-local 提供实现；dsh-tool-jobs 把它的能力递给模型。",
+  "anim": "queue-cells",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"8\" y=\"18\" width=\"10\" height=\"12\" rx=\"2\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" dur=\"2.7s\" repeatCount=\"indefinite\"/></rect><rect x=\"19\" y=\"18\" width=\"10\" height=\"12\" rx=\"2\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" begin=\"0.9s\" dur=\"2.7s\" repeatCount=\"indefinite\"/></rect><rect x=\"30\" y=\"18\" width=\"10\" height=\"12\" rx=\"2\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" begin=\"1.8s\" dur=\"2.7s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

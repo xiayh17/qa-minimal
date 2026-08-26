@@ -1,0 +1,6 @@
+{
+  "short": "dsh-command-goal",
+  "lore": "/goal：人对 goal 域的查看和修改入口（show / create / pause / resume / clear）。命令注册进 ctx.commands，操作的是 L7 dsh-goal 挂上的那个域。",
+  "anim": "goal-target",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"12\"/><circle cx=\"24\" cy=\"24\" r=\"4\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"r\" values=\"3;5;3\" dur=\"2.4s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

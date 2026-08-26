@@ -1,0 +1,6 @@
+{
+  "short": "dsh-settings-file",
+  "lore": "settings 的文件实现：一个用户可编辑的 settings.yaml，按 namespace 叠在各插件的组合基之上。watch 默认开着，外部编辑会实时重新解析，dsh-llm-pi-ai 的 providers 段就是这样变成热文档的。",
+  "anim": "settings-file-gear",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"12\" y=\"8\" width=\"24\" height=\"32\" rx=\"2\"/><circle cx=\"24\" cy=\"24\" r=\"6\" stroke-dasharray=\"3 2\"><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 24 24\" to=\"360 24 24\" dur=\"4s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

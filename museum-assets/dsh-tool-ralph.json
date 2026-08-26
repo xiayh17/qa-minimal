@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-ralph",
+  "lore": "给模型一个 ralph 工具：把目标交给一轮一个的新鲜子 agent 反复推进，每轮只带目标和上一轮的交接。它跑在 workflow 引擎和 spawn provider 之上，轮数有上限，到顶就停。",
+  "anim": "ralph-loop",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"12\" stroke-dasharray=\"4 4\"/><circle cx=\"24\" cy=\"12\" r=\"3\" fill=\"currentColor\" stroke=\"none\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;360 24 24\" dur=\"3s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

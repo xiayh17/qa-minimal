@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-subagent",
+  "lore": "把一个 subagent provider 绑定成一个模型工具，provider 不在时工具就不出现。L8 把它挂了两次：subagent 走 spawn，subagent_fork 走 fork，一个实例只绑一对。",
+  "anim": "plane-fly",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 30l24-14-12 18-3-8z\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;5 -4;0 0\" keyTimes=\"0;0.5;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"1;0.5;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></path></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-reference",
+  "lore": "它把别的会话的快照作为引用带进当前会话，以不可信上下文的身份发给模型。它的 sessionQuery 注入由 dsh-session-query-sqlite 满足，L10 里随检索后端一起启用。",
+  "anim": "reference-link",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"18\" cy=\"24\" r=\"9\"/><circle cx=\"30\" cy=\"24\" r=\"9\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"6 0;0 0;6 0\" dur=\"3s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

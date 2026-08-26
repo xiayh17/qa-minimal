@@ -1,97 +1,479 @@
 {
-  "groupOrder": ["LLM", "Agent spine", "Persistence", "Workspace FS", "Shell", "Safety", "Task state", "Delegation", "Long task", "Operability", "Product config", "Web", "External", "Local demo"],
+  "groupOrder": [
+    "LLM",
+    "Agent spine",
+    "Persistence",
+    "Workspace FS",
+    "Shell",
+    "Safety",
+    "Task state",
+    "Skill",
+    "Delegation",
+    "Long task",
+    "Operability",
+    "Product config",
+    "Web",
+    "External",
+    "Local demo"
+  ],
   "plugins": {
-    "dsh-llm": { "role": "core", "group": "LLM", "blurb": "抽象 LLM 服务。模型调用都从这里过。" },
-    "dsh-llm-pi-ai": { "role": "provider", "group": "LLM", "blurb": "把具体 provider 和协议注册到 LLM 服务。" },
-    "dsh-session": { "role": "state", "group": "Agent spine", "blurb": "事件溯源的会话日志。turn、step 和消息都记在这里。" },
-    "dsh-system-prompt": { "role": "core", "group": "Agent spine", "blurb": "每一步把 persona、上下文和工具 schema 组装成模型输入。" },
-    "dsh-tools": { "role": "core", "group": "Agent spine", "blurb": "工具注册表和执行流水线。没有具体工具时，它可以是空的。" },
-    "dsh-agent": { "role": "core", "group": "Agent spine", "blurb": "Agent 注册表、身份和创建约定。" },
-    "dsh-agent-loop": { "role": "core", "group": "Agent spine", "blurb": "具体循环。驱动 turn / step，把请求、工具结果写回会话。" },
-    "dsh-session-persistence-jsonl": { "role": "provider", "group": "Persistence", "blurb": "把会话事件持久化到 JSONL。进程退出后仍可恢复。" },
-    "dsh-session-checkpoint-policy": { "role": "policy", "group": "Persistence", "blurb": "在模型请求和副作用前设置持久化检查点，减少崩溃后的不确定性。" },
-    "dsh-fs-local": { "role": "provider", "group": "Workspace FS", "blurb": "本地文件系统 Provider。让 ctx.fs 有真实后端。" },
-    "dsh-fs-sandbox": { "role": "provider", "group": "Workspace FS", "blurb": "带沙箱约束的文件系统 Provider。" },
-    "dsh-fs-observation-policy": { "role": "policy", "group": "Workspace FS", "blurb": "记录模型看过哪些文件，并为写入/编辑提供观察和版本门禁。" },
-    "dsh-tool-fs": { "role": "tool", "group": "Workspace FS", "blurb": "给模型 read / write / edit 工具。Consumer 依赖 ctx.fs。" },
-    "dsh-subprocess-local": { "role": "provider", "group": "Shell", "blurb": "本地子进程后端，为 shell 和搜索提供进程能力。" },
-    "dsh-shell-env": { "role": "core", "group": "Shell", "blurb": "集中提供模型 shell 调用需要的 DSH_* 环境。" },
-    "dsh-bash-local": { "role": "provider", "group": "Shell", "blurb": "真实 Bash 执行器，没有沙箱限制。" },
-    "dsh-bash-sandbox": { "role": "provider", "group": "Shell", "blurb": "在执行命令前应用 sandbox policy。", "disabledOnWindows": true },
-    "dsh-tool-bash": { "role": "tool", "group": "Shell", "blurb": "给模型 bash 工具，并把 stdout / stderr / exit code 交回模型。", "disabledOnWindows": true },
-    "dsh-tool-fs-search": { "role": "tool", "group": "Shell", "blurb": "给模型 glob / grep。底层通过 subprocess 跑 ripgrep。" },
-    "dsh-sandbox-local": { "role": "provider", "group": "Safety", "blurb": "本地 sandbox 边界。" },
-    "dsh-sandbox-policy": { "role": "policy", "group": "Safety", "blurb": "决定 read-only、workspace-write 或更宽模式。" },
-    "dsh-user-approval": { "role": "policy", "group": "Safety", "blurb": "一次性审批 seam。L6 开始让拒绝后的升级请求有去处。" },
-    "dsh-permission-presets": { "role": "policy", "group": "Safety", "blurb": "把 sandbox mode 和 approval policy 组合成用户可理解的权限预设。" },
-    "dsh-user-questions": { "role": "policy", "group": "Task state", "blurb": "向用户提问的抽象 seam。Headless 没有 UI provider 时会明确不可用。" },
-    "dsh-tool-todo": { "role": "tool", "group": "Task state", "blurb": "todo_write。任务列表通过会话事件持久化。" },
-    "dsh-plan-mode": { "role": "state", "group": "Task state", "blurb": "把 plan mode 变成 session state，并提供 exit_plan_mode。" },
-    "dsh-goal": { "role": "state", "group": "Task state", "blurb": "同会话的 goal 状态，事件溯源。" },
-    "dsh-tool-goal": { "role": "tool", "group": "Task state", "blurb": "给模型 create / get / update goal。" },
-    "dsh-storage": { "role": "core", "group": "Task state", "blurb": "宿主侧存储 hub。后端按名字注册。" },
-    "dsh-storage-sqlite": { "role": "provider", "group": "Task state", "blurb": "SQLite 存储后端。" },
-    "dsh-storage-domain": { "role": "provider", "group": "Task state", "blurb": "把命名后端包装成领域数据层。" },
-    "dsh-workspace": { "role": "state", "group": "Task state", "blurb": "持久 workspace 实体注册表。它不直接给模型工具。" },
-    "dsh-subagent": { "role": "core", "group": "Delegation", "blurb": "Subagent Provider 注册表。" },
-    "dsh-subagent-spawn-in-process": { "role": "provider", "group": "Delegation", "blurb": "spawn Provider。子 Agent 从干净历史开始。" },
-    "dsh-subagent-fork-in-process": { "role": "provider", "group": "Delegation", "blurb": "fork Provider。子 Agent 继承父会话已完成的前缀。" },
-    "dsh-tool-subagent": { "role": "tool", "group": "Delegation", "blurb": "把某个 subagent Provider 暴露成模型工具。" },
-    "dsh-jobs": { "role": "core", "group": "Delegation", "blurb": "抽象后台 Job seam。组合里只做 Definition 展示，运行时由 jobs-local 提供。" },
-    "dsh-jobs-local": { "role": "provider", "group": "Delegation", "blurb": "进程内 Job Provider。" },
-    "dsh-tool-jobs": { "role": "tool", "group": "Delegation", "blurb": "给模型 job_list / job_output / job_kill。" },
-    "dsh-workflow": { "role": "core", "group": "Long task", "blurb": "抽象 workflow seam。当前 stage 用 worker-thread Provider。" },
-    "dsh-workflow-worker-thread": { "role": "provider", "group": "Long task", "blurb": "在 worker thread 中执行模型写出的编排脚本。" },
-    "dsh-tool-ralph": { "role": "tool", "group": "Long task", "blurb": "新鲜子 Agent 逐轮迭代的 ralph 工具。" },
-    "dsh-token-meter": { "role": "ops", "group": "Long task", "blurb": "从会话日志折叠 token 使用和上下文压力。" },
-    "dsh-compaction": { "role": "core", "group": "Long task", "blurb": "抽象 compaction seam。实际由 compaction-basic 提供。" },
-    "dsh-compaction-basic": { "role": "provider", "group": "Long task", "blurb": "根据 token 压力把旧历史折叠成摘要。" },
-    "dsh-compaction-tool-result-pruner": { "role": "policy", "group": "Long task", "blurb": "对过大的工具结果做确定性裁剪，避免上下文被单次结果撑爆。" },
-    "dsh-llm-retry": { "role": "ops", "group": "Operability", "blurb": "为瞬时 Provider 错误做有界重试，并写入 retry 事件。" },
-    "dsh-invariants": { "role": "ops", "group": "Operability", "blurb": "运行时断言注册表。" },
-    "dsh-session-telemetry": { "role": "ops", "group": "Operability", "blurb": "Telemetry 契约缝。当前版本没有可直接挂载的具体后端。" },
-    "dsh-session-projection": { "role": "ops", "group": "Operability", "blurb": "从事件日志维护当前投影视图。" },
-    "dsh-session-stats": { "role": "ops", "group": "Operability", "blurb": "统计整场 session 的 turn / step / 时间等指标。" },
-    "dsh-settings": { "role": "core", "group": "Product config", "blurb": "抽象 settings seam。L11 用 settings-file 提供实现。" },
-    "dsh-credentials": { "role": "core", "group": "Product config", "blurb": "抽象 credentials seam。L11 用 credentials-local 提供实现。" },
-    "dsh-settings-file": { "role": "provider", "group": "Product config", "blurb": "settings.yaml 文件后端，watch 后可热重载。" },
-    "dsh-credentials-local": { "role": "provider", "group": "Product config", "blurb": "环境变量 + 本地凭据文档的解析 Provider。" },
-    "dsh-tool-str-replace-editor": { "role": "tool", "group": "Workspace FS", "blurb": "给模型 str_replace_editor：查看、创建、字面替换、插入行。走 ctx.fs。" },
-    "dsh-skill": { "role": "core", "group": "Task state", "blurb": "抽象 skill 缝。skill Provider 的注册表，自己不持有技能来源。" },
-    "dsh-skill-filesystem": { "role": "provider", "group": "Task state", "blurb": "扫描项目和用户目录里的 SKILL.md，注册成技能目录。" },
-    "dsh-tool-skill": { "role": "tool", "group": "Task state", "blurb": "把可用技能目录发给模型，并给模型 skill 加载工具。" },
-    "dsh-skill-badge": { "role": "provider", "group": "Task state", "blurb": "内置 dsh-badge 技能 Provider。默认禁用，按需开启。" },
-    "dsh-goal-round-driver": { "role": "core", "group": "Task state", "blurb": "让 active goal 在 Agent 空闲时自动续跑下一轮。" },
-    "dsh-agent-instructions": { "role": "core", "group": "Task state", "blurb": "把 AGENTS.md / CLAUDE.md 指令链折进会话历史。" },
-    "dsh-schedule": { "role": "tool", "group": "Task state", "blurb": "schedule_create / list / delete。提醒通过会话事件持久化。" },
-    "dsh-tool-subagent-control": { "role": "tool", "group": "Delegation", "blurb": "send_message / interrupt_agent。父对子的控制面，全局只注册一次。" },
-    "dsh-tool-subagent-control/list-agents": { "role": "tool", "group": "Delegation", "blurb": "list_agents 子路径导出。调用时读 sessionProjections，L10 起完全可用。" },
-    "dsh-tool-subagent-report": { "role": "tool", "group": "Delegation", "blurb": "子对父的 report 工具。只存在于 continuable 子 Agent 内部。" },
-    "dsh-tool-workflow": { "role": "tool", "group": "Long task", "blurb": "给模型 workflow 工具。模型写编排脚本，跑在 workflowEngine 上。" },
-    "dsh-code-runtime": { "role": "core", "group": "Long task", "blurb": "抽象 code runtime 缝。实际由 code-runtime-worker-thread 提供。" },
-    "dsh-code-runtime-worker-thread": { "role": "provider", "group": "Long task", "blurb": "在独立 worker thread 里执行模型写出的程序。containment，不是安全边界。" },
-    "dsh-session-query": { "role": "core", "group": "Operability", "blurb": "抽象 session query 缝。实际由 session-query-sqlite 提供。" },
-    "dsh-session-query-sqlite": { "role": "provider", "group": "Operability", "blurb": "SQLite FTS5 的会话检索后端。是检索，不是持久化。" },
-    "dsh-session-reference": { "role": "provider", "group": "Operability", "blurb": "跨会话快照引用。把别的会话内容作为不可信上下文给模型。" },
-    "dsh-repeat-tool-reminder": { "role": "policy", "group": "Operability", "blurb": "同一工具同参数连续调用时注入升级的提醒。只提醒，不拦截。" },
-    "dsh-tool-call-timeout-policy": { "role": "policy", "group": "Operability", "blurb": "给声明了超时的工具装上调用预算。超时返回结构化 TOOL_TIMEOUT。" },
-    "dsh-time-context": { "role": "ops", "group": "Operability", "blurb": "每一步向模型注入当前时间和距上条消息的间隔。" },
-    "dsh-commands": { "role": "core", "group": "Product config", "blurb": "人类命令注册表。UI adapter 从这里发现 slash 命令。" },
-    "dsh-command-compact": { "role": "provider", "group": "Product config", "blurb": "/compact：人手动触发一次 compaction。" },
-    "dsh-command-goal": { "role": "provider", "group": "Product config", "blurb": "/goal：人对 goal 域的查看和修改入口。" },
-    "dsh-command-feedback": { "role": "provider", "group": "Product config", "blurb": "/feedback：只写日志的会话反馈入口。" },
-    "dsh-tool-ask-user": { "role": "tool", "group": "Product config", "blurb": "给模型 ask_user_question。Headless 没有 UI Provider 时明确报 NO_PROVIDER。" },
-    "dsh-session-title": { "role": "core", "group": "Product config", "blurb": "会话标题服务。先用首条消息的前几个词兜底。" },
-    "dsh-session-title-first-prompt-llm": { "role": "provider", "group": "Product config", "blurb": "用一次小模型调用生成标题，失败回退到首词方案。" },
-    "dsh-persona": { "role": "policy", "group": "Product config", "blurb": "agent preset 作用域的 persona 段。全局挂载会和 system-prompt 冲突，所以禁用。" },
-    "dsh-agent-default-model": { "role": "core", "group": "Product config", "blurb": "进程级默认模型。入口创建 Agent 而没有本地选择时读它。" },
-    "dsh-agent-tool-presentation": { "role": "policy", "group": "Product config", "blurb": "agent preset 作用域的工具呈现选择。全局挂载非法，所以禁用。" },
-    "dsh-web": { "role": "core", "group": "Web", "blurb": "ctx.web 缝本身。search / fetch Provider 往里注册，不替换它。" },
-    "dsh-web-search-deepseek": { "role": "provider", "group": "Web", "blurb": "search Provider。每次搜索是一次带原生搜索工具的辅助模型调用。" },
-    "dsh-web-fetch-http": { "role": "provider", "group": "Web", "blurb": "fetch Provider。纯 HTTP GET，带大小和类型限制。" },
-    "dsh-tool-web": { "role": "tool", "group": "Web", "blurb": "给模型 web_search / web_fetch。" },
-    "dsh-mcp-client": { "role": "provider", "group": "External", "blurb": "连接一个外部 MCP server，把它的工具以 mcp__<server>__<name> 注册进来。" },
-    "./driver.mjs": { "role": "core", "group": "Local demo", "blurb": "这个 stage 的本地驱动。负责发起教学任务并打印结果。" }
+    "dsh-llm": {
+      "role": "core",
+      "group": "LLM",
+      "blurb": "抽象 LLM 服务。模型调用都从这里过。"
+    },
+    "dsh-llm-pi-ai": {
+      "role": "provider",
+      "group": "LLM",
+      "blurb": "把具体 provider 和协议注册到 LLM 服务。"
+    },
+    "dsh-session": {
+      "role": "state",
+      "group": "Agent spine",
+      "blurb": "事件溯源的会话日志。turn、step 和消息都记在这里。"
+    },
+    "dsh-system-prompt": {
+      "role": "core",
+      "group": "Agent spine",
+      "blurb": "每一步把 persona、上下文和工具 schema 组装成模型输入。"
+    },
+    "dsh-tools": {
+      "role": "core",
+      "group": "Agent spine",
+      "blurb": "工具注册表和执行流水线。没有具体工具时，它可以是空的。"
+    },
+    "dsh-agent": {
+      "role": "core",
+      "group": "Agent spine",
+      "blurb": "Agent 注册表、身份和创建约定。"
+    },
+    "dsh-agent-loop": {
+      "role": "core",
+      "group": "Agent spine",
+      "blurb": "具体循环。驱动 turn / step，把请求、工具结果写回会话。"
+    },
+    "dsh-session-persistence-jsonl": {
+      "role": "provider",
+      "group": "Persistence",
+      "blurb": "把会话事件持久化到 JSONL。进程退出后仍可恢复。"
+    },
+    "dsh-session-checkpoint-policy": {
+      "role": "policy",
+      "group": "Persistence",
+      "blurb": "在模型请求和副作用前设置持久化检查点，减少崩溃后的不确定性。"
+    },
+    "dsh-fs-local": {
+      "role": "provider",
+      "group": "Workspace FS",
+      "blurb": "本地文件系统 Provider。让 ctx.fs 有真实后端。"
+    },
+    "dsh-fs-sandbox": {
+      "role": "provider",
+      "group": "Workspace FS",
+      "blurb": "带沙箱约束的文件系统 Provider。"
+    },
+    "dsh-fs-observation-policy": {
+      "role": "policy",
+      "group": "Workspace FS",
+      "blurb": "记录模型看过哪些文件，并为写入/编辑提供观察和版本门禁。"
+    },
+    "dsh-tool-fs": {
+      "role": "tool",
+      "group": "Workspace FS",
+      "blurb": "给模型 read / write / edit 工具。Consumer 依赖 ctx.fs。"
+    },
+    "dsh-subprocess-local": {
+      "role": "provider",
+      "group": "Shell",
+      "blurb": "本地子进程后端，为 shell 和搜索提供进程能力。"
+    },
+    "dsh-shell-env": {
+      "role": "core",
+      "group": "Shell",
+      "blurb": "集中提供模型 shell 调用需要的 DSH_* 环境。"
+    },
+    "dsh-bash-local": {
+      "role": "provider",
+      "group": "Shell",
+      "blurb": "真实 Bash 执行器，没有沙箱限制。"
+    },
+    "dsh-bash-sandbox": {
+      "role": "provider",
+      "group": "Shell",
+      "blurb": "在执行命令前应用 sandbox policy。",
+      "disabledOnWindows": true
+    },
+    "dsh-tool-bash": {
+      "role": "tool",
+      "group": "Shell",
+      "blurb": "给模型 bash 工具，并把 stdout / stderr / exit code 交回模型。",
+      "disabledOnWindows": true
+    },
+    "dsh-tool-fs-search": {
+      "role": "tool",
+      "group": "Shell",
+      "blurb": "给模型 glob / grep。底层通过 subprocess 跑 ripgrep。"
+    },
+    "dsh-sandbox-local": {
+      "role": "provider",
+      "group": "Safety",
+      "blurb": "本地 sandbox 边界。"
+    },
+    "dsh-sandbox-policy": {
+      "role": "policy",
+      "group": "Safety",
+      "blurb": "决定 read-only、workspace-write 或更宽模式。"
+    },
+    "dsh-user-approval": {
+      "role": "policy",
+      "group": "Safety",
+      "blurb": "一次性审批 seam。L6 开始让拒绝后的升级请求有去处。"
+    },
+    "dsh-permission-presets": {
+      "role": "policy",
+      "group": "Safety",
+      "blurb": "把 sandbox mode 和 approval policy 组合成用户可理解的权限预设。"
+    },
+    "dsh-user-questions": {
+      "role": "policy",
+      "group": "Task state",
+      "blurb": "向用户提问的抽象 seam。Headless 没有 UI provider 时会明确不可用。"
+    },
+    "dsh-tool-todo": {
+      "role": "tool",
+      "group": "Task state",
+      "blurb": "todo_write。任务列表通过会话事件持久化。"
+    },
+    "dsh-plan-mode": {
+      "role": "state",
+      "group": "Task state",
+      "blurb": "把 plan mode 变成 session state，并提供 exit_plan_mode。"
+    },
+    "dsh-goal": {
+      "role": "state",
+      "group": "Task state",
+      "blurb": "同会话的 goal 状态，事件溯源。"
+    },
+    "dsh-tool-goal": {
+      "role": "tool",
+      "group": "Task state",
+      "blurb": "给模型 create / get / update goal。"
+    },
+    "dsh-storage": {
+      "role": "core",
+      "group": "Task state",
+      "blurb": "宿主侧存储 hub。后端按名字注册。"
+    },
+    "dsh-storage-sqlite": {
+      "role": "provider",
+      "group": "Task state",
+      "blurb": "SQLite 存储后端。"
+    },
+    "dsh-storage-domain": {
+      "role": "provider",
+      "group": "Task state",
+      "blurb": "把命名后端包装成领域数据层。"
+    },
+    "dsh-workspace": {
+      "role": "state",
+      "group": "Task state",
+      "blurb": "持久 workspace 实体注册表。它不直接给模型工具。"
+    },
+    "dsh-subagent": {
+      "role": "core",
+      "group": "Delegation",
+      "blurb": "Subagent Provider 注册表。"
+    },
+    "dsh-subagent-spawn-in-process": {
+      "role": "provider",
+      "group": "Delegation",
+      "blurb": "spawn Provider。子 Agent 从干净历史开始。"
+    },
+    "dsh-subagent-fork-in-process": {
+      "role": "provider",
+      "group": "Delegation",
+      "blurb": "fork Provider。子 Agent 继承父会话已完成的前缀。"
+    },
+    "dsh-tool-subagent": {
+      "role": "tool",
+      "group": "Delegation",
+      "blurb": "把某个 subagent Provider 暴露成模型工具。"
+    },
+    "dsh-jobs": {
+      "role": "core",
+      "group": "Delegation",
+      "blurb": "抽象后台 Job seam。组合里只做 Definition 展示，运行时由 jobs-local 提供。"
+    },
+    "dsh-jobs-local": {
+      "role": "provider",
+      "group": "Delegation",
+      "blurb": "进程内 Job Provider。"
+    },
+    "dsh-tool-jobs": {
+      "role": "tool",
+      "group": "Delegation",
+      "blurb": "给模型 job_list / job_output / job_kill。"
+    },
+    "dsh-workflow": {
+      "role": "core",
+      "group": "Long task",
+      "blurb": "抽象 workflow seam。当前 stage 用 worker-thread Provider。"
+    },
+    "dsh-workflow-worker-thread": {
+      "role": "provider",
+      "group": "Long task",
+      "blurb": "在 worker thread 中执行模型写出的编排脚本。"
+    },
+    "dsh-tool-ralph": {
+      "role": "tool",
+      "group": "Long task",
+      "blurb": "新鲜子 Agent 逐轮迭代的 ralph 工具。"
+    },
+    "dsh-token-meter": {
+      "role": "ops",
+      "group": "Long task",
+      "blurb": "从会话日志折叠 token 使用和上下文压力。"
+    },
+    "dsh-compaction": {
+      "role": "core",
+      "group": "Long task",
+      "blurb": "抽象 compaction seam。实际由 compaction-basic 提供。"
+    },
+    "dsh-compaction-basic": {
+      "role": "provider",
+      "group": "Long task",
+      "blurb": "根据 token 压力把旧历史折叠成摘要。"
+    },
+    "dsh-compaction-tool-result-pruner": {
+      "role": "policy",
+      "group": "Long task",
+      "blurb": "对过大的工具结果做确定性裁剪，避免上下文被单次结果撑爆。"
+    },
+    "dsh-llm-retry": {
+      "role": "ops",
+      "group": "Operability",
+      "blurb": "为瞬时 Provider 错误做有界重试，并写入 retry 事件。"
+    },
+    "dsh-invariants": {
+      "role": "ops",
+      "group": "Operability",
+      "blurb": "运行时断言注册表。"
+    },
+    "dsh-session-telemetry": {
+      "role": "ops",
+      "group": "Operability",
+      "blurb": "Telemetry 契约缝。当前版本没有可直接挂载的具体后端。"
+    },
+    "dsh-session-projection": {
+      "role": "ops",
+      "group": "Operability",
+      "blurb": "从事件日志维护当前投影视图。"
+    },
+    "dsh-session-stats": {
+      "role": "ops",
+      "group": "Operability",
+      "blurb": "统计整场 session 的 turn / step / 时间等指标。"
+    },
+    "dsh-settings": {
+      "role": "core",
+      "group": "Product config",
+      "blurb": "抽象 settings seam。L11 用 settings-file 提供实现。"
+    },
+    "dsh-credentials": {
+      "role": "core",
+      "group": "Product config",
+      "blurb": "抽象 credentials seam。L11 用 credentials-local 提供实现。"
+    },
+    "dsh-settings-file": {
+      "role": "provider",
+      "group": "Product config",
+      "blurb": "settings.yaml 文件后端，watch 后可热重载。"
+    },
+    "dsh-credentials-local": {
+      "role": "provider",
+      "group": "Product config",
+      "blurb": "环境变量 + 本地凭据文档的解析 Provider。"
+    },
+    "dsh-tool-str-replace-editor": {
+      "role": "tool",
+      "group": "Workspace FS",
+      "blurb": "给模型 str_replace_editor：查看、创建、字面替换、插入行。走 ctx.fs。"
+    },
+    "dsh-skill": {
+      "role": "core",
+      "group": "Skill",
+      "blurb": "抽象 skill 缝。skill Provider 的注册表，自己不持有技能来源。"
+    },
+    "dsh-skill-filesystem": {
+      "role": "provider",
+      "group": "Skill",
+      "blurb": "扫描项目和用户目录里的 SKILL.md，注册成技能目录。"
+    },
+    "dsh-tool-skill": {
+      "role": "tool",
+      "group": "Skill",
+      "blurb": "把可用技能目录发给模型，并给模型 skill 加载工具。"
+    },
+    "dsh-skill-badge": {
+      "role": "provider",
+      "group": "Skill",
+      "blurb": "内置 dsh-badge 技能 Provider。默认禁用，按需开启。"
+    },
+    "dsh-goal-round-driver": {
+      "role": "core",
+      "group": "Task state",
+      "blurb": "让 active goal 在 Agent 空闲时自动续跑下一轮。"
+    },
+    "dsh-agent-instructions": {
+      "role": "core",
+      "group": "Task state",
+      "blurb": "把 AGENTS.md / CLAUDE.md 指令链折进会话历史。"
+    },
+    "dsh-schedule": {
+      "role": "tool",
+      "group": "Task state",
+      "blurb": "schedule_create / list / delete。提醒通过会话事件持久化。"
+    },
+    "dsh-tool-subagent-control": {
+      "role": "tool",
+      "group": "Delegation",
+      "blurb": "send_message / interrupt_agent。父对子的控制面，全局只注册一次。"
+    },
+    "dsh-tool-subagent-control/list-agents": {
+      "role": "tool",
+      "group": "Delegation",
+      "blurb": "list_agents 子路径导出。调用时读 sessionProjections，L10 起完全可用。"
+    },
+    "dsh-tool-subagent-report": {
+      "role": "tool",
+      "group": "Delegation",
+      "blurb": "子对父的 report 工具。只存在于 continuable 子 Agent 内部。"
+    },
+    "dsh-tool-workflow": {
+      "role": "tool",
+      "group": "Long task",
+      "blurb": "给模型 workflow 工具。模型写编排脚本，跑在 workflowEngine 上。"
+    },
+    "dsh-code-runtime": {
+      "role": "core",
+      "group": "Long task",
+      "blurb": "抽象 code runtime 缝。实际由 code-runtime-worker-thread 提供。"
+    },
+    "dsh-code-runtime-worker-thread": {
+      "role": "provider",
+      "group": "Long task",
+      "blurb": "在独立 worker thread 里执行模型写出的程序。containment，不是安全边界。"
+    },
+    "dsh-session-query": {
+      "role": "core",
+      "group": "Operability",
+      "blurb": "抽象 session query 缝。实际由 session-query-sqlite 提供。"
+    },
+    "dsh-session-query-sqlite": {
+      "role": "provider",
+      "group": "Operability",
+      "blurb": "SQLite FTS5 的会话检索后端。是检索，不是持久化。"
+    },
+    "dsh-session-reference": {
+      "role": "provider",
+      "group": "Operability",
+      "blurb": "跨会话快照引用。把别的会话内容作为不可信上下文给模型。"
+    },
+    "dsh-repeat-tool-reminder": {
+      "role": "policy",
+      "group": "Operability",
+      "blurb": "同一工具同参数连续调用时注入升级的提醒。只提醒，不拦截。"
+    },
+    "dsh-tool-call-timeout-policy": {
+      "role": "policy",
+      "group": "Operability",
+      "blurb": "给声明了超时的工具装上调用预算。超时返回结构化 TOOL_TIMEOUT。"
+    },
+    "dsh-time-context": {
+      "role": "ops",
+      "group": "Operability",
+      "blurb": "每一步向模型注入当前时间和距上条消息的间隔。"
+    },
+    "dsh-commands": {
+      "role": "core",
+      "group": "Product config",
+      "blurb": "人类命令注册表。UI adapter 从这里发现 slash 命令。"
+    },
+    "dsh-command-compact": {
+      "role": "provider",
+      "group": "Product config",
+      "blurb": "/compact：人手动触发一次 compaction。"
+    },
+    "dsh-command-goal": {
+      "role": "provider",
+      "group": "Product config",
+      "blurb": "/goal：人对 goal 域的查看和修改入口。"
+    },
+    "dsh-command-feedback": {
+      "role": "provider",
+      "group": "Product config",
+      "blurb": "/feedback：只写日志的会话反馈入口。"
+    },
+    "dsh-tool-ask-user": {
+      "role": "tool",
+      "group": "Product config",
+      "blurb": "给模型 ask_user_question。Headless 没有 UI Provider 时明确报 NO_PROVIDER。"
+    },
+    "dsh-session-title": {
+      "role": "core",
+      "group": "Product config",
+      "blurb": "会话标题服务。先用首条消息的前几个词兜底。"
+    },
+    "dsh-session-title-first-prompt-llm": {
+      "role": "provider",
+      "group": "Product config",
+      "blurb": "用一次小模型调用生成标题，失败回退到首词方案。"
+    },
+    "dsh-persona": {
+      "role": "policy",
+      "group": "Product config",
+      "blurb": "agent preset 作用域的 persona 段。全局挂载会和 system-prompt 冲突，所以禁用。"
+    },
+    "dsh-agent-default-model": {
+      "role": "core",
+      "group": "Product config",
+      "blurb": "进程级默认模型。入口创建 Agent 而没有本地选择时读它。"
+    },
+    "dsh-agent-tool-presentation": {
+      "role": "policy",
+      "group": "Product config",
+      "blurb": "agent preset 作用域的工具呈现选择。全局挂载非法，所以禁用。"
+    },
+    "dsh-web": {
+      "role": "core",
+      "group": "Web",
+      "blurb": "ctx.web 缝本身。search / fetch Provider 往里注册，不替换它。"
+    },
+    "dsh-web-search-deepseek": {
+      "role": "provider",
+      "group": "Web",
+      "blurb": "search Provider。每次搜索是一次带原生搜索工具的辅助模型调用。"
+    },
+    "dsh-web-fetch-http": {
+      "role": "provider",
+      "group": "Web",
+      "blurb": "fetch Provider。纯 HTTP GET，带大小和类型限制。"
+    },
+    "dsh-tool-web": {
+      "role": "tool",
+      "group": "Web",
+      "blurb": "给模型 web_search / web_fetch。"
+    },
+    "dsh-mcp-client": {
+      "role": "provider",
+      "group": "External",
+      "blurb": "连接一个外部 MCP server，把它的工具以 mcp__<server>__<name> 注册进来。"
+    },
+    "./driver.mjs": {
+      "role": "core",
+      "group": "Local demo",
+      "blurb": "这个 stage 的本地驱动。负责发起教学任务并打印结果。"
+    }
   },
   "abstractSeams": {
     "dsh-jobs": "抽象后台 Job 缝。它只定义 ctx.jobs 的接口，构造函数按设计抛错。真实 stage 里以 disabled 挂载作展示，运行实现由 dsh-jobs-local 提供。单独挂载会在启动时崩溃。",
@@ -104,19 +486,428 @@
     "dsh-code-runtime": "抽象 code runtime 缝。只注册 ctx.codeRuntime 的接口，执行实现由 dsh-code-runtime-worker-thread 提供。两者注册同一服务名，真实 stage 里抽象缝以 disabled 挂载。单独挂载没有实现，无事发生。"
   },
   "levels": {
-    "0": { "title": "Raw LLM", "short": "裸调模型", "story": "问一句，答一句，然后退出。这里还没有 Agent。", "delta": "最小控制组", "defaultTask": "A" },
-    "1": { "title": "First Agent", "short": "第一次成为 Agent", "story": "同一道题，外面长出 session、turn 和 step。LLM 调用开始被一个 Agent 生命周期包起来。", "delta": "LLM ≠ Agent", "defaultTask": "B" },
-    "2": { "title": "Persistent Agent", "short": "退出后还能续聊", "story": "会话日志落到磁盘。重启进程后，Agent 可以接着原来的历史继续。", "delta": "记忆从 loop 里拆出来", "defaultTask": "C" },
-    "3": { "title": "Workspace FS", "short": "会读写真实文件", "story": "Provider 让 ctx.fs 出现，Consumer 才把 read / write / edit 交给模型。", "delta": "第一组真实工具", "defaultTask": "D" },
-    "4": { "title": "Shell / Process", "short": "会启动真实程序", "story": "模型能跑 bash、看 stdout / stderr / exit code，也能用 glob / grep 找文件。", "delta": "文件操作 → 进程执行", "defaultTask": "F" },
-    "5": { "title": "Sandboxed Agent", "short": "同样的命令被拦住", "story": "工具和任务不变，只把 FS 和 Bash Provider 换成受 sandbox 约束的版本。", "delta": "能力不等于权限", "defaultTask": "F" },
-    "6": { "title": "Approval & Permission", "short": "拒绝后可以请求授权", "story": "越界操作先被 sandbox 拒绝。模型可以带理由请求更宽权限，再由 approval seam 决定。", "delta": "拒绝 → 升级 → 审批", "defaultTask": "F" },
-    "7": { "title": "Stateful Task Agent", "short": "开始维护任务状态", "story": "Todo、Plan、Goal 和 Workspace 都是挂在 Agent 旁边的插件状态，不需要塞进 agent-loop。", "delta": "对话 → 有状态任务", "defaultTask": "G" },
-    "8": { "title": "Multi-Agent", "short": "可以把活交出去", "story": "Subagent 是一组 Provider。spawn 和 fork 决定子 Agent 怎么开始，工具只负责让模型发起委派。", "delta": "Agent 也能成为 Provider", "defaultTask": "H" },
-    "9": { "title": "Workflow Agent", "short": "长任务能持续跑", "story": "Workflow、Ralph、token meter 和 compaction 让多轮任务不必无限堆历史。", "delta": "conversation → task runtime", "defaultTask": "I" },
-    "10": { "title": "Operable Harness", "short": "会自愈，也能测量", "story": "重试、统计、投影和运行时断言开始围绕同一条 Agent 主线工作。", "delta": "能跑 → 可运营", "defaultTask": "J" },
-    "11": { "title": "Productized", "short": "配置和凭据能热换", "story": "模型路由和 key 不再只能写死在组合里。settings / credentials 有了真正的 Provider。", "delta": "composition → product config", "defaultTask": "J" },
-    "12": { "title": "Web Access", "short": "模型第一次能离开本地", "story": "web_search 让模型能查公网。每次搜索其实是一次完整的辅助模型调用，不是一次便宜的检索。", "delta": "local-only → 可达公网", "defaultTask": "K" },
-    "13": { "title": "MCP Client", "short": "工具不只来自内置包", "story": "MCP 桥把外部 server 的工具注册进同一个 ctx.tools。占位 server 连不上，演示的是降级契约：Agent 靠内置工具照常跑。", "delta": "built-in tools → 外部工具源", "defaultTask": "L" }
+    "0": {
+      "title": "Raw LLM",
+      "short": "裸调模型",
+      "story": "问一句，答一句，然后退出。这里还没有 Agent。",
+      "delta": "最小控制组",
+      "defaultTask": "A"
+    },
+    "1": {
+      "title": "First Agent",
+      "short": "第一次成为 Agent",
+      "story": "同一道题，外面长出 session、turn 和 step。LLM 调用开始被一个 Agent 生命周期包起来。",
+      "delta": "LLM ≠ Agent",
+      "defaultTask": "B"
+    },
+    "2": {
+      "title": "Persistent Agent",
+      "short": "退出后还能续聊",
+      "story": "会话日志落到磁盘。重启进程后，Agent 可以接着原来的历史继续。",
+      "delta": "记忆从 loop 里拆出来",
+      "defaultTask": "C"
+    },
+    "3": {
+      "title": "Workspace FS",
+      "short": "会读写真实文件",
+      "story": "Provider 让 ctx.fs 出现，Consumer 才把 read / write / edit 交给模型。",
+      "delta": "第一组真实工具",
+      "defaultTask": "D"
+    },
+    "4": {
+      "title": "Shell / Process",
+      "short": "会启动真实程序",
+      "story": "模型能跑 bash、看 stdout / stderr / exit code，也能用 glob / grep 找文件。",
+      "delta": "文件操作 → 进程执行",
+      "defaultTask": "F"
+    },
+    "5": {
+      "title": "Sandboxed Agent",
+      "short": "同样的命令被拦住",
+      "story": "工具和任务不变，只把 FS 和 Bash Provider 换成受 sandbox 约束的版本。",
+      "delta": "能力不等于权限",
+      "defaultTask": "F"
+    },
+    "6": {
+      "title": "Approval & Permission",
+      "short": "拒绝后可以请求授权",
+      "story": "越界操作先被 sandbox 拒绝。模型可以带理由请求更宽权限，再由 approval seam 决定。",
+      "delta": "拒绝 → 升级 → 审批",
+      "defaultTask": "F"
+    },
+    "7": {
+      "title": "Stateful Task Agent",
+      "short": "开始维护任务状态",
+      "story": "Todo、Plan、Goal 和 Workspace 都是挂在 Agent 旁边的插件状态，不需要塞进 agent-loop。",
+      "delta": "对话 → 有状态任务",
+      "defaultTask": "G"
+    },
+    "8": {
+      "title": "Multi-Agent",
+      "short": "可以把活交出去",
+      "story": "Subagent 是一组 Provider。spawn 和 fork 决定子 Agent 怎么开始，工具只负责让模型发起委派。",
+      "delta": "Agent 也能成为 Provider",
+      "defaultTask": "H"
+    },
+    "9": {
+      "title": "Workflow Agent",
+      "short": "长任务能持续跑",
+      "story": "Workflow、Ralph、token meter 和 compaction 让多轮任务不必无限堆历史。",
+      "delta": "conversation → task runtime",
+      "defaultTask": "I"
+    },
+    "10": {
+      "title": "Operable Harness",
+      "short": "会自愈，也能测量",
+      "story": "重试、统计、投影和运行时断言开始围绕同一条 Agent 主线工作。",
+      "delta": "能跑 → 可运营",
+      "defaultTask": "J"
+    },
+    "11": {
+      "title": "Productized",
+      "short": "配置和凭据能热换",
+      "story": "模型路由和 key 不再只能写死在组合里。settings / credentials 有了真正的 Provider。",
+      "delta": "composition → product config",
+      "defaultTask": "J"
+    },
+    "12": {
+      "title": "Web Access",
+      "short": "模型第一次能离开本地",
+      "story": "web_search 让模型能查公网。每次搜索其实是一次完整的辅助模型调用，不是一次便宜的检索。",
+      "delta": "local-only → 可达公网",
+      "defaultTask": "K"
+    },
+    "13": {
+      "title": "MCP Client",
+      "short": "工具不只来自内置包",
+      "story": "MCP 桥把外部 server 的工具注册进同一个 ctx.tools。占位 server 连不上，演示的是降级契约：Agent 靠内置工具照常跑。",
+      "delta": "built-in tools → 外部工具源",
+      "defaultTask": "L"
+    }
+  },
+  "skills": {
+    "dsh-llm": [
+      {
+        "icon": "⚡",
+        "name": "stream",
+        "effect": "统一的模型流式调用入口"
+      }
+    ],
+    "dsh-llm-retry": [
+      {
+        "icon": "↻",
+        "name": "有界重试",
+        "effect": "瞬时错误指数退避，有界重试并写入 retry 事件"
+      }
+    ],
+    "dsh-agent-loop": [
+      {
+        "icon": "◉",
+        "name": "turn / step 驱动",
+        "effect": "推进轮与步，发请求、执行工具、回写消息"
+      }
+    ],
+    "dsh-session-persistence-jsonl": [
+      {
+        "icon": "▤",
+        "name": "JSONL 持久化",
+        "effect": "仅追加事件日志，退出后可按 session id 恢复"
+      }
+    ],
+    "dsh-tool-fs": [
+      {
+        "icon": "▤",
+        "name": "read",
+        "effect": "读取工作区真实文件"
+      },
+      {
+        "icon": "✎",
+        "name": "write",
+        "effect": "写入或新建文件"
+      },
+      {
+        "icon": "✂",
+        "name": "edit",
+        "effect": "字面替换编辑"
+      },
+      {
+        "icon": "◫",
+        "name": "read_image",
+        "effect": "读取图片给模型看"
+      }
+    ],
+    "dsh-tool-fs-search": [
+      {
+        "icon": "◈",
+        "name": "glob",
+        "effect": "按模式匹配文件路径"
+      },
+      {
+        "icon": "⌕",
+        "name": "grep",
+        "effect": "按正则搜索文件内容"
+      }
+    ],
+    "dsh-tool-str-replace-editor": [
+      {
+        "icon": "✎",
+        "name": "str_replace_editor",
+        "effect": "查看、创建、字面替换、插入行"
+      }
+    ],
+    "dsh-tool-bash": [
+      {
+        "icon": "❯",
+        "name": "bash",
+        "effect": "执行真实 shell 命令"
+      }
+    ],
+    "dsh-sandbox-policy": [
+      {
+        "icon": "◆",
+        "name": "策略解析",
+        "effect": "把 read-only / workspace-write 等模式解析成每次调用的策略"
+      }
+    ],
+    "dsh-user-approval": [
+      {
+        "icon": "✋",
+        "name": "一次性审批",
+        "effect": "被拒操作带理由升级，应答缺失时安全拒绝"
+      }
+    ],
+    "dsh-tool-todo": [
+      {
+        "icon": "☑",
+        "name": "todo_write",
+        "effect": "写入并维护任务清单"
+      }
+    ],
+    "dsh-goal": [
+      {
+        "icon": "◎",
+        "name": "goal 状态",
+        "effect": "记录目标状态并跨轮次持久"
+      }
+    ],
+    "dsh-tool-goal": [
+      {
+        "icon": "◎",
+        "name": "create_goal",
+        "effect": "创建目标"
+      },
+      {
+        "icon": "◎",
+        "name": "get_goal",
+        "effect": "读取当前目标"
+      },
+      {
+        "icon": "◎",
+        "name": "update_goal",
+        "effect": "更新目标进度"
+      }
+    ],
+    "dsh-plan-mode": [
+      {
+        "icon": "☰",
+        "name": "exit_plan_mode",
+        "effect": "把完成的计划提交给用户评审"
+      }
+    ],
+    "dsh-schedule": [
+      {
+        "icon": "◔",
+        "name": "schedule_create",
+        "effect": "创建持久提醒"
+      },
+      {
+        "icon": "◔",
+        "name": "schedule_list",
+        "effect": "列出提醒"
+      },
+      {
+        "icon": "◔",
+        "name": "schedule_delete",
+        "effect": "删除提醒"
+      }
+    ],
+    "dsh-subagent": [
+      {
+        "icon": "⇄",
+        "name": "子 Agent 编排",
+        "effect": "spawn / fork 提供方注册表与描述符持久化"
+      }
+    ],
+    "dsh-tool-subagent": [
+      {
+        "icon": "⇄",
+        "name": "subagent",
+        "effect": "派生全新子 Agent"
+      },
+      {
+        "icon": "⇄",
+        "name": "subagent_fork",
+        "effect": "fork 一个继承前缀的子 Agent"
+      }
+    ],
+    "dsh-tool-subagent-control": [
+      {
+        "icon": "⇄",
+        "name": "send_message",
+        "effect": "给运行中的子 Agent 发消息"
+      },
+      {
+        "icon": "⇄",
+        "name": "interrupt_agent",
+        "effect": "中断子 Agent"
+      }
+    ],
+    "dsh-tool-subagent-report": [
+      {
+        "icon": "⇄",
+        "name": "report",
+        "effect": "子 Agent 向父级汇报"
+      }
+    ],
+    "dsh-tool-ralph": [
+      {
+        "icon": "∞",
+        "name": "ralph",
+        "effect": "把任务放进长循环反复推进"
+      }
+    ],
+    "dsh-workflow": [
+      {
+        "icon": "∞",
+        "name": "工作流运行时",
+        "effect": "worker 生命周期与轮次编排"
+      }
+    ],
+    "dsh-tool-workflow": [
+      {
+        "icon": "∞",
+        "name": "workflow",
+        "effect": "启动并管理工作流"
+      }
+    ],
+    "dsh-tool-jobs": [
+      {
+        "icon": "⚙",
+        "name": "job_list",
+        "effect": "列出后台任务"
+      },
+      {
+        "icon": "⚙",
+        "name": "job_output",
+        "effect": "读取后台任务输出"
+      },
+      {
+        "icon": "⚙",
+        "name": "job_kill",
+        "effect": "终止后台任务"
+      }
+    ],
+    "dsh-tool-ask-user": [
+      {
+        "icon": "？",
+        "name": "ask_user_question",
+        "effect": "向用户提问并等待回答"
+      }
+    ],
+    "dsh-compaction-basic": [
+      {
+        "icon": "▥",
+        "name": "折叠历史",
+        "effect": "token 压力超阈值时摘要压缩上下文"
+      }
+    ],
+    "dsh-token-meter": [
+      {
+        "icon": "∑",
+        "name": "token 计量",
+        "effect": "回放感知的上下文压力测量"
+      }
+    ],
+    "dsh-session-stats": [
+      {
+        "icon": "∑",
+        "name": "会话统计",
+        "effect": "从全日志折叠轮/步/耗时数字"
+      }
+    ],
+    "dsh-session-title": [
+      {
+        "icon": "✎",
+        "name": "会话标题",
+        "effect": "用首条提示词生成确定性标题"
+      }
+    ],
+    "dsh-web-search-deepseek": [
+      {
+        "icon": "◎",
+        "name": "DeepSeek 搜索",
+        "effect": "原生 web_search 工具的辅助模型调用"
+      }
+    ],
+    "dsh-tool-web": [
+      {
+        "icon": "◎",
+        "name": "web_search",
+        "effect": "联网搜索"
+      },
+      {
+        "icon": "◎",
+        "name": "web_fetch",
+        "effect": "抓取网页内容"
+      }
+    ],
+    "dsh-tool-skill": [
+      {
+        "icon": "☰",
+        "name": "skill",
+        "effect": "调用已安装的技能"
+      }
+    ],
+    "dsh-mcp-client": [
+      {
+        "icon": "↗",
+        "name": "MCP 桥",
+        "effect": "把外部 server 工具注册进同一个 ctx.tools"
+      }
+    ]
+  },
+  "actions": {
+    "dsh-llm-retry": [
+      "llm/retry",
+      "llm/retry-started"
+    ],
+    "dsh-agent-loop": [
+      "turn/start",
+      "step/start",
+      "request/header",
+      "assistant/message",
+      "tool/call",
+      "tool/result"
+    ],
+    "dsh-tool-todo": [
+      "todo/write"
+    ],
+    "dsh-goal": [
+      "goal/change"
+    ],
+    "dsh-permission-presets": [
+      "permission/preset",
+      "sandbox/mode",
+      "approval/policy"
+    ],
+    "dsh-sandbox-policy": [
+      "sandbox/mode"
+    ],
+    "dsh-session-title": [
+      "session/title"
+    ],
+    "dsh-web-search-deepseek": [
+      "web/deepseek-search-llm-request"
+    ]
   }
 }

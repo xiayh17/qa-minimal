@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-title",
+  "lore": "会话标题服务 ctx.sessionTitle。首条人类消息触发确定性的首词兜底标题，写成 session/title 事件，replay 可重建，不花模型 token。L10 的 projection 注册表在时，它还折叠 title 投影。",
+  "anim": "title-shrink",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"8\" y1=\"18\" x2=\"40\" y2=\"18\"/><line x1=\"8\" y1=\"30\" x2=\"38\" y2=\"30\"><animate attributeName=\"x2\" values=\"38;38;16;16;38\" keyTimes=\"0;0.3;0.55;0.8;1\" dur=\"3s\" repeatCount=\"indefinite\"/></line></svg>"
+}

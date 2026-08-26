@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-str-replace-editor",
+  "lore": "L8 给模型 str_replace_editor：查看、创建、字面替换、插入行。写入仍走 ctx.fs 的 write-intent / edit-intent 通道，所以 L5 的沙箱和 L6 的审批对它照常生效，不需要新规则。",
+  "anim": "segment-swap",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 24h14\" stroke-dasharray=\"4 3\"><animate attributeName=\"opacity\" values=\"1;0;0;1\" keyTimes=\"0;0.4;0.6;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></path><path d=\"M22 24h14\"><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.4;0.6;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></path></svg>"
+}

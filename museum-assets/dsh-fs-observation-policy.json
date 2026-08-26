@@ -1,0 +1,6 @@
+{
+  "short": "dsh-fs-observation-policy",
+  "lore": "记录模型读过哪些文件，给 write 和 edit 加上观察与版本门禁。从 L3 起一直挂在 FS 缝上，dsh-tool-fs 的每次写入都先过它；换 Provider 到沙箱，它也不用动。",
+  "anim": "lens-sweep",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M10 24h28\"/><g><animateTransform attributeName=\"transform\" type=\"translate\" values=\"-6 0;6 0;-6 0\" dur=\"3.2s\" repeatCount=\"indefinite\"/><circle cx=\"24\" cy=\"24\" r=\"7\"/><path d=\"M29 29l6 6\"/></g></svg>"
+}

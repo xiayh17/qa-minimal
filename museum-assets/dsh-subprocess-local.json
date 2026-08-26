@@ -1,0 +1,6 @@
+{
+  "short": "dsh-subprocess-local",
+  "lore": "ctx.subprocess 的本地实现：spawn、kill、进程组管道。L4 的 Shell 缝从它开始，dsh-tool-fs-search 的 glob / grep 就靠它跑 ripgrep——它不在场，搜索工具激活不了。",
+  "anim": "proc-fork",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"24\" r=\"3\"/><path d=\"M15 24h7\"/><path d=\"M22 24l10-8\" stroke-dasharray=\"14\" stroke-dashoffset=\"14\"><animate attributeName=\"stroke-dashoffset\" values=\"14;0;0;14\" keyTimes=\"0;0.4;0.7;1\" dur=\"3s\" repeatCount=\"indefinite\"/></path><path d=\"M22 24l10 8\" stroke-dasharray=\"14\" stroke-dashoffset=\"14\"><animate attributeName=\"stroke-dashoffset\" values=\"14;0;0;14\" keyTimes=\"0;0.4;0.7;1\" dur=\"3s\" repeatCount=\"indefinite\"/></path></svg>"
+}

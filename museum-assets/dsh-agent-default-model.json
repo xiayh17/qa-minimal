@@ -1,0 +1,6 @@
+{
+  "short": "dsh-agent-default-model",
+  "lore": "注册 ctx.agentDefaultModel：进程级默认模型路由。入口创建 Agent 而没有会话内选择时读它。L11 起挂载，config 同时是 settings 组合基，settings-file 里用户保存的选择可以热覆盖。",
+  "anim": "default-route-pointer",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 34a14 14 0 0 1 24 0\"/><line x1=\"24\" y1=\"34\" x2=\"24\" y2=\"22\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"-25 24 34;18 24 34;0 24 34;0 24 34\" keyTimes=\"0;0.35;0.6;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></line></svg>"
+}

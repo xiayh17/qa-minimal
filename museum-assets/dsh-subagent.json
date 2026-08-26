@@ -1,0 +1,6 @@
+{
+  "short": "dsh-subagent",
+  "lore": "注册 ctx.subagents：进程级 subagent provider 注册表，外加委派深度词表和 subagent/start 到 subagent/end 的生命周期事件。spawn、fork 两个 provider 都注册进它。",
+  "anim": "delegate-split",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"24\" r=\"3.5\"/><path d=\"M15 24c7 0 9-9 18-9\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" dur=\"2.6s\" repeatCount=\"indefinite\"/></path><path d=\"M15 24c7 0 9 9 18 9\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" begin=\"1.3s\" dur=\"2.6s\" repeatCount=\"indefinite\"/></path></svg>"
+}

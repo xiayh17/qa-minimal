@@ -1,0 +1,6 @@
+{
+  "short": "dsh-goal",
+  "lore": "在同会话内维护 goal 状态，create / update 都写成事件，可回放。它是状态层：模型侧的操作面在 dsh-tool-goal，active goal 未达成时 dsh-goal-round-driver 读它续跑下一轮。",
+  "anim": "goal-flag",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 6v36\"/><path d=\"M16 10h18l-5 6 5 6H16z\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 14;0 0;0 0;0 14\" keyTimes=\"0;0.4;0.8;1\" dur=\"3s\" repeatCount=\"indefinite\"/></path></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-compaction-basic",
+  "lore": "盯着 token 压力，一到阈值就把旧历史折叠成一段摘要，只留最近的部分原样保留。压力读数来自 dsh-token-meter，摘要沿用当前 agent 自己的模型，不另起 provider。",
+  "anim": "compaction-fold",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"10\" y1=\"16\" x2=\"38\" y2=\"16\"><animate attributeName=\"y1\" values=\"16;24;16\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"y2\" values=\"16;24;16\" dur=\"3s\" repeatCount=\"indefinite\"/></line><line x1=\"10\" y1=\"21\" x2=\"38\" y2=\"21\"><animate attributeName=\"y1\" values=\"21;24;21\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"y2\" values=\"21;24;21\" dur=\"3s\" repeatCount=\"indefinite\"/></line><line x1=\"10\" y1=\"27\" x2=\"38\" y2=\"27\"><animate attributeName=\"y1\" values=\"27;24;27\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"y2\" values=\"27;24;27\" dur=\"3s\" repeatCount=\"indefinite\"/></line><line x1=\"10\" y1=\"32\" x2=\"38\" y2=\"32\"><animate attributeName=\"y1\" values=\"32;24;32\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"y2\" values=\"32;24;32\" dur=\"3s\" repeatCount=\"indefinite\"/></line></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-web-fetch-http",
+  "lore": "fetch provider：纯 HTTP GET，带大小和 content-type 限制，不需要浏览器。注册进 ctx.web，web_fetch 工具经它出网；它是 L10 tool-call-timeout 文档里点名的预算声明工具之一。",
+  "anim": "fetch-hook",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M24 6v10\"/><g><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 6;0 6;0 0\" keyTimes=\"0;0.4;0.65;1\" dur=\"3s\" repeatCount=\"indefinite\"/><path d=\"M24 16v8\"/><path d=\"M18 28a6 6 0 1 0 12 0\"/></g></svg>"
+}

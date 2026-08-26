@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-jobs",
+  "lore": "给模型 job_list、job_output、job_kill 三个工具和完成通知，同时挂上 ctx.jobs.start() 需要的 per-owner 控制器。后台派出去的子 Agent，靠它把结果收回来。",
+  "anim": "gear-turn",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><g><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 24 24\" to=\"360 24 24\" dur=\"4s\" repeatCount=\"indefinite\"/><circle cx=\"24\" cy=\"24\" r=\"7\"/><path d=\"M24 14v20\"/><path d=\"M14 24h20\"/></g></svg>"
+}

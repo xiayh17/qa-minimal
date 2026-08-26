@@ -12,11 +12,12 @@ async function loadJson(path) {
   return res.json()
 }
 
-const [stagesData, catalog, graph, curated] = await Promise.all([
+const [stagesData, catalog, graph, curated, museumAssets] = await Promise.all([
   loadJson('./data/stages.json'),
   loadJson('./data/catalog.json'),
   loadJson('./data/graph.json'),
   loadJson('./data/curated.json'),
+  loadJson('./data/museum-assets.json'),
 ])
 
 const groupOrder = curated.groupOrder
@@ -39,6 +40,8 @@ function pluginInfo(short) {
     inject: facts.inject ?? [],
     provides: facts.provides ?? [],
     version: facts.version ?? '',
+    skills: curated.skills?.[short] ?? [],
+    actions: curated.actions?.[short] ?? [],
   }
 }
 
@@ -475,6 +478,292 @@ function renderFree(){
   renderFreeServices(v);
 }
 
+// ── mode 4: module museum ────────────────────────────────────────────
+// A collection room over catalog.json, laid out like game item cards:
+// every card discloses the plugin's stats (version / family / debut /
+// mount span), function lines (provides / inject as stat lines), and
+// effect (the curated one-liner). Abstract seams stay "sealed".
+
+const museum = { group: 'all', role: 'all', level: 'all', search: '' };
+
+// Levels where this plugin is mounted — drives the stat line and the
+// mini unlock-timeline on each card.
+function mountLevelsOf(short){
+  const lv = [];
+  for(const s of stages) if(s.entries.some(e => shortOf(e.name) === short)) lv.push(s.level);
+  return lv;
+}
+
+const groupIcons = {
+  'LLM': '⚡', 'Agent spine': '◉', 'Persistence': '▤', 'Workspace FS': '▦',
+  'Shell': '❯', 'Safety': '◆', 'Task state': '☑', 'Delegation': '⇄',
+  'Long task': '∞', 'Operability': '⚙', 'Product config': '☰', 'Web': '◎',
+  'External': '↗', 'Local demo': '▶', 'Skill': '✦',
+};
+
+function firstLevelOf(short){
+  for(const s of stages) if(s.entries.some(e => shortOf(e.name) === short)) return s.level;
+  return null;
+}
+
+// Most mounts of one plugin in any single stage (dsh-tool-subagent is ×2).
+function maxInstancesOf(short){
+  let max = 0;
+  for(const s of stages){
+    const n = s.entries.filter(e => shortOf(e.name) === short).length;
+    if(n > max) max = n;
+  }
+  return max;
+}
+
+const museumPlugins = Object.keys(catalog).map(short => ({
+  short,
+  info: pluginInfo(short),
+  debut: firstLevelOf(short),
+  instances: maxInstancesOf(short),
+  levels: mountLevelsOf(short),
+})).sort((a, b) => {
+  const g = groupOrder.indexOf(a.info.group) - groupOrder.indexOf(b.info.group);
+  if(g) return g;
+  if(a.debut !== b.debut) return (a.debut ?? 99) - (b.debut ?? 99);
+  return a.short.localeCompare(b.short);
+});
+
+// 被依赖数: distinct plugins consuming a service this one provides
+// (graph.json edges point consumer → provider).
+const museumDependents = (() => {
+  const map = {};
+  for(const e of graph.edges ?? []) (map[e.to] ??= new Set()).add(e.from);
+  return map;
+})();
+museumPlugins.forEach(p => {
+  p.dependents = museumDependents[p.short]?.size ?? 0;
+  p.span = p.levels.length;
+});
+// Stat bars are normalized across the whole collection, so a bar's length
+// is comparable between any two cards.
+const museumStatMax = {
+  inject: Math.max(1, ...museumPlugins.map(p => p.info.inject.length)),
+  dependents: Math.max(1, ...museumPlugins.map(p => p.dependents)),
+  span: Math.max(1, ...museumPlugins.map(p => p.span)),
+};
+
+// Six headliners, each picked because a level's main plot turns on it.
+// Curator lines are hand-written but only state what the data shows.
+const pedestals = [
+  { name: 'dsh-llm', line: '第一件展品。L0 起所有模型调用都从这里过，后面每一级都是在它旁边加东西。' },
+  { name: 'dsh-agent-loop', line: 'LLM 变成 Agent 的那一步。L1 挂上它，turn 和 step 才有了驱动者。' },
+  { name: 'dsh-sandbox-policy', line: 'L5 单一变量实验的主角。工具没变，只是它把模式定在 workspace-write，同一条命令就此被拦下。' },
+  { name: 'dsh-user-approval', line: '拒绝之后的出路。L6 起，被 sandbox 拦下的操作可以带理由升级，由它决定要不要问人。' },
+  { name: 'dsh-subagent', line: 'Agent 也能成为 Provider。L8 的 spawn 和 fork 两个实现都注册到它名下。' },
+  { name: 'dsh-mcp-client', line: '收官展品。L13 把外部 server 的工具接进同一个 ctx.tools；连不上时，演示的是降级契约。' },
+];
+
+// 战斗记录: 2–4 行迷你 trace，全部取自行为实验的教学 trace（traceFor），
+// 没有为展台新编任何一行。
+const pedestalTraces = {
+  'dsh-llm': [['event','ctx.llm.stream()'],['event','assistant chunks'],['result','answer → process exit']],
+  'dsh-agent-loop': [['event','turn/start'],['event','step/start'],['event','assistant/message'],['result','turn/end']],
+  'dsh-sandbox-policy': [['event','tool/call · bash → ../outside.txt'],['error','[sandbox: file access denied under workspace-write mode]']],
+  'dsh-user-approval': [['error','sandbox denies'],['event','approval/asked'],['result','approval/decided → asks user']],
+  'dsh-subagent': [['event','tool/call · subagent'],['event','subagent/start'],['event','subagent/end'],['result','child final message → parent']],
+  'dsh-mcp-client': [['error','spawn demo-mcp-server → ENOENT'],['event','tool list contains only built-ins'],['result','agent answers on built-in tools']],
+};
+
+const museumHeroLine = $('#museum-hero-line');
+const museumStats = $('#museum-stats');
+const museumPedestals = $('#museum-pedestals');
+const museumGroupTabs = $('#museum-group-tabs');
+const museumRoleFilters = $('#museum-role-filters');
+const museumLevelFilter = $('#museum-level-filter');
+const museumSearch = $('#museum-search');
+const museumCount = $('#museum-count');
+const museumGrid = $('#museum-grid');
+
+function museumCardHtml(p, { pedestal = false, line = '' } = {}){
+  const { short, info, debut, instances, levels } = p;
+  // 功能动画：museum-assets.json 里注册过的 SVG 小动画优先，否则回退家族字形。
+  const animKey = museumAssets.anims[short];
+  const animSvg = animKey ? museumAssets.registry[animKey] : null;
+  const icon = animSvg ?? (groupIcons[info.group] ?? '◈');
+  const maxLevel = stages[stages.length - 1].level;
+  // Mini unlock-timeline: one tick per level, lit where the plugin mounts.
+  const ticks = Array.from({ length: maxLevel + 1 }, (_, l) =>
+    `<i class="${levels.includes(l) ? 'on' : ''}" title="L${l}${levels.includes(l) ? ' · 已挂载' : ''}"></i>`
+  ).join('');
+  const timeline = `<em>L0</em><span class="mc-ticks">${ticks}</span><em>L${maxLevel}</em>`;
+  const stats = [
+    info.version ? `<span class="mc-stat"><span class="mc-key">版本</span><span class="mc-val">v${escapeHtml(info.version)}</span></span>` : '',
+    `<span class="mc-stat"><span class="mc-key">家族</span><span class="mc-val">${escapeHtml(info.group)}</span></span>`,
+    debut !== null ? `<span class="mc-stat"><span class="mc-key">初登场</span><span class="mc-val"><span class="mc-debut" data-debut="${debut}" title="跳到逐级拼装 L${debut}">L${debut}</span></span></span>` : '',
+  ].join('');
+  // 技能槽：只渲染 curated.skills 里验证过的条目；普通装备没有技能行。
+  const skills = info.skills.length
+    ? `<span class="mc-skills">${info.skills.map(s =>
+        `<span class="mc-skill"><span class="mc-skill-icon" aria-hidden="true">${s.icon}</span><span class="mc-skill-main"><span class="mc-skill-name">${escapeHtml(s.name)}</span><span class="mc-skill-effect">${escapeHtml(s.effect)}</span></span></span>`
+      ).join('')}</span>`
+    : '';
+  // 属性条：依赖 / 被依赖 / 跨度，全图鉴归一化，长度可跨卡比较。
+  const bars = [
+    ['依赖', info.inject.length, museumStatMax.inject, `${info.inject.length} 个 ctx.* 服务`],
+    ['被依赖', p.dependents, museumStatMax.dependents, `${p.dependents} 个插件消费它提供的服务`],
+    ['跨度', p.span, museumStatMax.span, `挂载 ${p.span} 级`],
+  ].map(([label, val, max, title]) =>
+    `<span class="mc-bar" title="${escapeHtml(title)}"><span class="mc-bar-key">${label}</span><span class="mc-bar-val">${val}</span><span class="mc-bar-track"><i style="width:${Math.round(val / max * 100)}%"></i></span></span>`
+  ).join('');
+  // 动作：运行时发出的 session 事件，等宽 event chips。
+  const actions = info.actions.length
+    ? `<span class="mc-actions">${info.actions.map(a => `<code class="mc-event">${escapeHtml(a)}</code>`).join('')}</span>`
+    : '';
+  const provides = info.provides.map(s =>
+    `<span class="mc-line provide"><i></i>提供 <code>ctx.${escapeHtml(s)}</code></span>`).join('');
+  const inject = info.inject.length
+    ? info.inject.map(s => `<span class="mc-line inject"><i></i>依赖 <code>ctx.${escapeHtml(s)}</code></span>`).join('')
+    : '<span class="mc-line self"><i></i>无依赖，自包含</span>';
+  const trace = pedestal && pedestalTraces[short]
+    ? `<span class="mc-trace">${pedestalTraces[short].map(([kind, text]) => `<span class="mc-trace-line ${kind}">${escapeHtml(text)}</span>`).join('')}</span>`
+    : '';
+  return `<button class="museum-card ${info.abstract ? 'sealed' : ''} ${pedestal ? 'pedestal' : ''}" data-museum="${escapeHtml(short)}" data-role="${info.role}" title="${escapeHtml(short)} · 点击查看组件说明">
+    <span class="mc-head">
+      <span class="mc-icon ${animSvg ? 'anim' : ''}" aria-hidden="true">${icon}</span>
+      <span class="mc-head-main">
+        <span class="mc-name">${escapeHtml(short)}</span>
+        <span class="mc-head-sub">
+          <span class="pm-tag role" data-role="${info.role}">${roleLabels[info.role] ?? info.role}</span>
+          ${info.abstract ? '<span class="mc-lock" title="抽象缝：只定义接口，实现由同缝的具体模块提供">🔒 封印</span>' : ''}
+          ${instances > 1 ? `<span class="mc-multi" title="同一级里挂载了 ${instances} 个实例">×${instances}</span>` : ''}
+          ${info.disabledOnWindows ? '<span class="mc-note">仅 win32 禁用</span>' : ''}
+        </span>
+      </span>
+    </span>
+    ${skills}
+    <span class="mc-bars">${bars}</span>
+    <span class="mc-stats">${stats}</span>
+    <span class="mc-timeline" aria-hidden="true">${timeline}</span>
+    <span class="mc-lines">${provides}${inject}</span>
+    ${actions}
+    <span class="mc-effect">${escapeHtml(info.blurb)}</span>
+    ${line ? `<span class="mc-curator">${escapeHtml(line)}</span>` : ''}
+    ${trace}
+  </button>`;
+}
+
+function bindMuseumCards(root){
+  root.querySelectorAll('[data-museum]').forEach(el => el.addEventListener('click', () => openPlugin(el.dataset.museum)));
+  root.querySelectorAll('[data-debut]').forEach(el => el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setView('build', { updateHash: false });
+    selectStage(Number(el.dataset.debut));
+  }));
+}
+
+function renderMuseumHero(){
+  const total = museumPlugins.length;
+  const abstractCount = museumPlugins.filter(p => p.info.abstract).length;
+  const maxLevel = stages[stages.length - 1].level;
+  museumHeroLine.textContent = `catalog.json 登记的 ${total} 个模块全部在列，按家族分节排架，节内按初登场顺序。其中 ${abstractCount} 块抽象缝处于封印状态，实现由同缝的具体模块提供。`;
+  const roleCounts = {};
+  museumPlugins.forEach(p => { roleCounts[p.info.role] = (roleCounts[p.info.role] ?? 0) + 1; });
+  const dist = Object.keys(roleLabels).filter(r => roleCounts[r]).map(r =>
+    `<span class="museum-role-stat"><i class="dot role-${r}"></i>${roleLabels[r]} ${roleCounts[r]}</span>`
+  ).join('');
+  museumStats.innerHTML = `
+    <div class="museum-total"><strong>${total}<span class="museum-total-sep">/</span>${total}</strong><span>已收录</span></div>
+    <div class="museum-substats">
+      <div class="museum-role-dist">${dist}</div>
+      <div class="museum-minor-stats"><span>抽象缝 ${abstractCount}</span><span>覆盖 L0–L${maxLevel}</span></div>
+    </div>`;
+}
+
+function renderMuseumPedestals(){
+  museumPedestals.innerHTML = pedestals.map((p) => {
+    const plugin = museumPlugins.find(m => m.short === p.name);
+    return plugin ? museumCardHtml(plugin, { pedestal: true, line: p.line }) : '';
+  }).join('');
+  bindMuseumCards(museumPedestals);
+}
+
+function museumFiltered(){
+  const q = museum.search.trim().toLowerCase();
+  return museumPlugins.filter(p => {
+    if(museum.group !== 'all' && p.info.group !== museum.group) return false;
+    if(museum.role !== 'all' && p.info.role !== museum.role) return false;
+    if(museum.level !== 'all' && p.debut !== Number(museum.level)) return false;
+    if(q && !p.short.toLowerCase().includes(q) && !p.info.blurb.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function renderMuseumGroupTabs(){
+  const tabs = ['all', ...groupOrder.filter(g => museumPlugins.some(p => p.info.group === g))];
+  museumGroupTabs.innerHTML = tabs.map(g =>
+    `<button class="museum-tab ${museum.group === g ? 'active' : ''}" data-mgroup="${escapeHtml(g)}">${g === 'all' ? '全部' : escapeHtml(g)}</button>`
+  ).join('');
+  museumGroupTabs.querySelectorAll('[data-mgroup]').forEach(el => el.addEventListener('click', () => {
+    museum.group = el.dataset.mgroup;
+    renderMuseumGroupTabs();
+    renderMuseumGrid();
+  }));
+}
+
+function renderMuseumRoleFilters(){
+  const roles = ['all', ...Object.keys(roleLabels)];
+  museumRoleFilters.innerHTML = roles.map(r =>
+    `<button class="museum-chip ${museum.role === r ? 'active' : ''}" data-mrole="${r}" ${r !== 'all' ? `data-role="${r}"` : ''}>${r === 'all' ? '全部角色' : roleLabels[r]}</button>`
+  ).join('');
+  museumRoleFilters.querySelectorAll('[data-mrole]').forEach(el => el.addEventListener('click', () => {
+    museum.role = el.dataset.mrole;
+    renderMuseumRoleFilters();
+    renderMuseumGrid();
+  }));
+}
+
+function renderMuseumLevelFilter(){
+  const levels = [...new Set(museumPlugins.map(p => p.debut).filter(l => l !== null))].sort((a, b) => a - b);
+  museumLevelFilter.innerHTML = `<option value="all">全部初登场</option>${levels.map(l => `<option value="${l}" ${museum.level === String(l) ? 'selected' : ''}>初登场 L${l}</option>`).join('')}`;
+}
+
+function renderMuseumGrid(){
+  const shown = museumFiltered();
+  museumCount.textContent = `${shown.length} / ${museumPlugins.length} 件展品`;
+  // 家族分区陈列：每个家族一个小节，主次按 groupOrder 自然出现
+  // （LLM / Agent spine 在前，Local demo 类的收尾）；筛选只隐藏卡片，
+  // 不破坏章节结构。
+  const byGroup = new Map();
+  shown.forEach(p => {
+    if(!byGroup.has(p.info.group)) byGroup.set(p.info.group, []);
+    byGroup.get(p.info.group).push(p);
+  });
+  museumGrid.innerHTML = groupOrder.filter(g => byGroup.has(g)).map(group => {
+    const cards = byGroup.get(group);
+    const icon = groupIcons[group] ?? '◈';
+    return `<section class="museum-family">
+      <div class="museum-family-head">
+        <span class="museum-family-name"><i aria-hidden="true">${icon}</i>${escapeHtml(group)}</span>
+        <small>${cards.length} 件</small>
+      </div>
+      <div class="museum-family-grid">${cards.map(p => museumCardHtml(p)).join('')}</div>
+    </section>`;
+  }).join('') || '<div class="museum-empty">架上没有匹配的展品。放宽筛选再看看。</div>';
+  bindMuseumCards(museumGrid);
+  // SMIL anims honor reduced-motion (CSS-class anims are handled in styles.css)
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    museumGrid.querySelectorAll('.mc-icon.anim svg').forEach(s => s.pauseAnimations?.());
+  }
+}
+
+function renderMuseum(){
+  renderMuseumHero();
+  renderMuseumPedestals();
+  renderMuseumGroupTabs();
+  renderMuseumRoleFilters();
+  renderMuseumLevelFilter();
+  renderMuseumGrid();
+}
+
+museumLevelFilter.addEventListener('change', () => { museum.level = museumLevelFilter.value; renderMuseumGrid(); });
+museumSearch.addEventListener('input', () => { museum.search = museumSearch.value; renderMuseumGrid(); });
+
 // ── live run (only with scripts/web-server.mjs; static mode disables it) ──
 
 const live = { source: null, available: false };
@@ -695,6 +984,7 @@ function renderPluginModal(short){
       <div class="pm-meta">${meta}</div>
     </div>
     <p class="pm-blurb">${escapeHtml(info.blurb)}</p>
+    ${museumAssets.lore[short] ? `<p class="pm-lore">${escapeHtml(museumAssets.lore[short])}</p>` : ''}
     ${notes.map(n => `<p class="pm-note">${escapeHtml(n)}</p>`).join('')}
     ${info.abstract ? `<div class="pm-seam"><strong>抽象缝</strong>${escapeHtml(abstractSeams[short])}</div>` : ''}
     <section class="pm-section">
@@ -742,7 +1032,7 @@ pmClose.addEventListener('click', () => closePlugin());
 pluginModal.addEventListener('click', (e) => { if(e.target === pluginModal) closePlugin(); });
 document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closePlugin(); });
 
-// ── hash routing (#L5 / #compare / #free / #plugin/<name>) ───────────
+// ── hash routing (#L5 / #compare / #free / #museum / #plugin/<name>) ──
 
 let suppressHash = false;
 
@@ -761,7 +1051,7 @@ function parseHash(){
   if(h.startsWith('plugin/')) return { plugin: h.slice(7) };
   const m = h.match(/^L(\d+)$/i);
   if(m) return { view: 'build', stage: Number(m[1]) };
-  if(h === 'compare' || h === 'free') return { view: h };
+  if(h === 'compare' || h === 'free' || h === 'museum') return { view: h };
   return { view: 'build' };
 }
 
@@ -789,6 +1079,7 @@ function setView(name, { updateHash = true } = {}){
     if(!free.seeded) seedFreeFromLevel(state.stage);
     renderFree();
   }
+  if(name === 'museum') renderMuseum();
   if(updateHash) setHash(viewHash());
 }
 

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-permission-presets",
+  "lore": "把 sandbox mode 和 approval policy 两个旋钮合成一个用户能看懂的档位。切换一次写成 permission/preset、sandbox/mode、approval/policy 三个事件，L6 起和 dsh-user-approval 一起挂进每个 stage。",
+  "anim": "preset-dial",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 34a14 14 0 0 1 24 0\"/><line x1=\"24\" y1=\"32\" x2=\"24\" y2=\"20\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"-30 24 32;0 24 32;30 24 32;0 24 32;-30 24 32\" keyTimes=\"0;0.25;0.5;0.75;1\" dur=\"3.6s\" repeatCount=\"indefinite\"/></line></svg>"
+}

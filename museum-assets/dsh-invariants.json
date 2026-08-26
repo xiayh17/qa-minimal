@@ -1,0 +1,6 @@
+{
+  "short": "dsh-invariants",
+  "lore": "它注册 ctx.invariants，一个对持久会话日志做运行时断言的注册表。注册表本身不装任何检查，各包可用 <pkg>/invariant 伴随插件把自己的断言挂进来。L10 闭合的是这条缝本身。",
+  "anim": "invariant-lock",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M24 6v8M24 34v8M6 24h8M34 24h8\"/><circle cx=\"24\" cy=\"24\" r=\"10\"><animate attributeName=\"r\" values=\"10;8;10\" dur=\"2.4s\" repeatCount=\"indefinite\"/></circle><circle cx=\"24\" cy=\"24\" r=\"2\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" dur=\"2.4s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

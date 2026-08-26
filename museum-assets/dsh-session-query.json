@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-query",
+  "lore": "它只定义 ctx.sessionQuery 的检索契约，不自带实现。实现由 dsh-session-query-sqlite 用同一服务名提供，两者同挂会因重复注册崩溃，所以 stage 里它以 disabled 挂着，只作占位可见。",
+  "anim": "query-ripple",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"24\" cy=\"24\" r=\"8\"><animate attributeName=\"r\" values=\"5;14\" dur=\"2.6s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"1;0\" dur=\"2.6s\" repeatCount=\"indefinite\"/></circle><circle cx=\"24\" cy=\"24\" r=\"8\"><animate attributeName=\"r\" values=\"5;14\" dur=\"2.6s\" begin=\"1.3s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"1;0\" dur=\"2.6s\" begin=\"1.3s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

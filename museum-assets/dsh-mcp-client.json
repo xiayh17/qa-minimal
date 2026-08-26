@@ -1,0 +1,6 @@
+{
+  "short": "dsh-mcp-client",
+  "lore": "MCP 客户端桥：连一个外部 MCP server（stdio 或 streamable-http），把它的工具以 mcp__<server>__<name> 注册进 ctx.tools。一个实例桥一个 server；server 连不上时有界重试、降级启动，不阻塞激活。",
+  "anim": "mcp-plug",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;4 0;4 0;0 0\" keyTimes=\"0;0.4;0.7;1\" dur=\"3s\" repeatCount=\"indefinite\"/><rect x=\"6\" y=\"19\" width=\"12\" height=\"10\" rx=\"2\"/><path d=\"M18 22h6M18 26h6\"/></g><rect x=\"30\" y=\"18\" width=\"12\" height=\"12\" rx=\"2\"/></svg>"
+}

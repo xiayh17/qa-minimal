@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-subagent-control/list-agents",
+  "lore": "list_agents 走单独的子路径导出，让部署可以只给控制不给发现。schema 在 L8 就注册，但调用要读 sessionProjections 注册表，L10 起才真正答得出来。",
+  "anim": "roll-call",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M10 14h28\"><animate attributeName=\"opacity\" values=\"0.25;1;0.25\" dur=\"2.7s\" repeatCount=\"indefinite\"/></path><path d=\"M10 24h28\"><animate attributeName=\"opacity\" values=\"0.25;1;0.25\" begin=\"0.9s\" dur=\"2.7s\" repeatCount=\"indefinite\"/></path><path d=\"M10 34h28\"><animate attributeName=\"opacity\" values=\"0.25;1;0.25\" begin=\"1.8s\" dur=\"2.7s\" repeatCount=\"indefinite\"/></path></svg>"
+}

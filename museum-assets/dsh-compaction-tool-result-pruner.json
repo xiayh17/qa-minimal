@@ -1,0 +1,6 @@
+{
+  "short": "dsh-compaction-tool-result-pruner",
+  "lore": "单次工具结果太长时，把结果裁成头、标记、尾三段，规则是确定的，不经过模型。它和 dsh-compaction-basic 分工：一个管单条结果超限，一个管整体历史超长。",
+  "anim": "pruner-cut",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"8\" y1=\"24\" x2=\"28\" y2=\"24\"/><line x1=\"28\" y1=\"24\" x2=\"42\" y2=\"24\" stroke-dasharray=\"3 3\"><animate attributeName=\"opacity\" values=\"1;0.15;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></line></svg>"
+}

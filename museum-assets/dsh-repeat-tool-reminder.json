@@ -1,0 +1,6 @@
+{
+  "short": "dsh-repeat-tool-reminder",
+  "lore": "它包住 tools/execute，数同一工具同一参数的连续调用次数，到 3、5、8 次时注入一条逐升级的提醒消息。它只提醒，不否决也不改写调用。计数按 agent 分开存，subagent 互不干扰，resume 后重新计。",
+  "anim": "reminder-bell",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"-7 24 12;7 24 12;-7 24 12\" dur=\"3s\" repeatCount=\"indefinite\"/><path d=\"M24 12c-6 0-9 4-9 10v6l-3 5h24l-3-5v-6c0-6-3-10-9-10z\"/><circle cx=\"24\" cy=\"37\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/></g></svg>"
+}

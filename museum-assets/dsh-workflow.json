@@ -1,0 +1,6 @@
+{
+  "short": "dsh-workflow",
+  "lore": "ctx.workflowEngine 的抽象服务定义：编排脚本在哪个引擎上跑，这条缝先占位。L9 里以 disabled 挂载，真实实现是 dsh-workflow-worker-thread；dsh-tool-workflow 和 dsh-tool-ralph 都落在它上面。",
+  "anim": "engine-piston",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"24\" cy=\"24\" r=\"12\"/><line x1=\"24\" y1=\"24\" x2=\"24\" y2=\"14\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;360 24 24\" dur=\"3s\" repeatCount=\"indefinite\"/></line></svg>"
+}

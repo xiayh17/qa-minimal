@@ -1,0 +1,6 @@
+{
+  "short": "dsh-skill-filesystem",
+  "lore": "默认的 skill Provider。扫描项目根（.dsh/skills、.agents/skills）、customSkillDirs 和用户根（~/.dsh/skills、~/.agents/skills）里的 SKILL.md 与单文件 .md，注册成技能目录；chokidar 监听到变更，下一步就重发目录。",
+  "anim": "skill-shelf",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M10 37h28\" stroke-linecap=\"round\"/><rect x=\"14\" y=\"18\" width=\"5\" height=\"19\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"3s\" begin=\"0s\" repeatCount=\"indefinite\"/></rect><rect x=\"21.5\" y=\"15\" width=\"5\" height=\"22\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"3s\" begin=\"1s\" repeatCount=\"indefinite\"/></rect><rect x=\"29\" y=\"19\" width=\"5\" height=\"18\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"3s\" begin=\"2s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-fs-local",
+  "lore": "L3 起 ctx.fs 的真实后端：文件读写直接落在本地磁盘上。dsh-tool-fs 声明依赖 ctx.fs，它不到场，工具就一直 pending。L5 起它被 dsh-fs-sandbox 换下——缝不变，多了一条边界。",
+  "anim": "folder-drop",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><path d=\"M8 18h12l4 5h16v15H8z\"/><rect x=\"18\" y=\"8\" width=\"12\" height=\"9\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"y\" values=\"6;14;14;6\" keyTimes=\"0;0.4;0.7;1\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.15;0.7;1\" dur=\"3s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

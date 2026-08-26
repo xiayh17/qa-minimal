@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-workflow",
+  "lore": "给模型一个 workflow 工具：模型写一段 JS 编排脚本，交给 ctx.workflowEngine 执行，父 turn 等它跑完才继续。引擎由 dsh-workflow-worker-thread 提供；ralph 是固定套路，这里把编排本身交给模型。",
+  "anim": "workflow-chain",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M14 24h20\"/><circle cx=\"12\" cy=\"24\" r=\"4\"><animate attributeName=\"opacity\" values=\"0.25;1;0.25\" dur=\"3s\" begin=\"0s\" repeatCount=\"indefinite\"/></circle><circle cx=\"24\" cy=\"24\" r=\"4\"><animate attributeName=\"opacity\" values=\"0.25;1;0.25\" dur=\"3s\" begin=\"0.5s\" repeatCount=\"indefinite\"/></circle><circle cx=\"36\" cy=\"24\" r=\"4\"><animate attributeName=\"opacity\" values=\"0.25;1;0.25\" dur=\"3s\" begin=\"1s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

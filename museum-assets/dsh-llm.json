@@ -1,0 +1,6 @@
+{
+  "short": "dsh-llm",
+  "lore": "第一件展品。L0 起所有模型调用都从这里过，后面每一级都是在它旁边加东西。它只定义抽象服务，具体协议由适配器（如 dsh-llm-pi-ai）注册进来。",
+  "anim": "stream-dots",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle class=\"anim-dot d1\" cx=\"12\" cy=\"24\" r=\"3\"/><circle class=\"anim-dot d2\" cx=\"24\" cy=\"24\" r=\"3\"/><circle class=\"anim-dot d3\" cx=\"36\" cy=\"24\" r=\"3\"/></svg>"
+}

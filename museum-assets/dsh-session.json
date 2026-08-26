@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session",
+  "lore": "事件溯源的会话日志，turn、step、消息都是追加进去的事件。agent-loop 往里写，persistence 负责落盘——记忆的内容在这里，存不存是别的缝的事。",
+  "anim": "session-log",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 14h24\"><animate attributeName=\"opacity\" values=\"0.15;1;1;0.15\" keyTimes=\"0;0.15;0.9;1\" dur=\"3s\" begin=\"0s\" repeatCount=\"indefinite\"/></path><path d=\"M12 24h24\"><animate attributeName=\"opacity\" values=\"0.15;1;1;0.15\" keyTimes=\"0;0.15;0.9;1\" dur=\"3s\" begin=\"1s\" repeatCount=\"indefinite\"/></path><path d=\"M12 34h16\"><animate attributeName=\"opacity\" values=\"0.15;1;1;0.15\" keyTimes=\"0;0.15;0.9;1\" dur=\"3s\" begin=\"2s\" repeatCount=\"indefinite\"/></path></svg>"
+}

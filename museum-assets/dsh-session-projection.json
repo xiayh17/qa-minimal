@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-projection",
+  "lore": "它注册 ctx.sessionProjections，从持久事件日志折叠出当前投影视图，供消费方读取。L10 挂载它是因为本组合里第一个消费者是 dsh-session-stats；todo、plan-mode 等更早的插件也把各自的投影单元注册到这里。",
+  "anim": "projection-shadow",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"16\" y=\"10\" width=\"16\" height=\"14\" rx=\"2\"/><ellipse cx=\"24\" cy=\"35\" rx=\"10\" ry=\"3\"><animate attributeName=\"opacity\" values=\"0.2;0.8;0.2\" dur=\"2.8s\" repeatCount=\"indefinite\"/><animate attributeName=\"ry\" values=\"2;3.4;2\" dur=\"2.8s\" repeatCount=\"indefinite\"/></ellipse><path d=\"M18 26l-4 6M30 26l4 6\" opacity=\"0.5\"/></svg>"
+}

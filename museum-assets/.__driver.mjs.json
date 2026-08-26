@@ -1,0 +1,6 @@
+{
+  "short": "./driver.mjs",
+  "lore": "每个 stage 的本地驱动：发起教学任务、把结果打印出来。它不是可复用插件，是每间展厅的讲解员——L11、L12、L13 的 cordis.yml 最后一行挂载的都是它。",
+  "anim": "driver-key",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"12\"/><circle cx=\"24\" cy=\"24\" r=\"5\" fill=\"currentColor\" stroke=\"none\" opacity=\"0.2\"><animate attributeName=\"opacity\" values=\"0.2;1;1;0.2\" keyTimes=\"0;0.3;0.7;1\" dur=\"2.6s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

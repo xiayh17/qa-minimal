@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-telemetry",
+  "lore": "它只导出抽象的 SessionTelemetryBackend 和协调器，没有可挂载的插件入口，cordis 会以 invalid plugin 拒绝，所以 stage 里以 disabled 占位。它等一个后端实现（比如 OTel 包）把会话记录导出出去。",
+  "anim": "telemetry-waves",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"16\" cy=\"24\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M24 17a10 10 0 0 1 0 14\"><animate attributeName=\"opacity\" values=\"1;0.15;1\" dur=\"2.4s\" repeatCount=\"indefinite\"/></path><path d=\"M30 12a17 17 0 0 1 0 24\"><animate attributeName=\"opacity\" values=\"1;0.15;1\" dur=\"2.4s\" begin=\"0.5s\" repeatCount=\"indefinite\"/></path></svg>"
+}

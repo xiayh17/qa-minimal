@@ -1,0 +1,6 @@
+{
+  "short": "dsh-web-search-deepseek",
+  "lore": "search provider。每次搜索是一次带原生 web_search 工具的辅助模型调用，走与会话模型同一条网关路由，密钥引用经 ctx.credentials 按次解析。开销可在 --trace 的 web/deepseek-search-llm-request 事件里看到。",
+  "anim": "search-radar",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"24\" cy=\"24\" r=\"14\"/><line x1=\"24\" y1=\"24\" x2=\"24\" y2=\"10\"><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 24 24\" to=\"360 24 24\" dur=\"3s\" repeatCount=\"indefinite\"/></line></svg>"
+}

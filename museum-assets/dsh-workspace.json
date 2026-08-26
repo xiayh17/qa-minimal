@@ -1,0 +1,6 @@
+{
+  "short": "dsh-workspace",
+  "lore": "持久 workspace 实体注册表，记录可复用的工作区，不直接给模型工具。存储走 dsh-storage-domain，会话侧注入靠 sessionPersistence。",
+  "anim": "grid-unfold",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><rect x=\"9\" y=\"9\" width=\"30\" height=\"30\" rx=\"2\" stroke-dasharray=\"120\" stroke-dashoffset=\"120\"><animate attributeName=\"stroke-dashoffset\" values=\"120;0;0;120\" keyTimes=\"0;0.45;0.8;1\" dur=\"3.6s\" repeatCount=\"indefinite\"/></rect><path d=\"M24 9v30M9 24h30\" opacity=\"0.5\"/></svg>"
+}

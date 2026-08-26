@@ -1,0 +1,6 @@
+{
+  "short": "dsh-schedule",
+  "lore": "给模型 schedule_create / list / delete 三个工具，提醒以会话事件持久化，进程重启后仍会从事件日志里恢复。",
+  "anim": "clock-tick",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"24\" cy=\"24\" r=\"14\"/><path d=\"M24 24V13\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;90 24 24;180 24 24;270 24 24\" calcMode=\"discrete\" dur=\"4s\" repeatCount=\"indefinite\"/></path></svg>"
+}

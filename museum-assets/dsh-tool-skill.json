@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-skill",
+  "lore": "skill 缝的 Consumer。第一次请求前把 <available_skills> 目录写成持久消息，并给模型注册 skill 加载工具——模型点名哪个技能，工具就把它的 <skill_content> 正文读回来。目录变更按追加式整体替换处理。",
+  "anim": "skill-scroll",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><rect x=\"11\" y=\"14\" width=\"4\" height=\"20\" rx=\"2\"/><path d=\"M20 20h14\" pathLength=\"14\" stroke-dasharray=\"14\"><animate attributeName=\"stroke-dashoffset\" values=\"14;0;0\" keyTimes=\"0;0.55;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></path><path d=\"M20 28h14\" pathLength=\"14\" stroke-dasharray=\"14\"><animate attributeName=\"stroke-dashoffset\" values=\"14;0;0\" keyTimes=\"0;0.55;1\" dur=\"2.8s\" begin=\"0.5s\" repeatCount=\"indefinite\"/></path></svg>"
+}

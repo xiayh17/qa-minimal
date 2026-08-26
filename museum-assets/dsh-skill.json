@@ -1,0 +1,6 @@
+{
+  "short": "dsh-skill",
+  "lore": "定义 ctx.skills 这条缝：按 scope 分层的 skill Provider 注册表，自己不持有技能来源，也不渲染任何模型可见的内容。L7 起技能体系都挂在这里：filesystem、badge 是 Provider，dsh-tool-skill 是 Consumer。",
+  "anim": "skill-book",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><path d=\"M24 14c-4-3-10-3-14-1v21c4-2 10-2 14 1 4-3 10-3 14-1V13c-4-2-10-2-14 1z\"/><path d=\"M24 14v21\"/><path d=\"M24 15c2.5-1.8 6-2.2 9-1.4v17c-3-.8-6.5-.4-9 1.4\" stroke-width=\"1.5\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;-28 24 24;0 24 24\" keyTimes=\"0;0.5;1\" dur=\"3s\" repeatCount=\"indefinite\"/></path></svg>"
+}

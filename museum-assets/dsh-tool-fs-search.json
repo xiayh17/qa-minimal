@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-fs-search",
+  "lore": "给模型 glob 和 grep 两个工具，底层通过 ctx.subprocess 跑 ripgrep。L4 和 bash 工具一起到，dsh-subprocess-local 不在场它就激活不了；之后的每一级都把它继承下来。",
+  "anim": "search-ripple",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M10 14h16\"/><path d=\"M10 24h22\"/><path d=\"M10 34h13\"/><circle cx=\"24\" cy=\"24\" r=\"4\"><animate attributeName=\"r\" values=\"4;16\" dur=\"2.6s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0.9;0\" dur=\"2.6s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

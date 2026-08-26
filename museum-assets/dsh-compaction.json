@@ -1,0 +1,5 @@
+{
+  "short": "dsh-compaction",
+  "lore": "ctx.compaction 的抽象服务定义：上下文装不下时由谁来折叠，这条缝先占位。它没有实现，L9 里以 disabled 挂载，真正折叠历史的引擎是 dsh-compaction-basic。",
+  "anim": "compaction-fold"
+}

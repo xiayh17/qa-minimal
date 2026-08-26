@@ -1,0 +1,5 @@
+{
+  "short": "dsh-jobs-local",
+  "lore": "dsh-jobs 那条缝的进程内实现，默认每个 owner 最多 10 个并发 job。L8 起 run_in_background 的子 Agent 句柄都登记在它这里，靠 dsh-tool-jobs 收结果。",
+  "anim": "queue-cells"
+}

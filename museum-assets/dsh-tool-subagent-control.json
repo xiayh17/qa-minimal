@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-subagent-control",
+  "lore": "父对子的控制面：send_message 把追问排成子 Agent 的下一个 turn，interrupt_agent 只取消目标当前 turn。全局只注册一次，subagent 和 subagent_fork 两个工具共享它。",
+  "anim": "signal-ping",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"24\" cy=\"24\" r=\"5\"><animate attributeName=\"r\" values=\"5;14\" dur=\"2.4s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0.9;0\" dur=\"2.4s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

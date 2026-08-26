@@ -1,0 +1,6 @@
+{
+  "short": "dsh-storage-sqlite",
+  "lore": "SQLite 存储后端，基于 node:sqlite 的 DatabaseSync，在 dsh-storage 上注册为 \"sqlite\"。L7 起插件要落盘的数据默认走它。",
+  "anim": "db-layers",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><ellipse cx=\"24\" cy=\"14\" rx=\"12\" ry=\"5\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" dur=\"2.4s\" begin=\"0s\" repeatCount=\"indefinite\"/></ellipse><path d=\"M12 14v10c0 2.8 5.4 5 12 5s12-2.2 12-5V14\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" dur=\"2.4s\" begin=\"0.4s\" repeatCount=\"indefinite\"/></path><path d=\"M12 24v10c0 2.8 5.4 5 12 5s12-2.2 12-5V24\"><animate attributeName=\"opacity\" values=\"0.3;1;0.3\" dur=\"2.4s\" begin=\"0.8s\" repeatCount=\"indefinite\"/></path></svg>"
+}

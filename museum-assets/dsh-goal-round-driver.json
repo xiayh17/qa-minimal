@@ -1,0 +1,6 @@
+{
+  "short": "dsh-goal-round-driver",
+  "lore": "Agent 空闲时检查 active goal，未达成就自动发起下一轮。达标线读的是 dsh-tool-goal 里声明的 threshold，driver 自己不会偏离目标。",
+  "anim": "round-step",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"24\" cy=\"24\" r=\"13\" stroke-dasharray=\"4 5\" opacity=\"0.5\"/><path d=\"M24 11a13 13 0 0 1 11 6.5M35 17.5l.2 4.5-4.3-1.3\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;90 24 24;180 24 24;270 24 24;360 24 24\" calcMode=\"discrete\" dur=\"4s\" repeatCount=\"indefinite\"/></path></svg>"
+}

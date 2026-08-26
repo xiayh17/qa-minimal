@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-stats",
+  "lore": "它注册 sessionStats 投影单元，从整场日志折叠 turn、step 计数和 llm、tool、ttft、decode 的墙钟时间。它的 sessionProjections 注入由 dsh-session-projection 满足，L10 起投影随事件流实时折叠。",
+  "anim": "stats-bars",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M8 40h32\" stroke-linecap=\"round\"/><rect x=\"13\" y=\"30\" width=\"6\" height=\"10\" fill=\"currentColor\" fill-opacity=\"0.2\"><animate attributeName=\"height\" values=\"6;12;6\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"y\" values=\"34;28;34\" dur=\"3s\" repeatCount=\"indefinite\"/></rect><rect x=\"23\" y=\"24\" width=\"6\" height=\"16\" fill=\"currentColor\" fill-opacity=\"0.2\"><animate attributeName=\"height\" values=\"10;18;10\" dur=\"3s\" begin=\"0.4s\" repeatCount=\"indefinite\"/><animate attributeName=\"y\" values=\"30;22;30\" dur=\"3s\" begin=\"0.4s\" repeatCount=\"indefinite\"/></rect><rect x=\"33\" y=\"28\" width=\"6\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.2\"><animate attributeName=\"height\" values=\"8;14;8\" dur=\"3s\" begin=\"0.8s\" repeatCount=\"indefinite\"/><animate attributeName=\"y\" values=\"32;26;32\" dur=\"3s\" begin=\"0.8s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

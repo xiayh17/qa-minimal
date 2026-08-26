@@ -1,0 +1,6 @@
+{
+  "short": "dsh-fs-sandbox",
+  "lore": "和 dsh-fs-local 是同一条缝的两个实现，差别只有一条边界。L4 写得出去的文件，L5 写不出去——模型、工具、问题都没变，换的只是这块 provider。",
+  "anim": "sandbox-wall",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"10\" y=\"10\" width=\"28\" height=\"28\" rx=\"3\" stroke-dasharray=\"4 4\"/><circle class=\"anim-ball\" cx=\"18\" cy=\"24\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/></svg>"
+}

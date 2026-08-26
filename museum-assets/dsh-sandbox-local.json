@@ -1,0 +1,6 @@
+{
+  "short": "dsh-sandbox-local",
+  "lore": "本机进程沙箱的后端：bwrap、landlock、Seatbelt、Windows ACL，探测到哪个用哪个，探不到就 fail-closed。dsh-fs-sandbox 和 dsh-bash-sandbox 的拦截，最终都落在它画的这条边界上。",
+  "anim": "sandbox-boundary",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"10\" y=\"10\" width=\"28\" height=\"28\" rx=\"3\" stroke-dasharray=\"6 4\"><animate attributeName=\"stroke-dashoffset\" values=\"20;0\" dur=\"2.8s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

@@ -1,0 +1,5 @@
+{
+  "short": "dsh-session-title-first-prompt-llm",
+  "lore": "标题的 LLM provider：用一次小模型调用从首条提示词生成标题，失败回退到首词方案。注册进 dsh-session-title 那条缝，路由和凭证引用沿用 stage 自己的网关配置。",
+  "anim": "title-shrink"
+}

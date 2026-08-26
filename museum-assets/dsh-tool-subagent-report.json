@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-subagent-report",
+  "lore": "子对父的回程通道：report 工具只注入 continuable 子 Agent，父和一次性子 Agent 都看不到，toolFilter 也剥不掉它。收到的 report 默认经 parent.steer() 在父的下一个步界送达。",
+  "anim": "beacon-return",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"20\" cy=\"24\" r=\"4\"/><circle cx=\"34\" cy=\"24\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"cx\" values=\"34;26;34\" keyTimes=\"0;0.5;1\" dur=\"3s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.1;0.9;1\" dur=\"3s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

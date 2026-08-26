@@ -1,0 +1,5 @@
+{
+  "short": "dsh-bash-sandbox",
+  "lore": "dsh-bash-local 外面套一层 sandbox policy：命令先过 workspace-write 边界再执行。L5 起替换 dsh-bash-local，dsh-tool-bash 不用改——Consumer 只看到 ctx.shell，看不见这道墙。",
+  "anim": "sandbox-wall"
+}

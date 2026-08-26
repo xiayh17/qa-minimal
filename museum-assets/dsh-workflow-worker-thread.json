@@ -1,0 +1,5 @@
+{
+  "short": "dsh-workflow-worker-thread",
+  "lore": "ctx.workflowEngine 的真实引擎：每次运行开一个 worker thread，在隔离的线程里执行编排脚本。它撑起 dsh-tool-workflow 的脚本执行，也是 ralph 每一轮子 agent 的跑道。",
+  "anim": "thread-speed"
+}

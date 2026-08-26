@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-query-sqlite",
+  "lore": "它用 SQLite FTS5 给会话历史建全文索引，把 ctx.sessionQuery 落成可用的检索能力。它盯着 L2 的 JSONL 存储建独立索引文件，是检索不是持久化——索引文件不许和持久化目录共用。",
+  "anim": "sqlite-drawer",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><rect x=\"10\" y=\"16\" width=\"28\" height=\"22\" rx=\"2\"/><g><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 -6;0 0\" dur=\"3s\" repeatCount=\"indefinite\"/><rect x=\"15\" y=\"12\" width=\"18\" height=\"10\" rx=\"1\" fill=\"currentColor\" fill-opacity=\"0.15\"/></g><path d=\"M20 32h8\" stroke-linecap=\"round\"/></svg>"
+}

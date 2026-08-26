@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-goal",
+  "lore": "给模型 create / get / update goal 三个工具，threshold 里写清完成标准。状态本身存在 dsh-goal，这里只暴露操作面；round-driver 的达标判断也以这个 threshold 为准。",
+  "anim": "goal-tune",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"13\"/><circle cx=\"24\" cy=\"24\" r=\"6\" opacity=\"0.5\"/><circle cx=\"24\" cy=\"24\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"5 0;0 0;0 0;5 0\" keyTimes=\"0;0.4;0.8;1\" dur=\"2.8s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

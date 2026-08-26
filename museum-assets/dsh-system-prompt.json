@@ -1,0 +1,6 @@
+{
+  "short": "dsh-system-prompt",
+  "lore": "每个 step 前把 persona、上下文和工具 schema 组装成模型输入。L1 它就注入了默认 Harness 身份，所以同一道题，L1 发给模型的请求和 L0 并不逐字节相同。",
+  "anim": "prompt-assemble",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><rect x=\"10\" y=\"10\" width=\"8\" height=\"8\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;6 6;0 0\" keyTimes=\"0;0.5;1\" dur=\"3s\" repeatCount=\"indefinite\"/></rect><rect x=\"30\" y=\"10\" width=\"8\" height=\"8\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;-6 6;0 0\" keyTimes=\"0;0.5;1\" dur=\"3s\" repeatCount=\"indefinite\"/></rect><rect x=\"20\" y=\"30\" width=\"8\" height=\"8\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 -8;0 0\" keyTimes=\"0;0.5;1\" dur=\"3s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

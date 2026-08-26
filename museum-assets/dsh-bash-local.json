@@ -1,0 +1,5 @@
+{
+  "short": "dsh-bash-local",
+  "lore": "L4 起 ctx.shell 的实现：在本地跑真实 bash，stdout、stderr、exit code 原样返回，没有沙箱约束。L5 被 dsh-bash-sandbox 换下，执行能力不变，只是命令先过一道边界。",
+  "anim": "bash-cursor"
+}

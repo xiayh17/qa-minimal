@@ -1,0 +1,6 @@
+{
+  "short": "dsh-web",
+  "lore": "ctx.web 缝本身：search / fetch 的 provider 注册表加顺序无关的选择逻辑。它不是抽象类——provider 往里注册而不替换它，所以 L12 里它和两个 provider 同时启用。",
+  "anim": "web-globe",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"13\"/><ellipse cx=\"24\" cy=\"24\" rx=\"13\" ry=\"5\"><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 24 24\" to=\"360 24 24\" dur=\"4s\" repeatCount=\"indefinite\"/></ellipse></svg>"
+}

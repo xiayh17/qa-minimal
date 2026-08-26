@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-fs",
+  "lore": "给模型注册 read / write / edit 工具（有条件时加 read_image）。它声明依赖 ctx.fs，Provider 在场才激活——L3 起模型第一次能改真实文件。搜索工具不在这里，glob / grep 是 L4 的 dsh-tool-fs-search。",
+  "anim": "pen-lines",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M10 16h28\"/><path d=\"M10 32h28\"/><path d=\"M20 28l5-5\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 -4;0 4;0 -4\" dur=\"2.4s\" repeatCount=\"indefinite\"/></path></svg>"
+}

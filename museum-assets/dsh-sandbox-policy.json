@@ -1,0 +1,6 @@
+{
+  "short": "dsh-sandbox-policy",
+  "lore": "把 read-only、workspace-write 这些模式解析成每次调用的具体策略，连同 workspaceRoot 放进当前会话上下文，所有执法的能力族共用。dsh-sandbox-local 负责拦，它告诉拦的人这一次门开多大。",
+  "anim": "policy-gate",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><rect x=\"12\" y=\"8\" width=\"24\" height=\"32\" rx=\"2\"/><line x1=\"24\" y1=\"8\" x2=\"24\" y2=\"40\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 0;6 0;6 0;0 0\" keyTimes=\"0;0.2;0.45;0.7;1\" dur=\"3.2s\" repeatCount=\"indefinite\"/></line></svg>"
+}

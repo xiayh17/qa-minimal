@@ -1,0 +1,6 @@
+{
+  "short": "dsh-subagent-spawn-in-process",
+  "lore": "spawn provider：子 Agent 在本进程里从干净历史开始，继承 cwd 和模型，看不到父会话。默认的 subagent 工具走的就是它，适合把互不干扰的子任务派出去。",
+  "anim": "spawn-dot",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"16\" cy=\"24\" r=\"3.5\"/><circle cx=\"32\" cy=\"24\" r=\"4\"><animate attributeName=\"r\" values=\"1;4;4;1\" keyTimes=\"0;0.3;0.8;1\" dur=\"2.6s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.3;0.8;1\" dur=\"2.6s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

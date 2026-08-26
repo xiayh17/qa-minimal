@@ -1,0 +1,5 @@
+{
+  "short": "dsh-subagent-fork-in-process",
+  "lore": "fork provider：子 Agent 在同进程运行，但会话播种了父会话已完成的前缀。经 dsh-tool-subagent 以 subagent_fork 工具名暴露给模型——让子 Agent 接着父亲的上下文想。",
+  "anim": "delegate-split"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-commands",
+  "lore": "人类命令注册表 ctx.commands。/compact、/goal、/feedback 这些 producer 往里注册，交互式 UI adapter 从这里发现 slash 命令并直接分发，不消耗模型 turn。",
+  "anim": "slash-cursor",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M28 8L18 40\"/><rect x=\"30\" y=\"33\" width=\"10\" height=\"3\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"opacity\" values=\"1;1;0;0;1\" keyTimes=\"0;0.45;0.5;0.95;1\" dur=\"2s\" repeatCount=\"indefinite\"/></rect></svg>"
+}

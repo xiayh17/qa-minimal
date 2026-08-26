@@ -22,6 +22,7 @@
         <button class="mode-tab active" data-view="build">逐级拼装</button>
         <button class="mode-tab" data-view="compare">行为对照</button>
         <button class="mode-tab" data-view="free">自由拼装</button>
+        <button class="mode-tab" data-view="museum">模块博物馆</button>
       </nav>
       <a class="repo-link" href="https://github.com/xiayh17/qa-minimal" target="_blank" rel="noreferrer">GitHub ↗</a>
     </header>
@@ -194,6 +195,37 @@
             </div>
           </section>
         </div>
+      </section>
+
+      <section id="museum-view" class="museum-view view">
+        <div class="museum-hero">
+          <div class="museum-hero-text">
+            <p class="eyebrow">收藏陈列室</p>
+            <h2>这座实验室全部可收集的模块，都在架上。</h2>
+            <p id="museum-hero-line" class="museum-hero-line"></p>
+          </div>
+          <div id="museum-stats" class="museum-stats"></div>
+        </div>
+
+        <div class="museum-spotlight">
+          <div class="museum-section-head">
+            <span>主打展台</span>
+            <small>六块最有故事性的模块。每一级的主线都绕不开它们。</small>
+          </div>
+          <div id="museum-pedestals" class="museum-pedestals"></div>
+        </div>
+
+        <div class="museum-filters">
+          <div id="museum-group-tabs" class="museum-tabs" role="tablist" aria-label="按分组筛选"></div>
+          <div class="museum-filter-row">
+            <div id="museum-role-filters" class="museum-chips" aria-label="按角色筛选"></div>
+            <select id="museum-level-filter" class="museum-level-select" aria-label="按初登场 Level 筛选"></select>
+            <input id="museum-search" class="museum-search" type="search" placeholder="搜索名字或一句话说明…" aria-label="搜索展品" />
+          </div>
+        </div>
+
+        <div class="museum-count-row"><span id="museum-count"></span></div>
+        <div id="museum-grid" class="museum-grid" aria-live="polite"></div>
       </section>
     </main>
 

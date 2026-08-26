@@ -1,0 +1,6 @@
+{
+  "short": "dsh-settings",
+  "lore": "抽象 settings 缝，定义分层配置的解析契约。实现由 dsh-settings-file 提供；同一服务名不能注册两次，所以它在 L11 以 disabled 挂载，只保持闭包可见。",
+  "anim": "settings-slider",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"10\" y1=\"24\" x2=\"38\" y2=\"24\"/><circle cx=\"16\" cy=\"24\" r=\"4\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"cx\" values=\"16;32;16\" dur=\"3s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

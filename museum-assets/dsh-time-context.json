@@ -1,0 +1,6 @@
+{
+  "short": "dsh-time-context",
+  "lore": "它监听 agent/pre-step，每一步向模型追加一条带时区时间戳和距上条消息间隔的用户消息。读数本身是持久会话事件，replay 和 resume 能重建同一条时间线，不靠进程内缓存。",
+  "anim": "time-tick",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"24\" cy=\"24\" r=\"16\"/><path d=\"M24 24V12\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;30 24 24;60 24 24;90 24 24;120 24 24;150 24 24;180 24 24;210 24 24;240 24 24;270 24 24;300 24 24;330 24 24;360 24 24\" calcMode=\"discrete\" dur=\"3.6s\" repeatCount=\"indefinite\"/></path><circle cx=\"24\" cy=\"24\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/></svg>"
+}

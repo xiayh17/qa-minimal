@@ -1,0 +1,6 @@
+{
+  "short": "dsh-agent",
+  "lore": "定义 agent 的注册表、身份和创建约定。L1 起每个 stage 的会话都挂在它注册的身份下，dsh-agent-loop 推进 turn 时认的就是这里的 agent。",
+  "anim": "agent-badge",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"24\" cy=\"24\" r=\"14\"/><circle cx=\"24\" cy=\"24\" r=\"4\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"2.4s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

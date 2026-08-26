@@ -1,0 +1,6 @@
+{
+  "short": "dsh-llm-retry",
+  "lore": "瞬时错误不一定是错误，可能只是网络抖了一下。它在 provider 出错时有界重试，并把每次尝试写成 llm/retry 事件——L10 的\"能跑\"和\"可运营\"之差，就写在这些事件里。",
+  "anim": "retry-arc",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path class=\"anim-arc\" d=\"M34 14a12 12 0 1 0 4 10\"/><path d=\"M38 6v8h-8\"/></svg>"
+}

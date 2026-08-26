@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-persistence-jsonl",
+  "lore": "L2 的记忆全靠它。agent-loop 只管写事件，落盘是这条缝的事；--resume 恢复会话时，读回来的也是它。把 JSONL 换成 SQLite，loop 不会察觉。",
+  "anim": "jsonl-sink",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 22v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V22\"/><circle cx=\"20\" cy=\"10\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 18;0 18\" keyTimes=\"0;0.5;1\" dur=\"2.4s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.15;0.7;1\" dur=\"2.4s\" repeatCount=\"indefinite\"/></circle><circle cx=\"28\" cy=\"10\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 18;0 18\" keyTimes=\"0;0.5;1\" dur=\"2.4s\" begin=\"1.2s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.15;0.7;1\" dur=\"2.4s\" begin=\"1.2s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

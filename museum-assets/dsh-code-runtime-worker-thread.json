@@ -1,0 +1,6 @@
+{
+  "short": "dsh-code-runtime-worker-thread",
+  "lore": "把模型写出的程序放进一个独立的 worker thread 里跑，限制运行时间和内存，跑完把结果交回来。它是 ctx.codeRuntime 在 L9 的实现；消费者是 dsh-tools 的 Code Mode，默认 native 模式下模型的工具面不变。",
+  "anim": "thread-speed",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"8\" y1=\"14\" x2=\"40\" y2=\"14\"/><line x1=\"8\" y1=\"24\" x2=\"40\" y2=\"24\" stroke-dasharray=\"6 26\"><animate attributeName=\"stroke-dashoffset\" values=\"0;-64\" dur=\"2.4s\" repeatCount=\"indefinite\"/></line><line x1=\"8\" y1=\"34\" x2=\"40\" y2=\"34\"/></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-session-checkpoint-policy",
+  "lore": "在每次模型请求和副作用之前标一个持久化检查点，崩溃后知道从哪儿恢复。它不动 agent-loop，只给 dsh-session-persistence-jsonl 的写入定锚点。",
+  "anim": "checkpoint-flag",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M10 40h28\" opacity=\"0.3\"/><path d=\"M20 40V12l14 5-14 5\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 -6;0 0;0 0\" keyTimes=\"0;0.3;1\" dur=\"2.6s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;0.15;0.85;1\" dur=\"2.6s\" repeatCount=\"indefinite\"/></path></svg>"
+}

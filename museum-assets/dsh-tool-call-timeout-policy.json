@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-call-timeout-policy",
+  "lore": "它包住 tools/execute，给声明了 timeoutMs 的工具在 exec.signal 上装上调用预算，超时就替换成结构化的 TOOL_TIMEOUT 结果。这是协作式取消，不理会 signal 的工具不会被强杀。L10 组合里没有工具声明预算，所以它装着但不动。",
+  "anim": "timeout-hourglass",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\"><g><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 24 24;0 24 24;180 24 24;180 24 24;360 24 24;360 24 24\" keyTimes=\"0;0.4;0.5;0.9;1;1\" dur=\"4s\" repeatCount=\"indefinite\"/><path d=\"M15 10h18l-7 12 7 12H15l7-12z\"/></g><circle cx=\"24\" cy=\"16\" r=\"2\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"cy\" values=\"16;32\" dur=\"2s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"1;0\" dur=\"2s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tool-bash",
+  "lore": "模型第一次能启动真实程序。命令在 ctx.shell 上执行，stdout、stderr、exit code 原样回给模型。L4 能修 bug 靠它，L5 被沙箱拦的也是它——能力没变，权限变了。",
+  "anim": "bash-cursor",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M10 14l10 10-10 10\"/><rect class=\"anim-cursor\" x=\"24\" y=\"32\" width=\"12\" height=\"3\" stroke=\"none\" fill=\"currentColor\"/></svg>"
+}

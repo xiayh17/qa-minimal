@@ -1,0 +1,5 @@
+{
+  "short": "dsh-tool-web",
+  "lore": "web 能力的模型端入口：注册 web_search 和 web_fetch 两个工具。它 inject ctx.web，真正的出网由 dsh-web-search-deepseek 和 dsh-web-fetch-http 两个 provider 承担。",
+  "anim": "web-globe"
+}

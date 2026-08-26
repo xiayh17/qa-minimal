@@ -1,0 +1,6 @@
+{
+  "short": "dsh-persona",
+  "lore": "agent preset 作用域的 persona 段。全局挂载会和 dsh-system-prompt 注册的 prompt section 冲突、启动直接失败，所以 L11 里以 disabled 列出；部署级 persona 仍是 system-prompt 的 config。",
+  "anim": "persona-mask",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M13 12h22v12a11 11 0 0 1-22 0z\"/><circle cx=\"19\" cy=\"21\" r=\"1.5\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"opacity\" values=\"1;1;0;1;1\" keyTimes=\"0;0.42;0.5;0.58;1\" dur=\"3s\" repeatCount=\"indefinite\"/></circle><circle cx=\"29\" cy=\"21\" r=\"1.5\" fill=\"currentColor\" stroke=\"none\"><animate attributeName=\"opacity\" values=\"1;1;0;1;1\" keyTimes=\"0;0.42;0.5;0.58;1\" dur=\"3s\" repeatCount=\"indefinite\"/></circle></svg>"
+}

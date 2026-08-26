@@ -1,0 +1,6 @@
+{
+  "short": "dsh-tools",
+  "lore": "工具注册表和执行流水线。L1 它是空的，模型不能调工具——那节课是 LLM 不等于 Agent。L3 起 bash、fs 这些工具挂进来，流水线本身不变。",
+  "anim": "tools-rack",
+  "animSvg": "<svg viewBox=\"0 0 48 48\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M8 14h32\"/><rect x=\"12\" y=\"18\" width=\"7\" height=\"14\" rx=\"1\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"3s\" begin=\"0s\" repeatCount=\"indefinite\"/></rect><rect x=\"21\" y=\"18\" width=\"7\" height=\"14\" rx=\"1\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"3s\" begin=\"1s\" repeatCount=\"indefinite\"/></rect><rect x=\"30\" y=\"18\" width=\"7\" height=\"14\" rx=\"1\"><animate attributeName=\"opacity\" values=\"0.2;1;0.2\" dur=\"3s\" begin=\"2s\" repeatCount=\"indefinite\"/></rect></svg>"
+}
