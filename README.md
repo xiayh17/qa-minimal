@@ -6,6 +6,11 @@
 
 基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`@deepseek-ai/dsh`）的公开 npm 包构建。官方安装是完整的 Agent 平台（60+ 插件）；本仓库从 3 个插件开始，一级一级长出来。
 
+![qa-minimal 前端主页：逐级拼装视图（L6，Approval & Permission）](docs/images/home.png)
+
+> 配套的积木式教学前端：左边选 Level，中间看每一层新增哪些插件积木，
+> 右边用同一道任务观察行为怎么变。详见下文「Web 前端」。
+
 ## 生长树
 
 ```
