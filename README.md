@@ -208,9 +208,58 @@ docs/
 run.mjs             通用启动器：<stage> [--trace] [--resume <id>] <question>
                     qa-minimal inspect <stage>
                     qa-minimal diff <stage-a> <stage-b>
+web/                积木式教学前端（纯静态，无构建链）
+  data/             生成的数据层（stages/catalog/graph + 手工策展 curated）
+scripts/
+  build-web-data.mjs  从 stages/*/cordis.yml + node_modules 生成 web/data
+  smoke-stages.mjs    无头冒烟：12 个 stage 全部启动，专挑插件加载错误
+  sync-dsh.mjs        dsh 版本同步：改钉 → 重装 → 重建数据 → 冒烟
+  web-server.mjs      本地开发服务器：web/ 静态服务 + /api/run 实时运行（SSE）
 ```
 
 每级保留自己的 `package.json`——diff 它就能看到依赖闭包怎么长出来的。
+
+## Web 前端
+
+```sh
+node scripts/build-web-data.mjs     # 重新生成 web/data（cordis.yml 是唯一事实来源）
+node scripts/web-server.mjs         # 打开 http://127.0.0.1:8080（PORT 可改端口）
+```
+
+推荐用 `node scripts/web-server.mjs` 启动：除了静态文件，它还提供
+`/api/run`（SSE），前端"实时运行"面板会真实调用模型 API——在浏览器里选
+Level、输入问题，服务器就在本机起 `node run.mjs <level> --trace`，把事件
+流和最终回答推回来。API key 从服务器进程的环境变量读（`QA_BASE_URL` +
+`QA_API_KEY`），不会进浏览器；没配 key 时实时运行自动禁用。
+
+降级方式（纯静态，实时运行不可用）：
+
+```sh
+python3 -m http.server 8080 -d web  # 打开 http://localhost:8080
+```
+
+三个模式：逐级拼装（每级新增哪些积木、各连哪个 ctx.* 缝）、行为对照
+（A–J × L0–L11 矩阵）、自由拼装（自己组合积木，按真实 inject/provides
+依赖图校验悬空 Consumer、服务冲突和裸抽象缝）。行为实验里的 trace 播放
+用的是教学样本，不发送 API 请求；实时运行面板才是真实调用。
+
+## 升级 dsh 版本
+
+```sh
+npm run sync:dsh              # 对齐 npm `next` dist-tag（推荐）
+npm run sync:dsh -- 0.1.1-rc.2  # 或显式指定版本
+npm run sync:dsh -- --check   # 只看当前版本 vs 最新，不动文件
+```
+
+这一条命令完成整个升级闭环：改写根目录和全部 stage 的 `@deepseek-ai/*`
+版本钉 → `npm install` → 重新生成 `web/data` → 对 12 个 stage 做无头冒烟
+（dummy key + 不可达端点，专挑插件加载错误：缺包、inject 未满足、config
+schema 变动、服务重名）。任何一步失败都会停下来并指出是哪个 stage、哪类错误。
+
+升级后如果某个包还没发布目标版本，脚本默认中止并列出滞后的包；
+确认要混版时加 `--allow-mixed`。
+
+日常回归可以单独跑 `npm run smoke`（不动版本，只验证当前组合）。
 
 ## 文档
 

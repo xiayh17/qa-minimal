@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>qa-minimal · DeepSeek Harness 拼装实验室</title>
+  <meta name="description" content="从 3 个插件开始，一层层观察 DeepSeek Harness 的 Agent 能力如何被插件组合出来。" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div>
+          <div class="brand-name">qa-minimal</div>
+          <div class="brand-kicker">DeepSeek Harness progressive lab</div>
+        </div>
+      </div>
+      <nav class="mode-switch" aria-label="视图">
+        <button class="mode-tab active" data-view="build">逐级拼装</button>
+        <button class="mode-tab" data-view="compare">行为对照</button>
+        <button class="mode-tab" data-view="free">自由拼装</button>
+      </nav>
+      <a class="repo-link" href="https://github.com/xiayh17/qa-minimal" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">把 Agent 一层层拼出来</p>
+        <h1>从 3 个插件开始，看系统怎么长成一个 Agent 平台。</h1>
+        <p class="intro-copy">每一级只改变一件能观察到的事。选一个 Level，看新增的积木，再用同一道任务验证行为差异。</p>
+      </div>
+      <div class="intro-legend" aria-label="积木类型">
+        <span><i class="dot role-core"></i>主干</span>
+        <span><i class="dot role-provider"></i>后端</span>
+        <span><i class="dot role-tool"></i>模型工具</span>
+        <span><i class="dot role-policy"></i>策略</span>
+        <span><i class="dot role-state"></i>状态</span>
+        <span><i class="dot role-ops"></i>横切能力</span>
+      </div>
+    </section>
+
+    <main>
+      <section id="build-view" class="workspace view active">
+        <aside class="stage-rail" aria-label="Stage 列表">
+          <div class="rail-heading">
+            <span>拼装说明书</span>
+            <span id="stage-progress">L0 / L11</span>
+          </div>
+          <div id="stage-list" class="stage-list"></div>
+        </aside>
+
+        <section class="assembly-panel">
+          <div class="assembly-head">
+            <div>
+              <p id="stage-kicker" class="eyebrow">Level 0</p>
+              <h2 id="stage-title">Raw LLM</h2>
+              <p id="stage-story" class="stage-story"></p>
+            </div>
+            <div class="stage-metric">
+              <strong id="plugin-count">3</strong>
+              <span>mounted blocks</span>
+            </div>
+          </div>
+
+          <div class="delta-strip">
+            <div class="delta-label">
+              <span>这一层变了什么</span>
+              <small id="delta-summary"></small>
+            </div>
+            <div id="delta-bricks" class="delta-bricks"></div>
+          </div>
+
+          <div class="board-toolbar">
+            <div>
+              <span class="board-title">当前组合</span>
+              <span id="board-note" class="board-note">亮色是这一层新增，浅色是继承。</span>
+            </div>
+            <label class="compact-toggle">
+              <input id="only-new-toggle" type="checkbox" />
+              <span>只看变化</span>
+            </label>
+          </div>
+
+          <div id="brick-board" class="brick-board baseplate" aria-live="polite"></div>
+        </section>
+
+        <aside class="behavior-panel">
+          <div class="behavior-head">
+            <div>
+              <p class="eyebrow">同一道题</p>
+              <h3>行为实验</h3>
+            </div>
+            <span class="static-badge">静态样本</span>
+          </div>
+
+          <label class="task-picker-label" for="task-picker">测试任务</label>
+          <select id="task-picker" class="task-picker"></select>
+
+          <div id="behavior-card" class="behavior-card">
+            <div class="behavior-result-row">
+              <span>当前结果</span>
+              <span id="behavior-result" class="outcome">succeeds</span>
+            </div>
+            <p id="behavior-explain"></p>
+          </div>
+
+          <div id="ab-spotlight" class="ab-spotlight hidden"></div>
+
+          <div class="trace-head">
+            <span>运行录像</span>
+            <span id="trace-stage">L0</span>
+          </div>
+          <div id="trace-terminal" class="trace-terminal" role="log" aria-live="polite"></div>
+          <button id="play-trace" class="primary-action">播放这一步</button>
+          <p class="static-note">这里播放的是教学 trace，不会发送 API 请求。真实运行仍由仓库里的 <code>run.mjs</code> 完成。</p>
+
+          <div class="live-panel" id="live-panel">
+            <div class="trace-head live-head">
+              <span>实时运行</span>
+              <span class="live-badge">live</span>
+            </div>
+            <p id="live-note" class="live-note">正在检查本地服务器…</p>
+            <input id="live-question" class="live-input" type="text" autocomplete="off" disabled />
+            <button id="live-run" class="primary-action live-action" disabled>真实运行</button>
+            <div id="live-terminal" class="trace-terminal live-terminal hidden" role="log" aria-live="polite"></div>
+            <div id="live-answer" class="live-answer hidden"></div>
+            <p class="static-note">这里会真实调用模型 API，走的就是 <code>run.mjs</code> 和当前 Level 的插件组合。服务器同时只跑一个任务。</p>
+          </div>
+        </aside>
+      </section>
+
+      <section id="compare-view" class="compare-view view">
+        <div class="compare-head">
+          <div>
+            <p class="eyebrow">看行为，不打分</p>
+            <h2>同一任务，换一张插件图，系统会怎么做？</h2>
+            <p>L5 遇到越界写入时，正确结果就是 sandbox 拒绝。</p>
+          </div>
+          <div class="outcome-key">
+            <span class="key succeeds">succeeds</span>
+            <span class="key persists">persists</span>
+            <span class="key denied">denied-by-sandbox</span>
+            <span class="key approval">asks-approval</span>
+            <span class="key unsupported">unsupported</span>
+          </div>
+        </div>
+        <div class="matrix-wrap">
+          <table id="behavior-matrix" class="behavior-matrix"></table>
+        </div>
+        <div class="compare-foot">点击任意格子，会回到拼装视图并打开对应 Level 和任务。</div>
+      </section>
+
+      <section id="free-view" class="free-view view">
+        <div class="free-head">
+          <div>
+            <p class="eyebrow">自己拼一张插件图</p>
+            <h2>把积木放上底盘，看组合能不能启动。</h2>
+            <p>点目录里的积木放上去，点底盘上的积木拿下来。校验规则和运行时一致：Consumer 要等 Provider，一个上下文一个实现。</p>
+          </div>
+          <div class="free-actions">
+            <button id="free-from-level" class="secondary-action">以当前 Level 为起点</button>
+            <button id="free-clear" class="secondary-action">清空底盘</button>
+          </div>
+        </div>
+
+        <div class="free-body">
+          <aside class="catalog-panel" aria-label="积木目录">
+            <div class="catalog-head">
+              <span>积木目录</span>
+              <span id="catalog-count"></span>
+            </div>
+            <input id="catalog-search" class="catalog-search" type="search" placeholder="搜索名字或说明…" aria-label="搜索积木" />
+            <div id="catalog-list" class="catalog-list"></div>
+          </aside>
+
+          <section class="free-board-panel">
+            <div id="free-verdict" class="free-verdict"></div>
+            <div id="free-issues" class="free-issues"></div>
+
+            <div class="board-toolbar free-board-toolbar">
+              <div>
+                <span class="board-title">底盘</span>
+                <span id="free-count" class="board-note"></span>
+              </div>
+            </div>
+            <div id="free-board" class="brick-board baseplate free-board" aria-live="polite"></div>
+
+            <div class="free-services">
+              <div class="free-services-title">当前组合里的 ctx.* 服务</div>
+              <div id="free-service-list" class="free-service-list"></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>数据来源：<code>web/data/stages.json</code>、<code>catalog.json</code>、<code>graph.json</code>（由 <code>scripts/build-web-data.mjs</code> 从 <code>stages/*/cordis.yml</code> 和 npm 包生成）；策展说明在 <code>web/data/curated.json</code></span>
+      <span>Static site · no build step</span>
+    </footer>
+  </div>
+
+  <div id="plugin-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+    <div class="pm-dialog">
+      <button id="pm-close" class="pm-close" aria-label="关闭组件说明">×</button>
+      <div id="pm-content"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

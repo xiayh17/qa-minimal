@@ -1,0 +1,460 @@
+{
+  "providersByService": {
+    "agents": [
+      "dsh-agent"
+    ],
+    "agentLoop": [
+      "dsh-agent-loop"
+    ],
+    "shell": [
+      "dsh-bash-local",
+      "dsh-bash-sandbox"
+    ],
+    "compaction": [
+      "dsh-compaction",
+      "dsh-compaction-basic"
+    ],
+    "toolResultPruner": [
+      "dsh-compaction-tool-result-pruner"
+    ],
+    "credentials": [
+      "dsh-credentials",
+      "dsh-credentials-local"
+    ],
+    "fs": [
+      "dsh-fs-local",
+      "dsh-fs-sandbox"
+    ],
+    "goals": [
+      "dsh-goal"
+    ],
+    "invariants": [
+      "dsh-invariants"
+    ],
+    "jobs": [
+      "dsh-jobs",
+      "dsh-jobs-local"
+    ],
+    "llm": [
+      "dsh-llm",
+      "dsh-llm-pi-ai"
+    ],
+    "permissionPresets": [
+      "dsh-permission-presets"
+    ],
+    "planMode": [
+      "dsh-plan-mode"
+    ],
+    "sandbox": [
+      "dsh-sandbox-local"
+    ],
+    "sandboxPolicy": [
+      "dsh-sandbox-policy"
+    ],
+    "sessions": [
+      "dsh-session"
+    ],
+    "sessionPersistence": [
+      "dsh-session-persistence-jsonl"
+    ],
+    "sessionProjections": [
+      "dsh-session-projection"
+    ],
+    "sessionTelemetry": [
+      "dsh-session-telemetry"
+    ],
+    "settings": [
+      "dsh-settings",
+      "dsh-settings-file"
+    ],
+    "shellEnv": [
+      "dsh-shell-env"
+    ],
+    "storage": [
+      "dsh-storage"
+    ],
+    "storageDomain": [
+      "dsh-storage-domain"
+    ],
+    "subagents": [
+      "dsh-subagent"
+    ],
+    "subprocess": [
+      "dsh-subprocess-local"
+    ],
+    "systemPrompt": [
+      "dsh-system-prompt"
+    ],
+    "tokenMeter": [
+      "dsh-token-meter"
+    ],
+    "tools": [
+      "dsh-tools"
+    ],
+    "approval": [
+      "dsh-user-approval"
+    ],
+    "userQuestions": [
+      "dsh-user-questions"
+    ],
+    "workflowEngine": [
+      "dsh-workflow",
+      "dsh-workflow-worker-thread"
+    ],
+    "workspaceRegistry": [
+      "dsh-workspace"
+    ]
+  },
+  "edges": [
+    {
+      "from": "dsh-agent-loop",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-agent-loop",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-agent-loop",
+      "service": "llm",
+      "to": "dsh-llm"
+    },
+    {
+      "from": "dsh-agent-loop",
+      "service": "llm",
+      "to": "dsh-llm-pi-ai"
+    },
+    {
+      "from": "dsh-agent-loop",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-agent-loop",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-bash-local",
+      "service": "subprocess",
+      "to": "dsh-subprocess-local"
+    },
+    {
+      "from": "dsh-bash-sandbox",
+      "service": "subprocess",
+      "to": "dsh-subprocess-local"
+    },
+    {
+      "from": "dsh-bash-sandbox",
+      "service": "sandbox",
+      "to": "dsh-sandbox-local"
+    },
+    {
+      "from": "dsh-bash-sandbox",
+      "service": "sandboxPolicy",
+      "to": "dsh-sandbox-policy"
+    },
+    {
+      "from": "dsh-compaction-basic",
+      "service": "llm",
+      "to": "dsh-llm"
+    },
+    {
+      "from": "dsh-compaction-basic",
+      "service": "llm",
+      "to": "dsh-llm-pi-ai"
+    },
+    {
+      "from": "dsh-compaction-basic",
+      "service": "tokenMeter",
+      "to": "dsh-token-meter"
+    },
+    {
+      "from": "dsh-compaction-basic",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-compaction-tool-result-pruner",
+      "service": "tokenMeter",
+      "to": "dsh-token-meter"
+    },
+    {
+      "from": "dsh-fs-sandbox",
+      "service": "sandboxPolicy",
+      "to": "dsh-sandbox-policy"
+    },
+    {
+      "from": "dsh-goal",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-llm-pi-ai",
+      "service": "llm",
+      "to": "dsh-llm"
+    },
+    {
+      "from": "dsh-llm-pi-ai",
+      "service": "llm",
+      "to": "dsh-llm-pi-ai"
+    },
+    {
+      "from": "dsh-llm-retry",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-permission-presets",
+      "service": "shell",
+      "to": "dsh-bash-local"
+    },
+    {
+      "from": "dsh-permission-presets",
+      "service": "shell",
+      "to": "dsh-bash-sandbox"
+    },
+    {
+      "from": "dsh-permission-presets",
+      "service": "approval",
+      "to": "dsh-user-approval"
+    },
+    {
+      "from": "dsh-permission-presets",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-plan-mode",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-plan-mode",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-session-checkpoint-policy",
+      "service": "llm",
+      "to": "dsh-llm"
+    },
+    {
+      "from": "dsh-session-checkpoint-policy",
+      "service": "llm",
+      "to": "dsh-llm-pi-ai"
+    },
+    {
+      "from": "dsh-session-checkpoint-policy",
+      "service": "sessionPersistence",
+      "to": "dsh-session-persistence-jsonl"
+    },
+    {
+      "from": "dsh-session-checkpoint-policy",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-session-checkpoint-policy",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-session-persistence-jsonl",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-session-stats",
+      "service": "sessionProjections",
+      "to": "dsh-session-projection"
+    },
+    {
+      "from": "dsh-storage-domain",
+      "service": "storage",
+      "to": "dsh-storage"
+    },
+    {
+      "from": "dsh-storage-sqlite",
+      "service": "storage",
+      "to": "dsh-storage"
+    },
+    {
+      "from": "dsh-subagent-fork-in-process",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-subagent-spawn-in-process",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-tool-bash",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-bash",
+      "service": "shell",
+      "to": "dsh-bash-local"
+    },
+    {
+      "from": "dsh-tool-bash",
+      "service": "shell",
+      "to": "dsh-bash-sandbox"
+    },
+    {
+      "from": "dsh-tool-bash",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-bash",
+      "service": "shellEnv",
+      "to": "dsh-shell-env"
+    },
+    {
+      "from": "dsh-tool-fs",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-fs",
+      "service": "fs",
+      "to": "dsh-fs-local"
+    },
+    {
+      "from": "dsh-tool-fs",
+      "service": "fs",
+      "to": "dsh-fs-sandbox"
+    },
+    {
+      "from": "dsh-tool-fs",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-fs-search",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-fs-search",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-fs-search",
+      "service": "subprocess",
+      "to": "dsh-subprocess-local"
+    },
+    {
+      "from": "dsh-tool-goal",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-tool-goal",
+      "service": "goals",
+      "to": "dsh-goal"
+    },
+    {
+      "from": "dsh-tool-goal",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-goal",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-jobs",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-jobs",
+      "service": "jobs",
+      "to": "dsh-jobs"
+    },
+    {
+      "from": "dsh-tool-jobs",
+      "service": "jobs",
+      "to": "dsh-jobs-local"
+    },
+    {
+      "from": "dsh-tool-jobs",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-ralph",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-ralph",
+      "service": "workflowEngine",
+      "to": "dsh-workflow"
+    },
+    {
+      "from": "dsh-tool-ralph",
+      "service": "workflowEngine",
+      "to": "dsh-workflow-worker-thread"
+    },
+    {
+      "from": "dsh-tool-ralph",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-tool-ralph",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-subagent",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-subagent",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-tool-subagent",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-todo",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tools",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-workflow-worker-thread",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-workspace",
+      "service": "storageDomain",
+      "to": "dsh-storage-domain"
+    },
+    {
+      "from": "dsh-workspace",
+      "service": "sessionPersistence",
+      "to": "dsh-session-persistence-jsonl"
+    }
+  ]
+}
