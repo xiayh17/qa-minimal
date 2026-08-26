@@ -1,0 +1,38 @@
+{
+  "level": 2,
+  "order": 0,
+  "stageMeta": {
+    "dir": "02-persistence",
+    "title": "Persistent Agent: memory survives process exit",
+    "packageName": "stage-02-persistence",
+    "headerComment": [
+      "# Stage 02 — Persistent Agent: memory survives process exit",
+      "#",
+      "# Same Agent spine as Stage 01, plus two persistence plugins:",
+      "#   session-persistence-jsonl  writes the event log to ./sessions/<id>.jsonl",
+      "#   session-checkpoint-policy checkpoints before each model request",
+      "#",
+      "# The agent-loop itself is unchanged. Memory is NOT inside the loop —",
+      "# it's a separate capability seam (session persistence) that the loop",
+      "# happens to write to. Swap JSONL for SQLite and the loop never notices.",
+      "#",
+      "# This is the foundation for all later stages: L3–L6 inherit these two",
+      "# plugins so the agent can always resume across process restarts."
+    ],
+    "driverQuestion": "用一句话说明插件化架构的好处"
+  },
+  "sections": [
+    {
+      "label": "persistence",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+          "configYaml": "  config:\n    root: ./sessions"
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-checkpoint-policy"
+        }
+      ]
+    }
+  ]
+}

@@ -44,7 +44,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -107,7 +107,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -138,7 +138,7 @@
         "configKeys": [
           "agents"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session-persistence-jsonl",
@@ -180,7 +180,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -272,7 +272,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -353,7 +353,7 @@
           "cwd",
           "timeoutMs"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-tool-bash",
@@ -399,7 +399,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -446,25 +446,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -485,15 +466,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -505,6 +477,34 @@
         "configKeys": [
           "sampleOverCapGlobResults"
         ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
         "inConfig": true
       },
       {
@@ -539,7 +539,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -586,38 +586,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-approval",
-        "disabled": false,
-        "configKeys": [
-          "policy"
-        ],
-        "inConfig": true
-      },
-      {
-        "name": "@deepseek-ai/dsh-permission-presets",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -638,15 +606,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -658,7 +617,48 @@
         "configKeys": [
           "sampleOverCapGlobResults"
         ],
-        "inConfig": true
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
       },
       {
         "name": "./driver.mjs",
@@ -687,7 +687,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -734,38 +734,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-approval",
-        "disabled": false,
-        "configKeys": [
-          "policy"
-        ],
-        "inConfig": true
-      },
-      {
-        "name": "@deepseek-ai/dsh-permission-presets",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -786,15 +754,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -807,6 +766,47 @@
           "sampleOverCapGlobResults"
         ],
         "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
       },
       {
         "name": "@deepseek-ai/dsh-user-questions",
@@ -868,6 +868,49 @@
       },
       {
         "name": "@deepseek-ai/dsh-workspace",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
         "disabled": false,
         "configKeys": []
       },
@@ -886,7 +929,15 @@
       "@deepseek-ai/dsh-storage",
       "@deepseek-ai/dsh-storage-sqlite",
       "@deepseek-ai/dsh-storage-domain",
-      "@deepseek-ai/dsh-workspace"
+      "@deepseek-ai/dsh-workspace",
+      "@deepseek-ai/dsh-skill",
+      "@deepseek-ai/dsh-skill-filesystem",
+      "@deepseek-ai/dsh-tool-skill",
+      "@deepseek-ai/dsh-skill-badge",
+      "@deepseek-ai/dsh-goal-round-driver",
+      "@deepseek-ai/dsh-agent-instructions",
+      "@deepseek-ai/dsh-schedule",
+      "@deepseek-ai/dsh-tool-str-replace-editor"
     ],
     "removed": []
   },
@@ -905,7 +956,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -952,38 +1003,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-approval",
-        "disabled": false,
-        "configKeys": [
-          "policy"
-        ],
-        "inConfig": true
-      },
-      {
-        "name": "@deepseek-ai/dsh-permission-presets",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -1004,15 +1023,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -1027,17 +1037,58 @@
         "inConfig": false
       },
       {
-        "name": "@deepseek-ai/dsh-tool-todo",
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
         "disabled": false,
         "configKeys": [
-          "allowParallelInProgress"
+          "mode",
+          "workspaceRoot"
         ],
-        "inConfig": true
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
       },
       {
         "name": "@deepseek-ai/dsh-user-questions",
         "disabled": false,
         "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-todo",
+        "disabled": false,
+        "configKeys": [
+          "allowParallelInProgress"
+        ],
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-plan-mode",
@@ -1083,6 +1134,49 @@
       },
       {
         "name": "@deepseek-ai/dsh-workspace",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
         "disabled": false,
         "configKeys": []
       },
@@ -1134,6 +1228,24 @@
         "configKeys": []
       },
       {
+        "name": "@deepseek-ai/dsh-tool-subagent-control",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-report",
+        "disabled": false,
+        "configKeys": [
+          "reportDelivery"
+        ],
+        "inConfig": true
+      },
+      {
         "name": "./driver.mjs",
         "disabled": false,
         "configKeys": []
@@ -1147,7 +1259,10 @@
       "@deepseek-ai/dsh-tool-subagent",
       "@deepseek-ai/dsh-jobs",
       "@deepseek-ai/dsh-jobs-local",
-      "@deepseek-ai/dsh-tool-jobs"
+      "@deepseek-ai/dsh-tool-jobs",
+      "@deepseek-ai/dsh-tool-subagent-control",
+      "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+      "@deepseek-ai/dsh-tool-subagent-report"
     ],
     "removed": []
   },
@@ -1166,7 +1281,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -1213,38 +1328,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-approval",
-        "disabled": false,
-        "configKeys": [
-          "policy"
-        ],
-        "inConfig": true
-      },
-      {
-        "name": "@deepseek-ai/dsh-permission-presets",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -1265,15 +1348,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -1288,17 +1362,58 @@
         "inConfig": false
       },
       {
-        "name": "@deepseek-ai/dsh-tool-todo",
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
         "disabled": false,
         "configKeys": [
-          "allowParallelInProgress"
+          "mode",
+          "workspaceRoot"
         ],
-        "inConfig": true
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
       },
       {
         "name": "@deepseek-ai/dsh-user-questions",
         "disabled": false,
         "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-todo",
+        "disabled": false,
+        "configKeys": [
+          "allowParallelInProgress"
+        ],
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-plan-mode",
@@ -1351,6 +1466,49 @@
         "configKeys": []
       },
       {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
         "name": "@deepseek-ai/dsh-subagent",
         "disabled": false,
         "configKeys": []
@@ -1380,7 +1538,7 @@
           "provider",
           "toolName"
         ],
-        "inConfig": false
+        "inConfig": true
       },
       {
         "name": "@deepseek-ai/dsh-jobs",
@@ -1396,6 +1554,24 @@
         "name": "@deepseek-ai/dsh-tool-jobs",
         "disabled": false,
         "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-report",
+        "disabled": false,
+        "configKeys": [
+          "reportDelivery"
+        ],
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-workflow",
@@ -1414,7 +1590,7 @@
           "subagentProvider",
           "maxRounds"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-token-meter",
@@ -1442,6 +1618,21 @@
         "configKeys": []
       },
       {
+        "name": "@deepseek-ai/dsh-tool-workflow",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
         "name": "./driver.mjs",
         "disabled": false,
         "configKeys": []
@@ -1454,7 +1645,10 @@
       "@deepseek-ai/dsh-token-meter",
       "@deepseek-ai/dsh-compaction",
       "@deepseek-ai/dsh-compaction-basic",
-      "@deepseek-ai/dsh-compaction-tool-result-pruner"
+      "@deepseek-ai/dsh-compaction-tool-result-pruner",
+      "@deepseek-ai/dsh-tool-workflow",
+      "@deepseek-ai/dsh-code-runtime",
+      "@deepseek-ai/dsh-code-runtime-worker-thread"
     ],
     "removed": []
   },
@@ -1473,7 +1667,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -1520,38 +1714,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-approval",
-        "disabled": false,
-        "configKeys": [
-          "policy"
-        ],
-        "inConfig": true
-      },
-      {
-        "name": "@deepseek-ai/dsh-permission-presets",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -1572,15 +1734,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -1595,17 +1748,58 @@
         "inConfig": false
       },
       {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-questions",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
         "name": "@deepseek-ai/dsh-tool-todo",
         "disabled": false,
         "configKeys": [
           "allowParallelInProgress"
         ],
         "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-questions",
-        "disabled": false,
-        "configKeys": []
       },
       {
         "name": "@deepseek-ai/dsh-plan-mode",
@@ -1650,10 +1844,53 @@
         "configKeys": [
           "backend"
         ],
-        "inConfig": false
+        "inConfig": true
       },
       {
         "name": "@deepseek-ai/dsh-workspace",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
         "disabled": false,
         "configKeys": []
       },
@@ -1687,7 +1924,7 @@
           "provider",
           "toolName"
         ],
-        "inConfig": false
+        "inConfig": true
       },
       {
         "name": "@deepseek-ai/dsh-jobs",
@@ -1703,6 +1940,24 @@
         "name": "@deepseek-ai/dsh-tool-jobs",
         "disabled": false,
         "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-report",
+        "disabled": false,
+        "configKeys": [
+          "reportDelivery"
+        ],
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-workflow",
@@ -1721,7 +1976,7 @@
           "subagentProvider",
           "maxRounds"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-token-meter",
@@ -1745,6 +2000,21 @@
       },
       {
         "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-workflow",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
         "disabled": false,
         "configKeys": []
       },
@@ -1774,6 +2044,39 @@
         "configKeys": []
       },
       {
+        "name": "@deepseek-ai/dsh-session-query",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query-sqlite",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-reference",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-time-context",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
         "name": "./driver.mjs",
         "disabled": false,
         "configKeys": []
@@ -1784,7 +2087,13 @@
       "@deepseek-ai/dsh-invariants",
       "@deepseek-ai/dsh-session-telemetry",
       "@deepseek-ai/dsh-session-projection",
-      "@deepseek-ai/dsh-session-stats"
+      "@deepseek-ai/dsh-session-stats",
+      "@deepseek-ai/dsh-session-query",
+      "@deepseek-ai/dsh-session-query-sqlite",
+      "@deepseek-ai/dsh-session-reference",
+      "@deepseek-ai/dsh-repeat-tool-reminder",
+      "@deepseek-ai/dsh-tool-call-timeout-policy",
+      "@deepseek-ai/dsh-time-context"
     ],
     "removed": []
   },
@@ -1803,7 +2112,7 @@
         "configKeys": [
           "providers"
         ],
-        "inConfig": true
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-session",
@@ -1850,38 +2159,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-sandbox-local",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-sandbox-policy",
-        "disabled": false,
-        "configKeys": [
-          "mode",
-          "workspaceRoot"
-        ],
-        "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-approval",
-        "disabled": false,
-        "configKeys": [
-          "policy"
-        ],
-        "inConfig": true
-      },
-      {
-        "name": "@deepseek-ai/dsh-permission-presets",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
-        "name": "@deepseek-ai/dsh-fs-sandbox",
-        "disabled": false,
-        "configKeys": []
-      },
-      {
         "name": "@deepseek-ai/dsh-fs-observation-policy",
         "disabled": false,
         "configKeys": []
@@ -1902,15 +2179,6 @@
         "configKeys": []
       },
       {
-        "name": "@deepseek-ai/dsh-bash-sandbox",
-        "disabled": false,
-        "configKeys": [
-          "timeoutMs"
-        ],
-        "disabledCondition": "process.platform === 'win32'",
-        "inConfig": true
-      },
-      {
         "name": "@deepseek-ai/dsh-tool-bash",
         "disabled": false,
         "configKeys": [],
@@ -1925,17 +2193,58 @@
         "inConfig": false
       },
       {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-questions",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
         "name": "@deepseek-ai/dsh-tool-todo",
         "disabled": false,
         "configKeys": [
           "allowParallelInProgress"
         ],
         "inConfig": false
-      },
-      {
-        "name": "@deepseek-ai/dsh-user-questions",
-        "disabled": false,
-        "configKeys": []
       },
       {
         "name": "@deepseek-ai/dsh-plan-mode",
@@ -1974,10 +2283,53 @@
         "configKeys": [
           "backend"
         ],
-        "inConfig": false
+        "inConfig": true
       },
       {
         "name": "@deepseek-ai/dsh-workspace",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
         "disabled": false,
         "configKeys": []
       },
@@ -2011,7 +2363,7 @@
           "provider",
           "toolName"
         ],
-        "inConfig": false
+        "inConfig": true
       },
       {
         "name": "@deepseek-ai/dsh-jobs",
@@ -2027,6 +2379,24 @@
         "name": "@deepseek-ai/dsh-tool-jobs",
         "disabled": false,
         "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-report",
+        "disabled": false,
+        "configKeys": [
+          "reportDelivery"
+        ],
+        "inConfig": false
       },
       {
         "name": "@deepseek-ai/dsh-workflow",
@@ -2064,6 +2434,21 @@
         "configKeys": []
       },
       {
+        "name": "@deepseek-ai/dsh-tool-workflow",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
         "name": "@deepseek-ai/dsh-llm-retry",
         "disabled": false,
         "configKeys": []
@@ -2085,6 +2470,39 @@
       },
       {
         "name": "@deepseek-ai/dsh-session-stats",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query-sqlite",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-reference",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-time-context",
         "disabled": false,
         "configKeys": []
       },
@@ -2112,7 +2530,75 @@
         "configKeys": [
           "path"
         ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-commands",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-compact",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-feedback",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-ask-user",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title",
+        "disabled": false,
+        "configKeys": [
+          "fallbackMaxWords",
+          "fallbackMaxBytes",
+          "maxTitleBytes"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "model",
+          "targetWords",
+          "targetCjkCharacters",
+          "maxInputBytes",
+          "maxOutputTokens",
+          "timeoutMs"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-persona",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-default-model",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "model"
+        ],
         "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-tool-presentation",
+        "disabled": true,
+        "configKeys": []
       },
       {
         "name": "./driver.mjs",
@@ -2124,7 +2610,1109 @@
       "@deepseek-ai/dsh-settings",
       "@deepseek-ai/dsh-credentials",
       "@deepseek-ai/dsh-settings-file",
-      "@deepseek-ai/dsh-credentials-local"
+      "@deepseek-ai/dsh-credentials-local",
+      "@deepseek-ai/dsh-commands",
+      "@deepseek-ai/dsh-command-compact",
+      "@deepseek-ai/dsh-command-goal",
+      "@deepseek-ai/dsh-command-feedback",
+      "@deepseek-ai/dsh-tool-ask-user",
+      "@deepseek-ai/dsh-session-title",
+      "@deepseek-ai/dsh-session-title-first-prompt-llm",
+      "@deepseek-ai/dsh-persona",
+      "@deepseek-ai/dsh-agent-default-model",
+      "@deepseek-ai/dsh-agent-tool-presentation"
+    ],
+    "removed": []
+  },
+  {
+    "level": 12,
+    "title": "Web Access",
+    "entries": [
+      {
+        "name": "@deepseek-ai/dsh-llm",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-llm-pi-ai",
+        "disabled": false,
+        "configKeys": [
+          "providers"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-system-prompt",
+        "disabled": false,
+        "configKeys": [
+          "persona"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-tools",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-loop",
+        "disabled": false,
+        "configKeys": [
+          "agents"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "disabled": false,
+        "configKeys": [
+          "root"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-checkpoint-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-observation-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-fs",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subprocess-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-shell-env",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-bash",
+        "disabled": false,
+        "configKeys": [],
+        "disabledCondition": "process.platform === 'win32'"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-fs-search",
+        "disabled": false,
+        "configKeys": [
+          "sampleOverCapGlobResults"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-questions",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-todo",
+        "disabled": false,
+        "configKeys": [
+          "allowParallelInProgress"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-plan-mode",
+        "disabled": false,
+        "configKeys": [
+          "section"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage-sqlite",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage-domain",
+        "disabled": false,
+        "configKeys": [
+          "backend"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-workspace",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-spawn-in-process",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-fork-in-process",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent",
+        "disabled": false,
+        "configKeys": [
+          "provider"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "toolName"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-jobs",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-jobs-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-jobs",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-report",
+        "disabled": false,
+        "configKeys": [
+          "reportDelivery"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-workflow",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-workflow-worker-thread",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-ralph",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-token-meter",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction-basic",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-workflow",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-llm-retry",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-invariants",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-telemetry",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-projection",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-stats",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query-sqlite",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-reference",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-time-context",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-settings",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-credentials",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-settings-file",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-credentials-local",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-commands",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-compact",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-feedback",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-ask-user",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title",
+        "disabled": false,
+        "configKeys": [
+          "fallbackMaxWords",
+          "fallbackMaxBytes",
+          "maxTitleBytes"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "model",
+          "targetWords",
+          "targetCjkCharacters",
+          "maxInputBytes",
+          "maxOutputTokens",
+          "timeoutMs"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-persona",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-default-model",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "model"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-tool-presentation",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-web",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-search-deepseek",
+        "disabled": false,
+        "configKeys": [
+          "apiKeyEnv",
+          "baseURL"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-fetch-http",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-web",
+        "disabled": false,
+        "configKeys": [],
+        "inConfig": true
+      },
+      {
+        "name": "./driver.mjs",
+        "disabled": false,
+        "configKeys": []
+      }
+    ],
+    "added": [
+      "@deepseek-ai/dsh-web",
+      "@deepseek-ai/dsh-web-search-deepseek",
+      "@deepseek-ai/dsh-web-fetch-http",
+      "@deepseek-ai/dsh-tool-web"
+    ],
+    "removed": []
+  },
+  {
+    "level": 13,
+    "title": "MCP Client",
+    "entries": [
+      {
+        "name": "@deepseek-ai/dsh-llm",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-llm-pi-ai",
+        "disabled": false,
+        "configKeys": [
+          "providers"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-system-prompt",
+        "disabled": false,
+        "configKeys": [
+          "persona"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-tools",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-loop",
+        "disabled": false,
+        "configKeys": [
+          "agents"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "disabled": false,
+        "configKeys": [
+          "root"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-checkpoint-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-observation-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-fs",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subprocess-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-shell-env",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-bash",
+        "disabled": false,
+        "configKeys": [],
+        "disabledCondition": "process.platform === 'win32'"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-fs-search",
+        "disabled": false,
+        "configKeys": [
+          "sampleOverCapGlobResults"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "disabled": false,
+        "configKeys": [
+          "mode",
+          "workspaceRoot"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "disabled": false,
+        "configKeys": [
+          "timeoutMs"
+        ],
+        "disabledCondition": "process.platform === 'win32'",
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "disabled": false,
+        "configKeys": [
+          "policy"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-questions",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-todo",
+        "disabled": false,
+        "configKeys": [
+          "allowParallelInProgress"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-plan-mode",
+        "disabled": false,
+        "configKeys": [
+          "section"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage-sqlite",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage-domain",
+        "disabled": false,
+        "configKeys": [
+          "backend"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-workspace",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-filesystem",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-skill",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill-badge",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-instructions",
+        "disabled": false,
+        "configKeys": [
+          "maxBytes"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-str-replace-editor",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-spawn-in-process",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-fork-in-process",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent",
+        "disabled": false,
+        "configKeys": [
+          "provider"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "toolName"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-jobs",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-jobs-local",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-jobs",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent-report",
+        "disabled": false,
+        "configKeys": [
+          "reportDelivery"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-workflow",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-workflow-worker-thread",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-ralph",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-token-meter",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction-basic",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-workflow",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-llm-retry",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-invariants",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-telemetry",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-projection",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-stats",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query-sqlite",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-reference",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-time-context",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-settings",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-credentials",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-settings-file",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-credentials-local",
+        "disabled": false,
+        "configKeys": [
+          "path"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-commands",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-compact",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-goal",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-feedback",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-ask-user",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title",
+        "disabled": false,
+        "configKeys": [
+          "fallbackMaxWords",
+          "fallbackMaxBytes",
+          "maxTitleBytes"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "model",
+          "targetWords",
+          "targetCjkCharacters",
+          "maxInputBytes",
+          "maxOutputTokens",
+          "timeoutMs"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-persona",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-default-model",
+        "disabled": false,
+        "configKeys": [
+          "provider",
+          "model"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-tool-presentation",
+        "disabled": true,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-web",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-search-deepseek",
+        "disabled": false,
+        "configKeys": [
+          "apiKeyEnv",
+          "baseURL"
+        ],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-fetch-http",
+        "disabled": false,
+        "configKeys": []
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-web",
+        "disabled": false,
+        "configKeys": [],
+        "inConfig": false
+      },
+      {
+        "name": "@deepseek-ai/dsh-mcp-client",
+        "disabled": false,
+        "configKeys": [
+          "serverName",
+          "transport",
+          "command",
+          "failOnStartupError"
+        ],
+        "inConfig": true
+      },
+      {
+        "name": "./driver.mjs",
+        "disabled": false,
+        "configKeys": []
+      }
+    ],
+    "added": [
+      "@deepseek-ai/dsh-mcp-client"
     ],
     "removed": []
   }

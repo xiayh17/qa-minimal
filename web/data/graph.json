@@ -3,12 +3,22 @@
     "agents": [
       "dsh-agent"
     ],
+    "agentDefaultModel": [
+      "dsh-agent-default-model"
+    ],
     "agentLoop": [
       "dsh-agent-loop"
     ],
     "shell": [
       "dsh-bash-local",
       "dsh-bash-sandbox"
+    ],
+    "codeRuntime": [
+      "dsh-code-runtime",
+      "dsh-code-runtime-worker-thread"
+    ],
+    "commands": [
+      "dsh-commands"
     ],
     "compaction": [
       "dsh-compaction",
@@ -60,8 +70,18 @@
     "sessionProjections": [
       "dsh-session-projection"
     ],
+    "sessionQuery": [
+      "dsh-session-query",
+      "dsh-session-query-sqlite"
+    ],
+    "sessionReferenceResolver": [
+      "dsh-session-reference"
+    ],
     "sessionTelemetry": [
       "dsh-session-telemetry"
+    ],
+    "sessionTitle": [
+      "dsh-session-title"
     ],
     "settings": [
       "dsh-settings",
@@ -69,6 +89,9 @@
     ],
     "shellEnv": [
       "dsh-shell-env"
+    ],
+    "skills": [
+      "dsh-skill"
     ],
     "storage": [
       "dsh-storage"
@@ -96,6 +119,9 @@
     ],
     "userQuestions": [
       "dsh-user-questions"
+    ],
+    "web": [
+      "dsh-web"
     ],
     "workflowEngine": [
       "dsh-workflow",
@@ -137,6 +163,11 @@
       "to": "dsh-system-prompt"
     },
     {
+      "from": "dsh-agent-tool-presentation",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
       "from": "dsh-bash-local",
       "service": "subprocess",
       "to": "dsh-subprocess-local"
@@ -155,6 +186,36 @@
       "from": "dsh-bash-sandbox",
       "service": "sandboxPolicy",
       "to": "dsh-sandbox-policy"
+    },
+    {
+      "from": "dsh-command-compact",
+      "service": "commands",
+      "to": "dsh-commands"
+    },
+    {
+      "from": "dsh-command-compact",
+      "service": "compaction",
+      "to": "dsh-compaction"
+    },
+    {
+      "from": "dsh-command-compact",
+      "service": "compaction",
+      "to": "dsh-compaction-basic"
+    },
+    {
+      "from": "dsh-command-feedback",
+      "service": "commands",
+      "to": "dsh-commands"
+    },
+    {
+      "from": "dsh-command-goal",
+      "service": "commands",
+      "to": "dsh-commands"
+    },
+    {
+      "from": "dsh-command-goal",
+      "service": "goals",
+      "to": "dsh-goal"
     },
     {
       "from": "dsh-compaction-basic",
@@ -192,6 +253,21 @@
       "to": "dsh-agent"
     },
     {
+      "from": "dsh-goal-round-driver",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-goal-round-driver",
+      "service": "goals",
+      "to": "dsh-goal"
+    },
+    {
+      "from": "dsh-goal-round-driver",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
       "from": "dsh-llm-pi-ai",
       "service": "llm",
       "to": "dsh-llm"
@@ -205,6 +281,11 @@
       "from": "dsh-llm-retry",
       "service": "agents",
       "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-mcp-client",
+      "service": "tools",
+      "to": "dsh-tools"
     },
     {
       "from": "dsh-permission-presets",
@@ -227,6 +308,11 @@
       "to": "dsh-session"
     },
     {
+      "from": "dsh-persona",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
       "from": "dsh-plan-mode",
       "service": "tools",
       "to": "dsh-tools"
@@ -235,6 +321,26 @@
       "from": "dsh-plan-mode",
       "service": "systemPrompt",
       "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-schedule",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-schedule",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-schedule",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-schedule",
+      "service": "sessionPersistence",
+      "to": "dsh-session-persistence-jsonl"
     },
     {
       "from": "dsh-session-checkpoint-policy",
@@ -267,9 +373,64 @@
       "to": "dsh-session"
     },
     {
+      "from": "dsh-session-query",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-session-query-sqlite",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-session-reference",
+      "service": "sessionQuery",
+      "to": "dsh-session-query"
+    },
+    {
+      "from": "dsh-session-reference",
+      "service": "sessionQuery",
+      "to": "dsh-session-query-sqlite"
+    },
+    {
       "from": "dsh-session-stats",
       "service": "sessionProjections",
       "to": "dsh-session-projection"
+    },
+    {
+      "from": "dsh-session-title",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-session-title-first-prompt-llm",
+      "service": "sessionTitle",
+      "to": "dsh-session-title"
+    },
+    {
+      "from": "dsh-session-title-first-prompt-llm",
+      "service": "llm",
+      "to": "dsh-llm"
+    },
+    {
+      "from": "dsh-session-title-first-prompt-llm",
+      "service": "llm",
+      "to": "dsh-llm-pi-ai"
+    },
+    {
+      "from": "dsh-session-title-first-prompt-llm",
+      "service": "sessions",
+      "to": "dsh-session"
+    },
+    {
+      "from": "dsh-skill-badge",
+      "service": "skills",
+      "to": "dsh-skill"
+    },
+    {
+      "from": "dsh-skill-filesystem",
+      "service": "skills",
+      "to": "dsh-skill"
     },
     {
       "from": "dsh-storage-domain",
@@ -290,6 +451,21 @@
       "from": "dsh-subagent-spawn-in-process",
       "service": "subagents",
       "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-time-context",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-tool-ask-user",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-ask-user",
+      "service": "userQuestions",
+      "to": "dsh-user-questions"
     },
     {
       "from": "dsh-tool-bash",
@@ -315,6 +491,11 @@
       "from": "dsh-tool-bash",
       "service": "shellEnv",
       "to": "dsh-shell-env"
+    },
+    {
+      "from": "dsh-tool-call-timeout-policy",
+      "service": "tools",
+      "to": "dsh-tools"
     },
     {
       "from": "dsh-tool-fs",
@@ -417,6 +598,36 @@
       "to": "dsh-system-prompt"
     },
     {
+      "from": "dsh-tool-skill",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-tool-skill",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-skill",
+      "service": "skills",
+      "to": "dsh-skill"
+    },
+    {
+      "from": "dsh-tool-str-replace-editor",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-str-replace-editor",
+      "service": "fs",
+      "to": "dsh-fs-local"
+    },
+    {
+      "from": "dsh-tool-str-replace-editor",
+      "service": "fs",
+      "to": "dsh-fs-sandbox"
+    },
+    {
       "from": "dsh-tool-subagent",
       "service": "tools",
       "to": "dsh-tools"
@@ -432,14 +643,99 @@
       "to": "dsh-system-prompt"
     },
     {
+      "from": "dsh-tool-subagent-control",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-subagent-control",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-tool-subagent-control/list-agents",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-subagent-control/list-agents",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-tool-subagent-control/list-agents",
+      "service": "agents",
+      "to": "dsh-agent"
+    },
+    {
+      "from": "dsh-tool-subagent-report",
+      "service": "subagents",
+      "to": "dsh-subagent"
+    },
+    {
+      "from": "dsh-tool-subagent-report",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-subagent-report",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
       "from": "dsh-tool-todo",
       "service": "tools",
       "to": "dsh-tools"
     },
     {
+      "from": "dsh-tool-web",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-web",
+      "service": "web",
+      "to": "dsh-web"
+    },
+    {
+      "from": "dsh-tool-web",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-tool-workflow",
+      "service": "tools",
+      "to": "dsh-tools"
+    },
+    {
+      "from": "dsh-tool-workflow",
+      "service": "workflowEngine",
+      "to": "dsh-workflow"
+    },
+    {
+      "from": "dsh-tool-workflow",
+      "service": "workflowEngine",
+      "to": "dsh-workflow-worker-thread"
+    },
+    {
+      "from": "dsh-tool-workflow",
+      "service": "systemPrompt",
+      "to": "dsh-system-prompt"
+    },
+    {
       "from": "dsh-tools",
       "service": "systemPrompt",
       "to": "dsh-system-prompt"
+    },
+    {
+      "from": "dsh-web-fetch-http",
+      "service": "web",
+      "to": "dsh-web"
+    },
+    {
+      "from": "dsh-web-search-deepseek",
+      "service": "web",
+      "to": "dsh-web"
     },
     {
       "from": "dsh-workflow-worker-thread",

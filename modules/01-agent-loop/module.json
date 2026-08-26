@@ -1,0 +1,50 @@
+{
+  "level": 1,
+  "order": 0,
+  "stageMeta": {
+    "dir": "01-agent-loop",
+    "title": "First Agent: the L0→L1 conceptual jump",
+    "packageName": "stage-01-agent-loop",
+    "headerComment": [
+      "# Stage 01 — First Agent: the L0→L1 conceptual jump",
+      "#",
+      "# Same Q&A as Stage 00, but now through the full Agent spine:",
+      "#   session + system-prompt + tools (empty registry) + agent + agent-loop",
+      "#",
+      "# Same user task, same provider, same model as Stage 00.",
+      "# What changes is the MACHINERY around the LLM call:",
+      "#   a session log, turn/step boundaries, an agent identity.",
+      "# (dsh-system-prompt also injects a default Harness identity, so the",
+      "#  actual request is not byte-for-byte identical — but the user task is.)",
+      "#",
+      "# No tools are registered — dsh-tools is an empty registry.",
+      "# The model cannot call tools; it can only answer from knowledge.",
+      "# This is deliberate: the lesson is \"LLM ≠ Agent\", not \"look, tools\"."
+    ],
+    "driverQuestion": "用一句话说明插件化架构的好处"
+  },
+  "sections": [
+    {
+      "label": "Agent spine",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-session"
+        },
+        {
+          "name": "@deepseek-ai/dsh-system-prompt",
+          "configYaml": "  config:\n    persona: You are a helpful assistant. Answer concisely."
+        },
+        {
+          "name": "@deepseek-ai/dsh-tools"
+        },
+        {
+          "name": "@deepseek-ai/dsh-agent"
+        },
+        {
+          "name": "@deepseek-ai/dsh-agent-loop",
+          "configYaml": "  config:\n    agents: []"
+        }
+      ]
+    }
+  ]
+}

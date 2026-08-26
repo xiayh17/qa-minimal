@@ -1,0 +1,96 @@
+{
+  "level": 12,
+  "order": 0,
+  "stageMeta": {
+    "dir": "12-web-access",
+    "title": "Web Access",
+    "packageName": "stage-12-web-access",
+    "headerComment": [
+      "# Stage 12 — Web Access",
+      "#",
+      "# L12 = L11 + Web access.  Every plugin from Stage 06 is still here —",
+      "# sandbox, approval, FS, shell, search, persistence, resume — plus the",
+      "# accumulated closures of L7..L11 (stateful tasks, multi-agent, workflow,",
+      "# operability, product config), and now the web capability seam:",
+      "#",
+      "#   dsh-web                 ctx.web seam: the WebRuntime service itself —",
+      "#                           provider registries for search and fetch plus",
+      "#                           order-independent provider selection and the",
+      "#                           WebError taxonomy",
+      "#   dsh-web-search-deepseek search provider \"deepseek-official\": native",
+      "#                           web_search over DeepSeek's Anthropic-compatible",
+      "#                           Messages API ({baseURL}/messages)",
+      "#   dsh-tool-web            consumer: the model-facing web_search and",
+      "#                           web_fetch tools (inject tools/web/systemPrompt)",
+      "#   dsh-web-fetch-http    fetch provider: plain HTTP GET with size and",
+      "#                           content-type limits, no browser required",
+      "#                           the DeepSeek-native provider, fetch via plain",
+      "#",
+      "# This is the first level where the model can leave the local environment.",
+      "# Everything before L12 — files, shell, subagents, workflows — acted on the",
+      "# host; web_search reaches the public internet.",
+      "#",
+      "# Architecture concept: the seam is NOT an abstract class this time.",
+      "# Unlike dsh-jobs / dsh-compaction / dsh-settings (abstract seams whose",
+      "# provider extends the base and re-registers the same service name, so",
+      "# the abstract entry stays disabled), dsh-web IS the runtime: providers",
+      "# register INTO ctx.web via registerSearchProvider/registerFetchProvider",
+      "# and never claim the \"web\" service name, so all three entries mount",
+      "# enabled.  With exactly one usable search provider registered, selection",
+      "# auto-resolves — no searchProvider config needed.",
+      "#",
+      "# Headless notes:",
+      "#   - One web_search call costs a FULL auxiliary DeepSeek model turn (the",
+      "#     provider asks a separate model to perform the search with the native",
+      "#     web_search_20250305 server tool), not a cheap retrieval request —",
+      "#     watch the web/deepseek-search-llm-request session event in --trace.",
+      "#   - The auxiliary request speaks the Anthropic Messages protocol, so it",
+      "#     reuses this repo's gateway route: baseURL falls back to $QA_BASE_URL",
+      "#     and the credential reference is QA_API_KEY, resolved per search",
+      "#     through ctx.credentials (L11) with the process env as its layer.",
+      "#   - Web tools bypass the L6 approval gate entirely (the package defines",
+      "#     no web-specific permission policy), so in a headless run web access",
+      "#     is unmediated — the only brakes are searchMaxResults/searchMaxQueries",
+      "#     and the 30s cooperative tool-call budget.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the whole",
+      "# L4→L12 progression remains a single-variable experiment."
+    ],
+    "driverQuestion": "Use the web_search tool to find what the current Node.js LTS release is (version number and release date). Report the answer and cite the source URLs as markdown links."
+  },
+  "sections": [
+    {
+      "label": "web access",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-web",
+          "comments": [
+            "# ── web access (new in L12) ───────────────────────────────────────────",
+            "# ctx.web, the web capability seam.  NOT an abstract contract in the",
+            "# dsh-jobs sense: WebRuntime extends Service and is mounted directly —",
+            "# providers register into it instead of replacing it, so there is no",
+            "# service-name conflict and nothing to keep disabled.  No config: with",
+            "# exactly one usable search provider the selection auto-resolves",
+            "# (searchProvider/fetchProvider and $DSH_WEB_*_PROVIDER stay unset)."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-web-search-deepseek",
+          "configYaml": "  config:\n    # Search provider \"deepseek-official\" (inject: [web]).  Each search is a\n    # complete Anthropic Messages call carrying the native web_search_20250305\n    # server tool — the gateway already speaks anthropic-messages for the\n    # conversation model, so the same route serves the auxiliary one:\n    # baseURL falls back to $QA_BASE_URL (/messages is appended), and the\n    # key reference is QA_API_KEY, resolved per search through ctx.credentials\n    # (L11) so a rotated key reaches the next call.  Defaults kept: model\n    # deepseek-v4-flash, apiVersion 2023-06-01, maxTokens 4096, maxUses 5.\n    apiKeyEnv: QA_API_KEY\n    baseURL: !!js process.env.QA_BASE_URL ?? 'https://api.deepseek.com/anthropic/v1'"
+        },
+        {
+          "name": "@deepseek-ai/dsh-web-fetch-http",
+          "comments": [
+            "# HTTP fetch provider for the same ctx.web seam (inject [web]).",
+            "# Now web_fetch has a real backend — plain HTTP GET with size",
+            "# and content-type limits, no browser required."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-web",
+          "configYaml": "  config:\n    # Model-facing consumer (inject: [tools, web, systemPrompt] — all\n    # @deepseek-ai/dsh-web-fetch-http is not installed at this level, and an\n    # enabled-but-providerless tool stays visible only to fail every call\n    # with WEB_PROVIDER_UNAVAILABLE — disabling keeps the model contract\n    # honest (search guidance then omits the fetch follow-up).  Defaults\n    # kept: searchMaxResults 8, searchMaxQueries 4, searchTimeoutMs 30000."
+        }
+      ]
+    }
+  ]
+}

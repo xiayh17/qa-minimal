@@ -1,0 +1,31 @@
+{
+  "level": 0,
+  "order": 0,
+  "stageMeta": {
+    "dir": "00-llm-stream",
+    "title": "Raw LLM (control group)",
+    "packageName": "stage-00-llm-stream",
+    "headerComment": [
+      "# Stage 00 — Raw LLM (control group)",
+      "#",
+      "# 3 plugins: abstract LLM service + multi-provider adapter + local driver.",
+      "# No agent-loop, no sessions, no tools. One ctx.llm.stream() call, one answer, exit.",
+      "# This is the permanent control group — all later stages grow FROM here."
+    ],
+    "driverQuestion": "用一句话说明插件化架构的好处"
+  },
+  "sections": [
+    {
+      "label": null,
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-llm"
+        },
+        {
+          "name": "@deepseek-ai/dsh-llm-pi-ai",
+          "configYaml": "  config:\n    providers:\n      local-anthropic:\n        displayName: Local Gateway\n        api: anthropic-messages\n        baseURL: !!js process.env.QA_BASE_URL ?? 'https://your-gateway.example'\n        apiKeyEnv: QA_API_KEY\n        models:\n          - id: deepseek-v4-pro\n            contextWindow: 1000000\n          - id: deepseek-v4-flash\n            contextWindow: 1000000"
+        }
+      ]
+    }
+  ]
+}

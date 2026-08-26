@@ -9,9 +9,13 @@
 ## 生长树
 
 ```
-                    Workflow / Subagent            ← L8/L9 (已实现)
+                      MCP Client                 ← L13 (已实现)
                               ▲
-                     Plan / Goal / Todo            ← L7 (已实现)
+                       Web Access                ← L12 (已实现)
+                              ▲
+                    Workflow / Subagent          ← L8/L9 (已实现)
+                              ▲
+                     Plan / Goal / Todo          ← L7 (已实现)
                               ▲
               Approval / Permission          ← L6 (已实现)
                               ▲
@@ -63,6 +67,8 @@ node run.mjs 8 "Delegate investigating src/calculator.js to a subagent"  # L8: �
 node run.mjs 9 --trace "<一个需要多轮迭代的长任务>"            # L9: ralph 循环 + compaction
 node run.mjs 10 --trace "Fix the divide-by-zero bug in src/calculator.js"  # L10: llm/retry 事件
 node run.mjs 11 "Fix the divide-by-zero bug in src/calculator.js"          # L11: settings/credentials 热切换
+node run.mjs 12 --trace "查一下当前 Node.js LTS 的版本号和发布日期"         # L12: web_search / web_fetch
+node run.mjs 13 "列出你可调用的工具，有 mcp__demo__ 开头的吗？"            # L13: MCP 降级契约
 
 # 观察能力图怎样生长
 node run.mjs inspect 5                        # 查看某级挂载的全部插件
@@ -83,34 +89,43 @@ node run.mjs diff 4 5                         # 对比两级之间的插件差�
 | **L4** | Shell / Process | `subprocess` + `shell-env` + `bash-local` + `tool-bash` + `tool-fs-search` | `tool/call`（bash）→ `tool/result`（exit code）+ glob/grep 搜索 | ✅ |
 | **L5** | Sandboxed Agent | `sandbox-local` + `sandbox-policy` + `fs-sandbox` + `bash-sandbox` | 同一 bash 命令写工作区外 → sandbox 拒绝 | ✅ |
 | **L6** | Approval & Permission | `user-approval` + `permission-presets` | 越界写入 → sandbox 拒绝 → 模型 escalate → 审批请求 | ✅ |
-| **L7** | Stateful Task Agent | `tool-todo` + `plan-mode` + `goal` + `tool-goal` + `workspace`（+ 支撑：`user-questions`、`storage` + `storage-sqlite` + `storage-domain`） | `todo/write`、`goal/*` 事件；exit_plan_mode 评审流 | ✅ |
-| **L8** | Multi-Agent | `subagent` + `subagent-spawn/fork-in-process` + `tool-subagent`×2 + `jobs-local` + `tool-jobs` | `subagent` / `subagent_fork` / `job_*` 工具出现，真实委派 | ✅ |
-| **L9** | Workflow Agent | `workflow-worker-thread` + `tool-ralph` + `token-meter` + `compaction-basic` + `compaction-tool-result-pruner` | ralph fresh-agent 循环；token 计量驱动 compaction | ✅ |
-| **L10** | Operable Harness | `llm-retry` + `invariants` + `session-projection` + `session-stats` | `llm/retry` → `llm/retry-started`；session 统计激活 | ✅ |
-| **L11** | Productized | `settings-file` + `credentials-local` | `settings.yaml` watch 热重载；`ctx.credentials` 真实解析密钥 | ✅ |
-| L12 | Full Product | host + API + client + Web UI（见 [docs/ladder.md](docs/ladder.md)） | | 📋 |
+| **L7** | Stateful Task Agent | `tool-todo` + `plan-mode` + `goal` + `tool-goal` + `workspace`（+ 支撑：`user-questions`、`storage` + `storage-sqlite` + `storage-domain`）；+ skills / AGENTS.md / schedule / str-replace editor | `todo/write`、`goal/*` 事件；exit_plan_mode 评审流 | ✅ |
+| **L8** | Multi-Agent | `subagent` + `subagent-spawn/fork-in-process` + `tool-subagent`×2 + `jobs-local` + `tool-jobs`；+ subagent 管控（send_message / interrupt_agent / report） | `subagent` / `subagent_fork` / `job_*` 工具出现，真实委派 | ✅ |
+| **L9** | Workflow Agent | `workflow-worker-thread` + `tool-ralph` + `token-meter` + `compaction-basic` + `compaction-tool-result-pruner`；+ `tool-workflow` + `code-runtime-worker-thread` | ralph fresh-agent 循环；token 计量驱动 compaction | ✅ |
+| **L10** | Operable Harness | `llm-retry` + `invariants` + `session-projection` + `session-stats`；+ session 检索（session-query-sqlite + session-reference）+ 防护策略（repeat-reminder / call-timeout / time-context） | `llm/retry` → `llm/retry-started`；session 统计激活 | ✅ |
+| **L11** | Productized | `settings-file` + `credentials-local`；+ 人用入口（commands + ask_user）+ 会话 UX（title） | `settings.yaml` watch 热重载；`ctx.credentials` 真实解析密钥 | ✅ |
+| **L12** | Web Access | `web` + `web-search-deepseek` + `web-fetch-http` + `tool-web` | `web_search` / `web_fetch` 工具出现；`web/deepseek-search-llm-request` 事件（每次搜索是一次辅助模型调用） | ✅ |
+| **L13** | MCP Client | `mcp-client` | 占位 server 连接失败 → 有界重试 → 降级运行；换真实 server 后 `mcp__demo__*` 工具出现 | ✅ |
+| L14 | Full Product | host + API + client + Web UI（见 [docs/ladder.md](docs/ladder.md)） | | 📋 |
 
 ## 行为结果矩阵
 
-每个 Level 跑同一套任务（A–G 七项）。变的不是题目，是插件图。
+每个 Level 跑同一套任务（A–L 十二项）。变的不是题目，是插件图。
 矩阵不用 ✓/✗，而是标注**行为结果**——"能力"和"策略"是两个独立维度。
 
-| 任务 | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 | L11 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| A. 回答知识问题 | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| B. 记住本轮信息 | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| C. 重启后继续会话 | unsupported | unsupported | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists |
-| D. 阅读项目文件 | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| E. 运行测试并改文件 | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| F. 写工作区外文件 | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval |
-| G. 跟踪多步任务 (todo/plan/goal) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
-| H. 委派子 Agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
-| I. 长任务运行 (ralph/compaction) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds |
-| J. 瞬时故障自愈 (retry) + 可测量 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds |
+| 任务 | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 | L11 | L12 | L13 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A. 回答知识问题 | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| B. 记住本轮信息 | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| C. 重启后继续会话 | unsupported | unsupported | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists |
+| D. 阅读项目文件 | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| E. 运行测试并改文件 | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| F. 写工作区外文件 | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval |
+| G. 跟踪多步任务 (todo/plan/goal) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| H. 委派子 Agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| I. 长任务运行 (ralph/compaction) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
+| J. 瞬时故障自愈 (retry) + 可测量 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
+| K. 联网搜索 / 抓取网页 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds |
+| L. 接入 MCP 工具 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds |
 
 > **L5 的 F 标为 `denied-by-sandbox`——这正是该 stage 的测试 PASS。**
 > 被安全拒绝本身就是正确行为，不是"失败"。L6 的 F 标为
 > `asks-approval`——同样是被拒绝后的正确升级路径。
+
+> **K 的 succeeds 有代价**：每次 `web_search` 是一次完整的辅助模型调用，
+> 且 web 工具不经过 L6 审批门。**L 的 succeeds 指桥接契约**：默认配置的
+> demo server 是占位，演示的是降级路径；换成真实 server 后 `mcp__demo__*`
+> 工具直接出现。
 
 > **Agent 的能力不是一个大类里写死的，而是组合出来的。**
 
@@ -186,7 +201,7 @@ node run.mjs diff 4 5
 ## 仓库结构
 
 ```
-stages/             每级一个目录，同时存在、可 diff
+stages/             每级一个目录，同时存在、可 diff（生成物，勿手改）
   00-llm-stream/    L0: 3 插件，裸 ctx.llm.stream()
   01-agent-loop/    L1: +5 插件，最小 Agent 闭包
   02-persistence/   L2: +2 插件，JSONL 持久化 + resume
@@ -199,6 +214,9 @@ stages/             每级一个目录，同时存在、可 diff
   09-workflow/      L9: +7 插件，workflow 引擎 + ralph + compaction
   10-operable/      L10: +5 插件，retry + invariants + stats
   11-productized/   L11: +4 插件，settings + credentials 热切换
+  12-web-access/    L12: +4 插件，web 能力缝 (web_search / web_fetch)
+  13-mcp/           L13: +1 插件，MCP client 桥接（占位 server 演示降级契约）
+modules/            闭包模块，唯一事实来源（见下节）
 lib/
   workspace.mjs     一次性临时工作区（L3+ 使用）
 fixtures/           固定测试项目（calculator.js，含待修 bug）
@@ -211,18 +229,33 @@ run.mjs             通用启动器：<stage> [--trace] [--resume <id>] <questio
 web/                积木式教学前端（纯静态，无构建链）
   data/             生成的数据层（stages/catalog/graph + 手工策展 curated）
 scripts/
+  build-stages.mjs    从 modules/ 组装 stages/*/cordis.yml + package.json + driver.mjs
+  migrate-stages-to-modules.mjs  一次性迁移脚本（已完成，仅留档，勿重跑）
   build-web-data.mjs  从 stages/*/cordis.yml + node_modules 生成 web/data
-  smoke-stages.mjs    无头冒烟：12 个 stage 全部启动，专挑插件加载错误
+  smoke-stages.mjs    无头冒烟：全部 stage 启动，专挑插件加载错误
   sync-dsh.mjs        dsh 版本同步：改钉 → 重装 → 重建数据 → 冒烟
   web-server.mjs      本地开发服务器：web/ 静态服务 + /api/run 实时运行（SSE）
 ```
+
+## 模块化：modules/ 是唯一事实来源
+
+`stages/` 下的 `cordis.yml`、`package.json`、`driver.mjs` 都是生成物，不要手改。
+事实来源是 `modules/<NN>-<slug>/module.json`：每个模块只存放该闭包自己新增的
+插件条目（delta），`node scripts/build-stages.mjs` 把所有 level ≤ N 的闭包先按
+level、再按同级模块的 `order` 字段排序，累加后生成 stage N 的三个文件。
+加 `--check` 只 diff 不写。
+
+同一 level 可以有多个闭包（如 `07-stateful-tasks` 与 `07-skills`），同级顺序由
+各自 module.json 的 `order` 字段决定。闭包还可以修改继承来的条目：`remove`
+按名字移除一个继承条目（用于替换 provider），`replace` 原位替换配置（位置保留）。
+改了模块就重跑 `node scripts/build-stages.mjs`，把生成物一起提交。
 
 每级保留自己的 `package.json`——diff 它就能看到依赖闭包怎么长出来的。
 
 ## Web 前端
 
 ```sh
-node scripts/build-web-data.mjs     # 重新生成 web/data（cordis.yml 是唯一事实来源）
+node scripts/build-web-data.mjs     # 重新生成 web/data（由 stages/*/cordis.yml 生成，根本来源是 modules/）
 node scripts/web-server.mjs         # 打开 http://127.0.0.1:8080（PORT 可改端口）
 ```
 
@@ -239,7 +272,7 @@ python3 -m http.server 8080 -d web  # 打开 http://localhost:8080
 ```
 
 三个模式：逐级拼装（每级新增哪些积木、各连哪个 ctx.* 缝）、行为对照
-（A–J × L0–L11 矩阵）、自由拼装（自己组合积木，按真实 inject/provides
+（A–L × L0–L13 矩阵）、自由拼装（自己组合积木，按真实 inject/provides
 依赖图校验悬空 Consumer、服务冲突和裸抽象缝）。行为实验里的 trace 播放
 用的是教学样本，不发送 API 请求；实时运行面板才是真实调用。
 
@@ -252,7 +285,7 @@ npm run sync:dsh -- --check   # 只看当前版本 vs 最新，不动文件
 ```
 
 这一条命令完成整个升级闭环：改写根目录和全部 stage 的 `@deepseek-ai/*`
-版本钉 → `npm install` → 重新生成 `web/data` → 对 12 个 stage 做无头冒烟
+版本钉 → `npm install` → 重新生成 `web/data` → 对全部 stage 做无头冒烟
 （dummy key + 不可达端点，专挑插件加载错误：缺包、inject 未满足、config
 schema 变动、服务重名）。任何一步失败都会停下来并指出是哪个 stage、哪类错误。
 

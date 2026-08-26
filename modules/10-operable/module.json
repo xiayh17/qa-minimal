@@ -1,0 +1,150 @@
+{
+  "level": 10,
+  "order": 0,
+  "stageMeta": {
+    "dir": "10-operable",
+    "title": "Operable Harness",
+    "packageName": "stage-10-operable",
+    "headerComment": [
+      "# Stage 10 — Operable Harness",
+      "#",
+      "# L10 = L9 + Operability.  Every plugin from Stage 09 is still here —",
+      "# the sandboxed, approval-gated, persistent agent with the L7 stateful-task",
+      "# closure (todo / plan-mode / goal / workspace), the L8 multi-agent closure",
+      "# (subagent registry + providers + jobs), and the L9 long-task runtime",
+      "# (workflow engine / ralph / token-meter / compaction) — plus the L10",
+      "# operability closure:",
+      "#",
+      "#   dsh-llm-retry          transient provider failures heal themselves:",
+      "#                          hooks the loop's agent/request-error waterfall,",
+      "#                          backs off (500ms→10s + jitter, 2 retries in the",
+      "#                          default \"normal\" mode) and appends durable",
+      "#                          llm/retry + llm/retry-started session events.",
+      "#                          No config of its own — per-provider policy lives",
+      "#                          in the adapter's optional `retryPolicy` key;",
+      "#                          omission = normal mode, so mounting alone turns",
+      "#                          retry on.",
+      "#   dsh-invariants         ctx.invariants registry: runtime assertions over",
+      "#                          the durable session log.  The registry alone",
+      "#                          installs no checks — each package may publish a",
+      "#                          `<pkg>/invariant` companion (inject:",
+      "#                          [\"invariants\"]) that registers its own checks.",
+      "#   dsh-session-telemetry  telemetry seam — still DISABLED, see below.",
+      "#   dsh-session-projection ctx.sessionProjections registry — mounted here,",
+      "#                          in L10, because its first consumer in this",
+      "#                          composition is session-stats.",
+      "#   dsh-session-stats      registers the `sessionStats` projection unit",
+      "#                          (turn/step counts, llm/tool/ttft/decode wall",
+      "#                          times).  ACTIVE at this level: its",
+      "#                          `sessionProjections` inject is now satisfied by",
+      "#                          dsh-session-projection above.",
+      "#",
+      "# The architectural concept: \"runs\" ≠ \"operable\".",
+      "#   retry      → transient faults self-heal       (the run survives)",
+      "#   telemetry  → session records can be exported   (the run is observable)",
+      "#   stats      → whole-session figures are folded  (the run is measurable)",
+      "#   invariants → runtime assertions over the log   (the run is audited)",
+      "#",
+      "# What --trace shows at this level that L9 did not: on a flaky gateway the",
+      "# trace gains `llm/retry` / `llm/retry-started` events around the same",
+      "# turn/step machinery (the smoke run's dead baseURL classifies as",
+      "# TRANSPORT, so retry fires twice before the error surfaces), and the",
+      "# session-projection registry now folds live `sessionStats` figures as",
+      "# those events stream by.",
+      "#",
+      "# Remaining gaps in the pinned 0.1.0-rc.6 dependency set (entries kept",
+      "# visible in inspect/diff, mounted `disabled`):",
+      "#   - dsh-session-telemetry is a pure Service Definition: its module",
+      "#     exports only the abstract SessionTelemetryBackend + coordinator and",
+      "#     NO plugin entry, so cordis rejects it as \"invalid plugin\".  A",
+      "#     backend implementation (e.g. an OTel package) is not installed.",
+      "#   - dsh-jobs, dsh-compaction and dsh-workflow are abstract Service",
+      "#     Definitions.  dsh-jobs throws by design when mounted directly;",
+      "#     dsh-compaction / dsh-workflow would double-register ctx.compaction /",
+      "#     ctx.workflowEngine next to their concrete providers",
+      "#     (dsh-compaction-basic, dsh-workflow-worker-thread).  Exactly one",
+      "#     implementation per context — the providers carry the runtime.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the",
+      "# whole L4→L10 progression remains a single-variable experiment.",
+      "#",
+      "# Second L10 closure — retrieval + guard policies:",
+      "#   dsh-session-query    DISABLED (abstract seam; sqlite backend provides it)",
+      "#   dsh-session-query-sqlite  FTS5 session-history search — a retrieval",
+      "#                        capability, NOT a persistence backend",
+      "#   dsh-session-reference  cross-session snapshot references (untrusted ctx)",
+      "#   dsh-repeat-tool-reminder  advisory loop-breaker at 3/5/8 identical calls",
+      "#   dsh-tool-call-timeout-policy  enforces ToolDefinition.timeoutMs budgets",
+      "#   dsh-time-context     durable per-step timestamp + elapsed-time injection"
+    ],
+    "driverQuestion": "Fix the divide-by-zero bug in src/calculator.js and run the tests."
+  },
+  "replace": [
+    {
+      "name": "@deepseek-ai/dsh-storage-sqlite",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-storage-sqlite",
+        "configYaml": "  config:\n    # Required string.  Lives inside the disposable tmp workspace next to\n    # ./sessions; missing directories are created owner-only by the plugin.\n    path: ./storage/domain.db"
+      }
+    }
+  ],
+  "sections": [
+    {
+      "label": "operability",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-llm-retry",
+          "comments": [
+            "  # No config — the executor's schema is empty; policy lives in each",
+            "  # provider profile's optional `retryPolicy` key (omitted above =",
+            "  # \"normal\" mode: 2 retries on EMPTY_RESPONSE/RATE_LIMIT/SERVER/TIMEOUT/",
+            "  # TRANSPORT, bounded 500ms→10s backoff + 10% jitter).  Hooks the loop's",
+            "  # agent/request-error waterfall and appends durable llm/retry +",
+            "  # llm/retry-started events — watch for them in --trace."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-invariants",
+          "comments": [
+            "  # No config — defaults: enabled: true, empty allow/blocklists (every",
+            "  # companion selected).  The registry alone installs NO checks; concrete",
+            "  # runtime assertions come from per-package companions mountable as",
+            "  # '@deepseek-ai/<pkg>/invariant' (not added here — the declared L10",
+            "  # closure is the registry seam itself)."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-telemetry",
+          "disabled": true,
+          "comments": [
+            "  # DISABLED — still not a mountable plugin: the module exports only the",
+            "  # abstract SessionTelemetryBackend class + SessionTelemetryCoordinator",
+            "  # (no apply, no default plugin), so cordis rejects it as",
+            "  # \"invalid plugin\".  The seam needs a backend implementation (e.g. an",
+            "  # OTel package) that is not installed.  Entry kept for closure",
+            "  # visibility in inspect/diff.",
+            "# Session projection registry (ctx.sessionProjections): folds per-session",
+            "# projection units from the durable log and serves them to consumers.",
+            "# Mounted in L10 because its first consumer in this composition is",
+            "# session-stats below; several earlier plugins (todo, plan-mode,",
+            "# token-meter, subagent) also register their units here now that the",
+            "# registry exists."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-projection",
+          "comments": [
+            "# ACTIVE at this level: the `sessionProjections` inject is satisfied",
+            "# above, so the `sessionStats` unit (turns, steps, llmMs, ttftMs,",
+            "# decodeMs, toolMs folded from the whole log) actually registers and",
+            "# folds live.  No config."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-stats"
+        }
+      ]
+    }
+  ]
+}

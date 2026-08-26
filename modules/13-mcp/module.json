@@ -1,0 +1,64 @@
+{
+  "level": 13,
+  "order": 0,
+  "stageMeta": {
+    "dir": "13-mcp",
+    "title": "MCP Client",
+    "packageName": "stage-13-mcp",
+    "headerComment": [
+      "# Stage 13 — MCP Client",
+      "#",
+      "# L13 = L12 + the MCP client bridge.  Every plugin from Stage 12 is",
+      "# still here — web access, product config, operability, workflow,",
+      "# multi-agent, stateful tasks, and the L6 baseline — plus:",
+      "#",
+      "#   dsh-mcp-client   MCP client bridge: connects to an external MCP",
+      "#                    server (stdio or streamable-http) and registers",
+      "#                    its tools on ctx.tools under server-qualified",
+      "#                    names (mcp__<serverName>__<rawName>)",
+      "#",
+      "# Architecture concept: the Agent's tools no longer come only from",
+      "# built-in packages.  The bridge is a CONSUMER of the core ctx.tools",
+      "# registry — the same seam dsh-tool-fs and dsh-tool-bash write tool",
+      "# schemas into — so an external process's tools become first-class",
+      "# model-facing tools with zero changes to the agent loop.  One plugin",
+      "# instance bridges one server; mount further instances (unique",
+      "# serverName each) for more servers.",
+      "#",
+      "# The configured 'demo' server is a placeholder: no MCP server ships",
+      "# with this repo, so the spawn fails fast and the stage demonstrates",
+      "# the DEGRADATION contract instead.  failOnStartupError: false (the",
+      "# default) means activation completes with zero tools from that",
+      "# server, the supervisor retries with bounded exponential backoff",
+      "# (10 attempts, 500ms doubling to a 30s ceiling) and gives up loudly;",
+      "# the agent runs on its built-in tools throughout.  Point command at",
+      "# a real server (e.g. npx -y @modelcontextprotocol/server-everything)",
+      "# and the mcp__demo__* tools appear with no other change.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the",
+      "# progression remains a single-variable experiment."
+    ],
+    "driverQuestion": "List the tools you can call right now. Are there any whose names start with mcp__demo__? Based on what you observe, explain whether the MCP client reached its configured 'demo' server and what the harness did about the failure."
+  },
+  "sections": [
+    {
+      "label": "mcp client bridge",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-mcp-client",
+          "comments": [
+            "  # MCP client bridge (new in L13): connects to an EXTERNAL MCP server,",
+            "  # discovers its tools, and registers them on ctx.tools under",
+            "  # server-qualified public names (mcp__<serverName>__<rawName>) — the",
+            "  # same naming shape Claude Code and Codex use.  inject = [tools],",
+            "  # satisfied by the core spine.  Its other package imports",
+            "  # (dsh-subprocess env scrubbing, dsh-timeout bounds, dsh-attachment /",
+            "  # dsh-llm for OPTIONAL image-result admission) are library imports,",
+            "  # not service injections — no extra plugins are required."
+          ],
+          "configYaml": "  config:\n    # One plugin instance = one MCP server; there is no `servers` list.\n    # serverName is required ([A-Za-z0-9_-]{1,32}, unique across live\n    # instances) and prefixes every public tool name this server publishes.\n    serverName: demo\n    transport: stdio\n    # Placeholder command: no MCP server ships with this repo, so the\n    # spawn fails fast (ENOENT) instead of hanging the boot.  To go live:\n    #   command: npx\n    #   args: ['-y', '@modelcontextprotocol/server-everything']\n    command: demo-mcp-server\n    # Degrade vs fail-closed: with the default false, an unreachable server\n    # NEVER blocks activation — the plugin comes up with zero tools from\n    # this server, the supervisor retries with bounded backoff (defaults:\n    # 10 attempts, 500ms doubling to a 30s ceiling, each attempt a warn\n    # log) and then gives up with a loud error.  Set true to reject plugin\n    # activation when the initial connect or tool discovery fails.\n    failOnStartupError: false\n    # toolCallTimeoutMs defaults to 60000 — the repo-wide timeout order of\n    # magnitude — and needs no override here."
+        }
+      ]
+    }
+  ]
+}

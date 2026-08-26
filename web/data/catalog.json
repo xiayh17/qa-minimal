@@ -7,6 +7,20 @@
     "description": "Agent interface, registry, initiator scope, and event vocabulary for the DeepSeek Harness",
     "version": "0.1.1-rc.2"
   },
+  "dsh-agent-default-model": {
+    "inject": [],
+    "provides": [
+      "agentDefaultModel"
+    ],
+    "description": "Default model selection shared by Agent entry points",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-agent-instructions": {
+    "inject": [],
+    "provides": [],
+    "description": "Workspace context loader for AGENTS.md/CLAUDE.md instruction files",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-agent-loop": {
     "inject": [
       "agents",
@@ -19,6 +33,14 @@
       "agentLoop"
     ],
     "description": "The concrete agent loop plugin for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-agent-tool-presentation": {
+    "inject": [
+      "tools"
+    ],
+    "provides": [],
+    "description": "Agent-plane presentation selector: composes one agent's tools as Code Mode, native, or both",
     "version": "0.1.1-rc.2"
   },
   "dsh-bash-local": {
@@ -44,6 +66,57 @@
     "description": "Sandbox-consuming implementation of the DeepSeek Harness bash executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
     "version": "0.1.1-rc.2",
     "providesInherited": true
+  },
+  "dsh-code-runtime": {
+    "inject": [],
+    "provides": [
+      "codeRuntime"
+    ],
+    "description": "Abstract code-execution seam (ctx.codeRuntime) for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-code-runtime-worker-thread": {
+    "inject": [],
+    "provides": [
+      "codeRuntime"
+    ],
+    "description": "Worker-thread implementation of the DeepSeek Harness code-execution seam",
+    "version": "0.1.1-rc.2",
+    "providesInherited": true
+  },
+  "dsh-command-compact": {
+    "inject": [
+      "commands",
+      "compaction"
+    ],
+    "provides": [],
+    "description": "Human-facing slash command for explicit session compaction",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-command-feedback": {
+    "inject": [
+      "commands"
+    ],
+    "provides": [],
+    "description": "Log-only session feedback producer and human-facing slash command",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-command-goal": {
+    "inject": [
+      "commands",
+      "goals"
+    ],
+    "provides": [],
+    "description": "Human-facing slash command for persisted same-session goals",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-commands": {
+    "inject": [],
+    "provides": [
+      "commands"
+    ],
+    "description": "Plugin-owned human command registry for DeepSeek Harness UIs",
+    "version": "0.1.1-rc.2"
   },
   "dsh-compaction": {
     "inject": [],
@@ -129,6 +202,16 @@
     "description": "Event-sourced same-session goal state and lifecycle service for the DeepSeek Harness",
     "version": "0.1.1-rc.2"
   },
+  "dsh-goal-round-driver": {
+    "inject": [
+      "agents",
+      "goals",
+      "sessions"
+    ],
+    "provides": [],
+    "description": "Race-fenced same-session goal-round driver",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-invariants": {
     "inject": [],
     "provides": [
@@ -181,6 +264,14 @@
     "description": "Provider-routed LLM request retry policy for the DeepSeek Harness",
     "version": "0.1.1-rc.2"
   },
+  "dsh-mcp-client": {
+    "inject": [
+      "tools"
+    ],
+    "provides": [],
+    "description": "MCP client bridge: connects to MCP servers and registers their tools on ctx.tools",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-permission-presets": {
     "inject": [
       "shell",
@@ -193,6 +284,14 @@
     "description": "User-facing permission presets (ctx.permissionPresets) for the DeepSeek Harness: one product-level Permissions select bundling the sandbox-mode and approval-policy knobs, written through to their own session events",
     "version": "0.1.1-rc.2"
   },
+  "dsh-persona": {
+    "inject": [
+      "systemPrompt"
+    ],
+    "provides": [],
+    "description": "Composition-authored deployment persona section for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-plan-mode": {
     "inject": [
       "tools",
@@ -202,6 +301,12 @@
       "planMode"
     ],
     "description": "Logged per-agent plan mode with deployment guidance, a direct slash command, and a user-reviewed exit",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-repeat-tool-reminder": {
+    "inject": [],
+    "provides": [],
+    "description": "Repeat-tool-call guard plugin: advisory reminders when an agent loops on identical tool calls",
     "version": "0.1.1-rc.2"
   },
   "dsh-sandbox-local": {
@@ -219,6 +324,17 @@
       "sandboxPolicy"
     ],
     "description": "Per-call sandbox policy resolver and current model context: deployment fallbacks plus each session's mode and workspace root, shared by every enforcing capability family",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-schedule": {
+    "inject": [
+      "agents",
+      "sessions",
+      "tools",
+      "sessionPersistence"
+    ],
+    "provides": [],
+    "description": "Agent-scoped durable after, at, and fixed-rate reminders over the session event log",
     "version": "0.1.1-rc.2"
   },
   "dsh-session": {
@@ -259,6 +375,37 @@
     "description": "Session-projection seam: the merge-extensible projection type table, the provider contract, and the ctx.sessionProjections registry serving whole current values of log-derived per-session state",
     "version": "0.1.1-rc.2"
   },
+  "dsh-session-query": {
+    "inject": [
+      "sessions"
+    ],
+    "provides": [
+      "sessionQuery"
+    ],
+    "description": "Combined session query service contract with concrete reads, traces, and filters",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-session-query-sqlite": {
+    "inject": [
+      "sessions"
+    ],
+    "provides": [
+      "sessionQuery"
+    ],
+    "description": "Concrete ctx.sessionQuery backend with SQLite FTS5 search",
+    "version": "0.1.1-rc.2",
+    "providesInherited": true
+  },
+  "dsh-session-reference": {
+    "inject": [
+      "sessionQuery"
+    ],
+    "provides": [
+      "sessionReferenceResolver"
+    ],
+    "description": "Cross-session snapshot references and durable untrusted model context (ctx.sessionReferenceResolver)",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-session-stats": {
     "inject": [
       "sessionProjections"
@@ -273,6 +420,26 @@
       "sessionTelemetry"
     ],
     "description": "SessionTelemetryBackend seam for the DeepSeek Harness: session-event capture, projection, redaction, and handoff to a reporting backend",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-session-title": {
+    "inject": [
+      "sessions"
+    ],
+    "provides": [
+      "sessionTitle"
+    ],
+    "description": "Log-backed session title service and provider registry for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-session-title-first-prompt-llm": {
+    "inject": [
+      "sessionTitle",
+      "llm",
+      "sessions"
+    ],
+    "provides": [],
+    "description": "First-message LLM provider plugin for DeepSeek Harness session titles",
     "version": "0.1.1-rc.2"
   },
   "dsh-settings": {
@@ -298,6 +465,30 @@
       "shellEnv"
     ],
     "description": "Tool-independent managed DSH_* shell environment registry",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-skill": {
+    "inject": [],
+    "provides": [
+      "skills"
+    ],
+    "description": "Agent skill provider registry for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-skill-badge": {
+    "inject": [
+      "skills"
+    ],
+    "provides": [],
+    "description": "Bundled dsh badge skill provider for DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-skill-filesystem": {
+    "inject": [
+      "skills"
+    ],
+    "provides": [],
+    "description": "Local filesystem skill provider for the DeepSeek Harness",
     "version": "0.1.1-rc.2"
   },
   "dsh-storage": {
@@ -367,12 +558,29 @@
     "description": "System prompt assembly registry for the DeepSeek Harness",
     "version": "0.1.1-rc.2"
   },
+  "dsh-time-context": {
+    "inject": [
+      "agents"
+    ],
+    "provides": [],
+    "description": "Opt-in durable per-step context with the current time and elapsed time",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-token-meter": {
     "inject": [],
     "provides": [
       "tokenMeter"
     ],
     "description": "Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-tool-ask-user": {
+    "inject": [
+      "tools",
+      "userQuestions"
+    ],
+    "provides": [],
+    "description": "Model-facing ask_user_question tool over the ctx.userQuestions seam",
     "version": "0.1.1-rc.2"
   },
   "dsh-tool-bash": {
@@ -384,6 +592,14 @@
     ],
     "provides": [],
     "description": "Model-facing bash tool with optional generic background-job and sandbox-escalation support",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-tool-call-timeout-policy": {
+    "inject": [
+      "tools"
+    ],
+    "provides": [],
+    "description": "Tool-call timeout policy: a tools/execute wrapper that arms a per-tool deadline on exec.signal and returns TOOL_TIMEOUT when it wins",
     "version": "0.1.1-rc.2"
   },
   "dsh-tool-fs": {
@@ -438,6 +654,25 @@
     "description": "Model-facing fresh-agent Ralph loop over the workflow and subagent seams",
     "version": "0.1.1-rc.2"
   },
+  "dsh-tool-skill": {
+    "inject": [
+      "agents",
+      "tools",
+      "skills"
+    ],
+    "provides": [],
+    "description": "Model-facing skill loading tool for the DeepSeek Harness",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-tool-str-replace-editor": {
+    "inject": [
+      "tools",
+      "fs"
+    ],
+    "provides": [],
+    "description": "Model-facing view, create, literal replace, and line insert tool over the Harness filesystem service",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-tool-subagent": {
     "inject": [
       "tools",
@@ -448,12 +683,60 @@
     "description": "Model-facing subagent delegation tool over the ctx.subagents seam",
     "version": "0.1.1-rc.2"
   },
+  "dsh-tool-subagent-control": {
+    "inject": [
+      "tools",
+      "subagents"
+    ],
+    "provides": [],
+    "description": "Globally named send_message, interrupt_agent, and list_agents tools over ctx.subagents continuations",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-tool-subagent-control/list-agents": {
+    "inject": [
+      "tools",
+      "subagents",
+      "agents"
+    ],
+    "provides": [],
+    "description": ""
+  },
+  "dsh-tool-subagent-report": {
+    "inject": [
+      "subagents",
+      "tools",
+      "systemPrompt"
+    ],
+    "provides": [],
+    "description": "Child-scoped report tool over ctx.subagents continuations",
+    "version": "0.1.1-rc.2"
+  },
   "dsh-tool-todo": {
     "inject": [
       "tools"
     ],
     "provides": [],
     "description": "Model-facing todo_write tool over the DeepSeek Harness event-sourced session log",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-tool-web": {
+    "inject": [
+      "tools",
+      "web",
+      "systemPrompt"
+    ],
+    "provides": [],
+    "description": "Model-facing web tools (web_search, web_fetch) over the DeepSeek Harness web capability seam (ctx.web)",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-tool-workflow": {
+    "inject": [
+      "tools",
+      "workflowEngine",
+      "systemPrompt"
+    ],
+    "provides": [],
+    "description": "Model-facing workflow tool: run a JavaScript orchestration script over ctx.workflowEngine",
     "version": "0.1.1-rc.2"
   },
   "dsh-tools": {
@@ -480,6 +763,30 @@
       "userQuestions"
     ],
     "description": "Abstract user-questions seam (ctx.userQuestions) for asking the human during agent runs",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-web": {
+    "inject": [],
+    "provides": [
+      "web"
+    ],
+    "description": "Abstract web access capability seam (ctx.web) for the DeepSeek Harness — search/fetch provider registry, registration-order-independent selection, request/result vocabulary, and the WebError taxonomy",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-web-fetch-http": {
+    "inject": [
+      "web"
+    ],
+    "provides": [],
+    "description": "Anonymous public HTTP(S) fetch provider for the DeepSeek Harness web capability seam (ctx.web)",
+    "version": "0.1.1-rc.2"
+  },
+  "dsh-web-search-deepseek": {
+    "inject": [
+      "web"
+    ],
+    "provides": [],
+    "description": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web)",
     "version": "0.1.1-rc.2"
   },
   "dsh-workflow": {

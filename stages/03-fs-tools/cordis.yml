@@ -20,6 +20,7 @@
 # can produce real file side effects.  Search tools (glob / grep) are a
 # separate plugin (dsh-tool-fs-search) that depends on ctx.subprocess;
 # they arrive in Stage 04.
+
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -34,6 +35,7 @@
             contextWindow: 1000000
           - id: deepseek-v4-flash
             contextWindow: 1000000
+# ── Agent spine (inherited from L1) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session'
 - name: '@deepseek-ai/dsh-system-prompt'
   config:
@@ -43,12 +45,12 @@
 - name: '@deepseek-ai/dsh-agent-loop'
   config:
     agents: []
-# ── persistence (inherited from L2) ──────────────────────────────────
+# ── persistence (inherited from L2) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
     root: ./sessions
 - name: '@deepseek-ai/dsh-session-checkpoint-policy'
-# ── FS capability seam (new in L3) ───────────────────────────────────
+# ── FS capability seam (new in L3) ────────────────────────────────────────────
 - name: '@deepseek-ai/dsh-fs-local'
   config:
     cwd: !!js process.env.QA_WORKSPACE ?? process.cwd()

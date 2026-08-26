@@ -10,6 +10,10 @@ upper levels inherit all plugins from lower levels and add one new closure.
 ```
                          Full Harness
                               ▲
+                         MCP Client
+                              ▲
+                         Web Access
+                              ▲
                     Workflow / Subagent
                               ▲
                      Plan / Goal / Skill
@@ -47,30 +51,34 @@ upper levels inherit all plugins from lower levels and add one new closure.
 | **L9** | Workflow Agent | workflow + ralph + compaction + guard | long multi-round tasks | conversation → task runtime |
 | **L10** | Operable Harness | retry + invariants + telemetry + stats | retry, diagnose, measure | "runs" ≠ "operable" |
 | **L11** | Productized | settings + credentials + preset + bundle + HMR | hot-swap model/key/mode | composition → product config |
-| **L12** | Full Product | host + API + client + Web UI | CLI → API → Web | one capability graph, many entry points |
+| **L12** | Web Access | web runtime + deepseek search + http fetch + web tools | web_search / web_fetch reach the public internet | a seam providers register INTO, not replace |
+| **L13** | MCP Client | mcp-client | external server tools appear as mcp__\<server\>__\<name\> | ctx.tools is an open registry |
+| **L14** | Full Product | host + API + client + Web UI | CLI → API → Web | one capability graph, many entry points |
 
-> Status: L0–L11 implemented (`stages/00`–`stages/11`). L12 (host/API/Web
+> Status: L0–L13 implemented (`stages/00`–`stages/13`). L14 (host/API/Web
 > surfaces) lives in the full `dsh` CLI and is out of this lab's scope.
 
 ## The behavior outcome matrix
 
-Every level runs the same seven tasks (A–G). What changes is the **behavior
+Every level runs the same twelve tasks (A–L). What changes is the **behavior
 outcome** — not a simple pass/fail, because "denied by sandbox" and "asks
 approval" are correct results, not failures. This separates *capability*
 from *policy*.
 
-| Task | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 | L11 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| A. Answer a knowledge question | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| B. Remember this turn's info | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| C. Resume after restart | unsupported | unsupported | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists |
-| D. Read a project file | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| E. Run tests and edit files | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
-| F. Write outside workspace | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval |
-| G. Track multi-step work (todo/plan/goal) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
-| H. Delegate to a sub-agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
-| I. Long-running task (ralph/compaction) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds |
-| J. Retry transient failure + stats | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds |
+| Task | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 | L11 | L12 | L13 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A. Answer a knowledge question | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| B. Remember this turn's info | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| C. Resume after restart | unsupported | unsupported | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists | persists |
+| D. Read a project file | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| E. Run tests and edit files | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| F. Write outside workspace | unsupported | unsupported | unsupported | unsupported | succeeds | denied-by-sandbox | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval | asks-approval |
+| G. Track multi-step work (todo/plan/goal) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| H. Delegate to a sub-agent | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds | succeeds |
+| I. Long-running task (ralph/compaction) | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds | succeeds |
+| J. Retry transient failure + stats | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds | succeeds | succeeds |
+| K. Search / fetch the web | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds | succeeds |
+| L. Use MCP server tools | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | succeeds |
 
 ### Reading the matrix
 
@@ -82,6 +90,15 @@ from *policy*.
   justification, and the approval gate prompts the user; this is the
   **correct** result for L6
 - **unsupported** — the capability closure is not yet mounted
+
+Two rows deserve a footnote:
+
+- **K** — each `web_search` is a full auxiliary model turn, and web tools
+  bypass the L6 approval gate (no web-specific permission policy exists).
+- **L** — the shipped configuration points at a placeholder server on
+  purpose: the stage demonstrates the degradation contract (bounded
+  retries, then the agent runs on built-in tools). Point `command` at a
+  real MCP server and the `mcp__demo__*` tools appear with no other change.
 
 This "same task, different plugin graph" experience proves:
 **Agent capability is not hardcoded — it is composed. And capability is

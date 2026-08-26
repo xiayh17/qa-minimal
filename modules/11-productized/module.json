@@ -1,0 +1,151 @@
+{
+  "level": 11,
+  "order": 0,
+  "stageMeta": {
+    "dir": "11-productized",
+    "title": "Productized",
+    "packageName": "stage-11-productized",
+    "headerComment": [
+      "# Stage 11 — Productized",
+      "#",
+      "# L11 = L10 + product configuration.  Every plugin from Stage 06 is still",
+      "# here — sandbox, approval, FS, shell, search, persistence, resume — plus",
+      "# the accumulated closures of L7 (stateful tasks), L8 (multi-agent),",
+      "# L9 (workflow + context management) and L10 (operability), and finally",
+      "# the product-config seam, now with real providers:",
+      "#",
+      "#   dsh-settings-file      file-backed settings provider: one user-editable",
+      "#                          settings.yaml whose per-namespace sections layer",
+      "#                          OVER each plugin's composition base — edit the",
+      "#                          file and watchers re-resolve live (watch: true)",
+      "#   dsh-credentials-local  file-backed credential provider: the live",
+      "#                          process environment layered over a managed",
+      "#                          .credentials.yaml document",
+      "#",
+      "# Architecture concept: composition → product config.  Until L10 the model",
+      "# route, the API-key reference and the sandbox/approval mode were frozen",
+      "# into this file — changing them meant editing the composition.  With the",
+      "# two providers mounted, dsh-llm-pi-ai's already-wired consumers go live:",
+      "# installSettingsSection() turns its `llm-pi-ai` namespace (providers,",
+      "# models, retryPolicy) into a hot-swappable user document, and every model",
+      "# request resolves `apiKeyEnv: QA_API_KEY` through ctx.credentials",
+      "# (per-operation resolution, so a rotated secret reaches the very next",
+      "# request without restarting any plugin).",
+      "#",
+      "# The abstract seams (dsh-settings, dsh-credentials) stay DISABLED under",
+      "# the same rule as dsh-jobs and dsh-compaction below: the provider extends",
+      "# the abstract class and registers the same service name, and cordis",
+      "# registers one service per name — mounting both fails the boot.",
+      "#",
+      "# Still open at 0.1.0-rc.6: the roadmap's preset / bundle / HMR have no",
+      "# standalone npm packages in this release — they live inside the dsh CLI's",
+      "# `dsh-base` profile bundle.  What this stage closes is the product-config",
+      "# seam itself: settings and credentials are real services now.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the whole",
+      "# L4→L11 progression remains a single-variable experiment.",
+      "#",
+      "# Second L11 closure — human entry points + product UX:",
+      "#   dsh-commands + dsh-command-compact/goal/feedback  slash-command surface",
+      "#   dsh-tool-ask-user    activates the L7 user-questions seam for the model",
+      "#   dsh-session-title (+ first-prompt-llm)  automatic session titles",
+      "#   dsh-agent-default-model  process-wide default route, settings-layered",
+      "#   dsh-persona / dsh-agent-tool-presentation  DISABLED: agent-preset-only rows",
+      "#                        (deployment-level equivalents: system-prompt persona,",
+      "#                        dsh-tools mode config)"
+    ],
+    "driverQuestion": "Fix the divide-by-zero bug in src/calculator.js and run the tests to verify."
+  },
+  "replace": [
+    {
+      "name": "@deepseek-ai/dsh-plan-mode",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-plan-mode",
+        "configYaml": "  config:\n    section: Plan mode is read-only. Explore with read-only tools, then present one concrete plan and wait for user review before any edit or command."
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-goal",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-goal"
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-goal",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-tool-goal",
+        "comments": [
+          "# Storage provider chain for the workspace registry: the hub (ctx.storage)",
+          "# names backends, the sqlite backend serves the kv facet, and the domain",
+          "# data form mounts schema-validated KV domains and provides",
+          "# ctx.storageDomain — the service dsh-workspace injects.  sqlite `path`",
+          "# and the domain `backend` route are both REQUIRED keys; defaults are",
+          "# taken everywhere else (journalMode wal, no per-domain routes)."
+        ]
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-storage-sqlite",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-storage-sqlite",
+        "configYaml": "  config:\n    path: ./storage.sqlite"
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-ralph",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-tool-ralph",
+        "comments": [
+          "# ctx.tokenMeter: replay-aware token measurement.  Both context-management",
+          "# consumers below inject it."
+        ]
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-compaction-basic",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-compaction-basic",
+        "comments": [
+          "# Model-free head/middle/tail pruning of oversized tool results",
+          "# (character budgets defaulted; injects tokenMeter)."
+        ]
+      }
+    }
+  ],
+  "sections": [
+    {
+      "label": "product config",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-settings",
+          "disabled": true
+        },
+        {
+          "name": "@deepseek-ai/dsh-credentials",
+          "disabled": true,
+          "comments": [
+            "# The providers that make the seam real.  Both follow the persistence",
+            "# convention (root: ./sessions): an explicit `path` inside the disposable",
+            "# workspace instead of the $DSH_HOME default, and watch: true (default) so",
+            "# an external edit re-resolves live.  dsh-home-paths and dsh-atomic-write",
+            "# are libraries these providers import, not plugins — nothing to mount."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-settings-file",
+          "configYaml": "  config:\n    path: ./settings.yaml"
+        },
+        {
+          "name": "@deepseek-ai/dsh-credentials-local",
+          "configYaml": "  config:\n    path: ./.credentials.yaml"
+        }
+      ]
+    }
+  ]
+}

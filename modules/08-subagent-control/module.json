@@ -1,0 +1,56 @@
+{
+  "level": 8,
+  "order": 10,
+  "sections": [
+    {
+      "label": "subagent control",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-tool-subagent-control",
+          "comments": [
+            "  # ── subagent control plane (new in L8) ────────────────────────────",
+            "  # The parent-to-child direction, registered ONCE and globally named:",
+            "  # send_message (deliver a follow-up as the child's next FIFO turn) and",
+            "  # interrupt_agent (cancel only the target's current turn; queued",
+            "  # messages park, descendants keep running).  Keeping the controls in",
+            "  # one separately loaded plugin is what lets several provider-bound",
+            "  # delegation tools (subagent, subagent_fork above) share one control",
+            "  # API without double-registering it.  No config.  inject = [tools,",
+            "  # subagents]; the continuation runtime itself comes from ctx.agents",
+            "  # (dsh-agent, L1), so followup/interrupt are live at this level.",
+            "  # NOTE: both mounted delegation instances keep backgroundMode",
+            "  # 'one-shot', so no continuable child can be started yet — the",
+            "  # controls are wired but have nothing to steer until a",
+            "  # dsh-tool-subagent instance sets backgroundMode: continuable."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+          "comments": [
+            "  # list_agents rides a separate subpath export (inject [tools,",
+            "  # subagents, agents]) so a deployment can deliver continuation",
+            "  # without exposing discovery.  Its schema registers here, but",
+            "  # every CALL also reads the sessionProjections registry — absent",
+            "  # until dsh-session-projection (L10) — and fails cleanly with",
+            "  # SUBAGENT_CONTROL_PROJECTIONS_UNAVAILABLE.  Mounting it now keeps",
+            "  # the whole closure visible; it goes fully live at L10."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-subagent-report",
+          "configYaml": "  config:\n    # Deployment scheduling policy for accepted reports (the schema\n    # default, written out for visibility): next-step delivers through\n    # parent.steer() — a running parent receives the report at its nearest\n    # step boundary, an idle parent starts a turn.  The alternative 'quiet'\n    # uses parent.inject() and never wakes a parked parent.  The\n    # model-facing schema cannot override this per call.\n    reportDelivery: next-step",
+          "comments": [
+            "  # The child-to-parent direction: NOT a global tool but a",
+            "  # continuable-child setup contribution, so `report` and its",
+            "  # tool:report prompt section exist only inside continuable",
+            "  # in-process children — roots, one-shot children, and the parent",
+            "  # never see them, and the registration survives the child's",
+            "  # toolFilter so a delegation allow-list cannot strip the only",
+            "  # return channel.  inject = [subagents, tools, systemPrompt], all",
+            "  # satisfied in this graph."
+          ]
+        }
+      ]
+    }
+  ]
+}

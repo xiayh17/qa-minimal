@@ -12,6 +12,7 @@
 # No tools are registered — dsh-tools is an empty registry.
 # The model cannot call tools; it can only answer from knowledge.
 # This is deliberate: the lesson is "LLM ≠ Agent", not "look, tools".
+
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -26,6 +27,7 @@
             contextWindow: 1000000
           - id: deepseek-v4-flash
             contextWindow: 1000000
+# ── Agent spine (new in L1) ───────────────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session'
 - name: '@deepseek-ai/dsh-system-prompt'
   config:

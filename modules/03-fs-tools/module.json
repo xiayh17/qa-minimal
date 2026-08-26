@@ -1,0 +1,61 @@
+{
+  "level": 3,
+  "order": 0,
+  "stageMeta": {
+    "dir": "03-fs-tools",
+    "title": "Workspace FS: the first real Tool",
+    "packageName": "stage-03-fs-tools",
+    "headerComment": [
+      "# Stage 03 — Workspace FS: the first real Tool",
+      "#",
+      "# L3 = L2 + FS.  Every plugin from Stage 02 is still here — the agent can",
+      "# still resume across process restarts — plus the FS capability seam:",
+      "#",
+      "#   dsh-fs-local               Provider: implements ctx.fs (real filesystem)",
+      "#   dsh-fs-observation-policy  tracks which files the model has observed",
+      "#   dsh-tool-fs                Consumer: read / write / edit tool schemas",
+      "#",
+      "# Cordis dependency injection in one sentence:",
+      "#   Provider makes ctx.fs appear; Consumer declares a dependency on ctx.fs;",
+      "#   when the dependency is satisfied, Consumer activates and registers the",
+      "#   tool schemas onto ctx.tools — giving the model the ability to read and",
+      "#   write files.  Without the Provider, ctx.fs is absent and dsh-tool-fs",
+      "#   stays pending (it never finishes registering).  Without the Consumer,",
+      "#   ctx.fs works but the model has no tool to call it.",
+      "#",
+      "# dsh-tool-fs registers read / write / edit (and conditionally read_image),",
+      "# NOT a read-only subset.  This stage is a Workspace FS Agent — the model",
+      "# can produce real file side effects.  Search tools (glob / grep) are a",
+      "# separate plugin (dsh-tool-fs-search) that depends on ctx.subprocess;",
+      "# they arrive in Stage 04."
+    ],
+    "driverQuestion": "Read the file src/calculator.js and explain what it does. Be concise."
+  },
+  "replace": [
+    {
+      "name": "@deepseek-ai/dsh-system-prompt",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-system-prompt",
+        "configYaml": "  config:\n    persona: You are a helpful coding assistant. Read and write files when asked. Answer concisely."
+      }
+    }
+  ],
+  "sections": [
+    {
+      "label": "FS capability seam",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-fs-local",
+          "configYaml": "  config:\n    cwd: !!js process.env.QA_WORKSPACE ?? process.cwd()"
+        },
+        {
+          "name": "@deepseek-ai/dsh-fs-observation-policy"
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-fs"
+        }
+      ]
+    }
+  ]
+}

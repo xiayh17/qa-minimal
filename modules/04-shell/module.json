@@ -1,0 +1,74 @@
+{
+  "level": 4,
+  "order": 0,
+  "stageMeta": {
+    "dir": "04-shell",
+    "title": "Shell / Process Execution: real side effects",
+    "packageName": "stage-04-shell",
+    "headerComment": [
+      "# Stage 04 — Shell / Process Execution: real side effects",
+      "#",
+      "# L4 = L3 + Shell.  Every plugin from Stage 03 is still here — FS tools,",
+      "# persistence, resume — plus the Shell capability seam:",
+      "#",
+      "#   dsh-subprocess-local   Provider: child-process groups (spawn/kill/plumbing)",
+      "#   dsh-shell-env          publishes shell environment variables",
+      "#   dsh-bash-local         Provider: implements ctx.shell (runs real bash commands)",
+      "#   dsh-tool-bash          Consumer: bash tool schema",
+      "#   dsh-tool-fs-search     Consumer: glob / grep tool schemas (depends on ctx.subprocess)",
+      "#",
+      "# The Agent can now read/write/edit files AND run commands — edit, test,",
+      "# git, anything.  This is where \"Q&A\" becomes \"coding agent\": the model",
+      "# has real side effects.  Up to L3 the model could only operate on files;",
+      "# now it can start real programs and see stdout/stderr/exit codes.",
+      "#",
+      "# The persona is frozen from this stage onward (L4 → L5 → L6) so that the",
+      "# L4→L5 A/B experiment is truly single-variable: only the safety layer",
+      "# changes, not the system prompt."
+    ],
+    "driverQuestion": "Read src/calculator.js, find the divide-by-zero bug, fix it by adding a guard for b === 0 that throws an Error, then run: node -e \"const c = require(\\'./src/calculator\\'); try { c.divide(1,0) } catch(e) { console.log(e.message) }\" to verify."
+  },
+  "replace": [
+    {
+      "name": "@deepseek-ai/dsh-system-prompt",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-system-prompt",
+        "configYaml": "  config:\n    # FROZEN — do not change in L4/L5/L6 (A/B single-variable requirement)\n    persona: You are a coding agent. Read files, run commands, fix bugs. Be concise."
+      }
+    }
+  ],
+  "sections": [
+    {
+      "label": "Shell capability seam",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-subprocess-local"
+        },
+        {
+          "name": "@deepseek-ai/dsh-shell-env"
+        },
+        {
+          "name": "@deepseek-ai/dsh-bash-local",
+          "configYaml": "  config:\n    cwd: !!js process.env.QA_WORKSPACE ?? process.cwd()\n    timeoutMs: 60000"
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-bash",
+          "disabledCondition": "!!js process.platform === 'win32'",
+          "comments": [
+            "# ── FS search tools (new in L4 — depends on ctx.subprocess) ──────────"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "FS search tools",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-tool-fs-search",
+          "configYaml": "  config:\n    # required key since 0.1.0-rc.6: sample over-cap glob results across\n    # top-level dirs instead of truncating (irrelevant for the tiny fixture)\n    sampleOverCapGlobResults: true"
+        }
+      ]
+    }
+  ]
+}

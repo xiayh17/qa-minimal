@@ -36,6 +36,16 @@
 #
 # The persona is frozen (byte-for-byte identical to L4/L5/L6) so the whole
 # L4→L11 progression remains a single-variable experiment.
+#
+# Second L11 closure — human entry points + product UX:
+#   dsh-commands + dsh-command-compact/goal/feedback  slash-command surface
+#   dsh-tool-ask-user    activates the L7 user-questions seam for the model
+#   dsh-session-title (+ first-prompt-llm)  automatic session titles
+#   dsh-agent-default-model  process-wide default route, settings-layered
+#   dsh-persona / dsh-agent-tool-presentation  DISABLED: agent-preset-only rows
+#                        (deployment-level equivalents: system-prompt persona,
+#                        dsh-tools mode config)
+
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -50,84 +60,85 @@
             contextWindow: 1000000
           - id: deepseek-v4-flash
             contextWindow: 1000000
+# ── Agent spine (inherited from L1) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session'
 - name: '@deepseek-ai/dsh-system-prompt'
   config:
-    # FROZEN — byte-for-byte identical to L4/L5 (A/B single-variable requirement)
+    # FROZEN — do not change in L4/L5/L6 (A/B single-variable requirement)
     persona: You are a coding agent. Read files, run commands, fix bugs. Be concise.
 - name: '@deepseek-ai/dsh-tools'
 - name: '@deepseek-ai/dsh-agent'
 - name: '@deepseek-ai/dsh-agent-loop'
   config:
     agents: []
-# ── persistence (inherited from L2) ──────────────────────────────────
+# ── persistence (inherited from L2) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
     root: ./sessions
 - name: '@deepseek-ai/dsh-session-checkpoint-policy'
-# ── sandbox layer (inherited from L5) ────────────────────────────────
+# ── FS capability seam (inherited from L3) ────────────────────────────────────
+- name: '@deepseek-ai/dsh-fs-observation-policy'
+- name: '@deepseek-ai/dsh-tool-fs'
+# ── Shell capability seam (inherited from L4) ─────────────────────────────────
+- name: '@deepseek-ai/dsh-subprocess-local'
+- name: '@deepseek-ai/dsh-shell-env'
+# ── FS search tools (new in L4 — depends on ctx.subprocess) ──────────
+- name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+# ── FS search tools (inherited from L4) ───────────────────────────────────────
+- name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    # required key since 0.1.0-rc.6: sample over-cap glob results across
+    # top-level dirs instead of truncating (irrelevant for the tiny fixture)
+    sampleOverCapGlobResults: true
+# ── sandbox layer (inherited from L5) ─────────────────────────────────────────
 - name: '@deepseek-ai/dsh-sandbox-local'
 - name: '@deepseek-ai/dsh-sandbox-policy'
   config:
     mode: workspace-write
     workspaceRoot: !!js process.env.QA_WORKSPACE ?? process.cwd()
-# ── approval + permission presets (inherited from L6) ────────────────
-- name: '@deepseek-ai/dsh-user-approval'
-  config:
-    policy: ask
-- name: '@deepseek-ai/dsh-permission-presets'
-# ── sandboxed FS (inherited from L5) ─────────────────────────────────
+# ── sandboxed FS (replaces dsh-fs-local from L3/L4) ───────────────────
 - name: '@deepseek-ai/dsh-fs-sandbox'
-- name: '@deepseek-ai/dsh-fs-observation-policy'
-- name: '@deepseek-ai/dsh-tool-fs'
-# ── sandboxed shell (inherited from L5) ──────────────────────────────
-- name: '@deepseek-ai/dsh-subprocess-local'
-- name: '@deepseek-ai/dsh-shell-env'
 - name: '@deepseek-ai/dsh-bash-sandbox'
   disabled: !!js process.platform === 'win32'
   config:
     timeoutMs: 60000
-- name: '@deepseek-ai/dsh-tool-bash'
-  disabled: !!js process.platform === 'win32'
-# ── FS search tools (inherited from L4) ──────────────────────────────
-# NOTE: rc.6 made sampleOverCapGlobResults a REQUIRED key (no schema
-# default) — L4–L6 predate that change and no longer boot as-is.  true =
-# an over-cap glob result is sampled across top-level directories instead
-# of truncated to the modification-time head.  Every other cap keeps its
-# schema default.
-- name: '@deepseek-ai/dsh-tool-fs-search'
+# ── approval + permission presets (inherited from L6) ─────────────────────────
+- name: '@deepseek-ai/dsh-user-approval'
   config:
-    sampleOverCapGlobResults: true
-# ── stateful tasks (new in L7) ───────────────────────────────────────
-# todo_write: whole-list task tracking over the session log.
-# allowParallelInProgress is a REQUIRED deployment choice (no schema
-# default): true because this stage mounts subagent and job tooling that
-# legitimately fan out concurrent work.
+    policy: ask
+# ── sandboxed FS (inherited from L5) ─────────────────────────────────
+- name: '@deepseek-ai/dsh-permission-presets'
+# ── stateful task seams (inherited from L7) ───────────────────────────────────
+# ── stateful task seams (new in L7) ──────────────────────────────────
+# todo_write: the model replaces the WHOLE list on every call; each call
+# appends a todo/write event to the session log (last-write-wins on
+# replay).  allowParallelInProgress is a required deployment choice — true
+# permits several in_progress tasks at once, aligned with the other
+# stages in this repo.
+- name: '@deepseek-ai/dsh-user-questions'
 - name: '@deepseek-ai/dsh-tool-todo'
   config:
     allowParallelInProgress: true
-# ctx.userQuestions service: the question-asking seam plan-mode's
-# exit_plan_mode review reads through ctx.get("userQuestions").  The
-# service is the registry plus a validating ask(); no UI provider is
-# registered in this headless composition, so ask() fails loud with
-# NO_PROVIDER instead of blocking forever.
-- name: '@deepseek-ai/dsh-user-questions'
-# Logged plan mode (ctx.planMode): per-agent plan state, a plan:policy
-# prompt section, the /plan command, and a user-reviewed exit tool.
-# `section` is REQUIRED and must be non-empty — it is deployment-owned
-# guidance narrated while plan mode is active.  The exit tool's review
-# step asks through the user-questions seam mounted above.
+# plan mode: durable plan/mode session state + the always-registered
+# exit_plan_mode tool.  The /plan slash command stays dormant: it only
+# registers when ctx.commands is composed (@deepseek-ai/dsh-commands is
+# not mounted).  The exit review asks through ctx.userQuestions; with no
+# UI provider installed the review fails with a clear NO_PROVIDER error
+# and the session stays in plan mode.  Plan mode is soft guidance —
+# sandbox mode and approval policy enforce restrictions independently
+# and never read plan state.
 - name: '@deepseek-ai/dsh-plan-mode'
   config:
     section: Plan mode is read-only. Explore with read-only tools, then present one concrete plan and wait for user review before any edit or command.
 - name: '@deepseek-ai/dsh-goal'
-- name: '@deepseek-ai/dsh-tool-goal'
 # Storage provider chain for the workspace registry: the hub (ctx.storage)
 # names backends, the sqlite backend serves the kv facet, and the domain
 # data form mounts schema-validated KV domains and provides
 # ctx.storageDomain — the service dsh-workspace injects.  sqlite `path`
 # and the domain `backend` route are both REQUIRED keys; defaults are
 # taken everywhere else (journalMode wal, no per-domain routes).
+- name: '@deepseek-ai/dsh-tool-goal'
 - name: '@deepseek-ai/dsh-storage'
 - name: '@deepseek-ai/dsh-storage-sqlite'
   config:
@@ -135,112 +146,402 @@
 - name: '@deepseek-ai/dsh-storage-domain'
   config:
     backend: sqlite
-# Durable workspace registry (ctx.workspaceRegistry): validated session
-# attachment over the domain data form.  Startup waits for
-# sessionPersistence so an unavailable peer can never be mistaken for an
-# empty history.
 - name: '@deepseek-ai/dsh-workspace'
-# ── multi-agent (new in L8) ──────────────────────────────────────────
-# dsh-subagent is the concrete named-provider registry (ctx.subagents);
-# the spawn/fork backends register provider routes into it, both driven by
-# the shared in-process run driver (a library, not a plugin).
+# ── skills (inherited from L7) ────────────────────────────────────────────────
+  # The skill seam itself: ctx.skills, a scope-layered registry of named
+  # skill PROVIDERS — the same Definition → Provider → Consumer shape as
+  # ctx.subagents.  It owns no skill source and renders no model-facing
+  # surface: providers register catalogs, consumers read them.
+  # No config (collectCacheMaxEntries defaults to 128).
+- name: '@deepseek-ai/dsh-skill'
+  # Provider "filesystem" (default providerName): scans the project roots
+  # (.dsh/skills, .agents/skills at the nearest .git ancestor), then
+  # customSkillDirs, then the user roots (~/.dsh/skills, ~/.agents/skills)
+  # for <name>/SKILL.md bundles and flat <name>.md files.  The chokidar
+  # watch (default on) invalidates the provider so the next pre-step
+  # republishes a changed catalog.  inject [skills] — satisfied above;
+  # all defaults kept.
+- name: '@deepseek-ai/dsh-skill-filesystem'
+  # Consumer: emits the durable <available_skills> catalog message before
+  # the first request (append-only complete replacement when membership,
+  # descriptions, or tool visibility change) and registers the `skill`
+  # loader tool, whose result is the canonical <skill_content> block.
+  # inject [agents, tools, skills] — all present in this graph.
+  # No config (catalogDescriptionMaxLength defaults to 500).
+- name: '@deepseek-ai/dsh-tool-skill'
+  # DISABLED — optional bundled provider contributing the fixed `dsh-badge`
+  # skill (official "powered by dsh" Markdown snippets plus the packaged
+  # PNG as resource base).  The upstream CLI composition ships this row
+  # disabled: true as an explicit opt-in, and the same choice is kept
+  # here; enable it to see a guaranteed built-in skill enter the catalog.
+- name: '@deepseek-ai/dsh-skill-badge'
+  disabled: true
+# ── task helpers (inherited from L7) ──────────────────────────────────────────
+  # The runtime that makes goal mode autonomous: at whole-agent idle, an
+  # active, armed goal with remaining capacity is continued as sequential
+  # retained <goal_round> prompts, each admitted only after a
+  # sessions.flush() durability checkpoint.  inject [agents, goals,
+  # sessions] — goals comes from the stateful-task closure above.  No
+  # config BY DESIGN: the round cap lives in the goal definition and the
+  # blocked threshold in dsh-tool-goal, so the driver cannot diverge
+  # from either.
+- name: '@deepseek-ai/dsh-goal-round-driver'
+  # AGENTS.md / CLAUDE.md loader (the roadmap's "reads AGENTS.md"): folds
+  # the user-global ($DSH_HOME/AGENTS.md) plus project instruction chain
+  # into durable history at the first pre-step, then discovers nested
+  # files after successful read/write/edit tool calls — additions,
+  # replacements, and removal notices.  Reads go through the optional
+  # ctx.fs (no static inject, so providerless trees still boot); here
+  # the L5 sandboxed fs serves them.  Defaults kept: candidates
+  # AGENTS.md/CLAUDE.md + .local overlays, maxSourceBytes 1 MiB,
+  # projectRootMarkers ['.git'].
+- name: '@deepseek-ai/dsh-agent-instructions'
+  config:
+    # REQUIRED, no schema default: per-session render budget for the whole
+    # injected instruction chain — each deployment must make this
+    # prompt-budget choice explicitly.  Broader files are dropped whole
+    # before the most-specific file is truncated.
+    maxBytes: 32768
+  # Durable reminders hung on the session event log: schedule_create /
+  # schedule_list / schedule_delete tools, installed on root agents
+  # created after this plugin loads.  schedule/change events are the only
+  # authority — timers, tool values, and due-reminder follow-ups are
+  # disposable projections, so replay reconstructs every reminder.
+  # inject [agents, sessions, tools, sessionPersistence] — persistence
+  # comes from the L2 JSONL backend, and the static inject makes a
+  # missing persistence service a composition error.  No config.
+- name: '@deepseek-ai/dsh-schedule'
+  # Model-facing surgical editor: str_replace_editor (view / create /
+  # str_replace / insert) over ctx.fs — one unique literal match
+  # required, no regex, no replace_all.  inject [tools, fs]: fs is the
+  # sandboxed provider from L5, and every mutation routes through
+  # fs/write-intent / fs/edit-intent, so the sandbox policy and the L6
+  # approval gate apply unchanged.  Defaults kept (maxOutputChars
+  # 16000, package tool description).
+- name: '@deepseek-ai/dsh-tool-str-replace-editor'
+# ── multi-agent (inherited from L8) ───────────────────────────────────────────
+  # The seam itself: registers ctx.subagents, the process-singleton registry
+  # of named subagent providers, plus the delegation-depth vocabulary and the
+  # subagent/start ↔ subagent/end lifecycle events.
 - name: '@deepseek-ai/dsh-subagent'
+  # Provider "spawn" (default providerName): fresh child Agent in this
+  # process — own session, inherits cwd/model, sees NO parent history.
 - name: '@deepseek-ai/dsh-subagent-spawn-in-process'
+  # Provider "fork" (default providerName): same in-process run mechanics as
+  # spawn, but the child's session is seeded with the parent's completed
+  # turns (the contiguous prefix ending at the last turn/end).
 - name: '@deepseek-ai/dsh-subagent-fork-in-process'
-# The delegation tool; `provider` is REQUIRED and names the spawn route —
-# a fresh child agent per delegation (fork inherits the parent's completed
-# turns instead, reachable via the fork route).
 - name: '@deepseek-ai/dsh-tool-subagent'
   config:
+    # First instance → the `subagent` tool over the spawn provider.
+    # Defaults kept: backgroundMode one-shot (foreground unless the model
+    # passes run_in_background), maxDepth 3, background calls enabled.
+    # The tool registers only while its provider exists — with spawn mounted
+    # above, the `subagent` schema appears in the parent's tool registry.
     provider: spawn
 - name: '@deepseek-ai/dsh-tool-subagent'
   config:
-    # Second instance → the `subagent_fork` tool over the fork provider
-    # (one instance binds one provider to one tool name).
+    # Second instance → the `subagent_fork` tool over the fork provider.
+    # One plugin instance binds exactly one provider to one tool name, so
+    # exposing both transports requires two distinctly named instances.
     provider: fork
     toolName: subagent_fork
-# DISABLED by design: dsh-jobs is the ABSTRACT job-registry seam and its
-# constructor throws when instantiated directly ("load an implementation
-# such as dsh-jobs-local instead").  dsh-jobs-local extends it and
-# provides ctx.jobs, so the abstract entry must not be mounted.
+  # dsh-jobs is the ABSTRACT job-registry contract: mounting it directly
+  # throws by design ("load an implementation such as dsh-jobs-local
+  # instead").  It is listed here, disabled, so the closure stays visible
+  # in inspect/diff; the concrete registry below provides ctx.jobs.
 - name: '@deepseek-ai/dsh-jobs'
   disabled: true
+  # Process-local JobRegistry (default maxConcurrentJobsPerOwner: 10).
 - name: '@deepseek-ai/dsh-jobs-local'
-# Model-facing job control (job_output / job_list / job_kill) over
-# ctx.jobs; all four config keys take their schema defaults (30s wait,
-# wakeup delivery, max 3 consecutive wakes).
+  # Model-facing job control: job_list / job_output / job_kill plus
+  # completion notices; also attaches the per-owner job controller that
+  # ctx.jobs.start() requires, which is what makes one-shot BACKGROUND
+  # subagent delegation (run_in_background: true) collectable.
+  # Config defaults kept: waitTimeoutMs 30s, maxWaitTimeoutMs 600s,
+  # completionDelivery 'wakeup', maxConsecutiveWakes 3.
 - name: '@deepseek-ai/dsh-tool-jobs'
-# ── workflow + context management (new in L9) ────────────────────────
-# DISABLED: dsh-workflow is the abstract seam declaration — the
-# worker-thread engine below extends it and registers the same
-# "workflowEngine" service, and cordis registers one service per name.
-# The entry stays here to document the Definition side of the seam.
+# ── subagent control (inherited from L8) ──────────────────────────────────────
+  # ── subagent control plane (new in L8) ────────────────────────────
+  # The parent-to-child direction, registered ONCE and globally named:
+  # send_message (deliver a follow-up as the child's next FIFO turn) and
+  # interrupt_agent (cancel only the target's current turn; queued
+  # messages park, descendants keep running).  Keeping the controls in
+  # one separately loaded plugin is what lets several provider-bound
+  # delegation tools (subagent, subagent_fork above) share one control
+  # API without double-registering it.  No config.  inject = [tools,
+  # subagents]; the continuation runtime itself comes from ctx.agents
+  # (dsh-agent, L1), so followup/interrupt are live at this level.
+  # NOTE: both mounted delegation instances keep backgroundMode
+  # 'one-shot', so no continuable child can be started yet — the
+  # controls are wired but have nothing to steer until a
+  # dsh-tool-subagent instance sets backgroundMode: continuable.
+- name: '@deepseek-ai/dsh-tool-subagent-control'
+  # list_agents rides a separate subpath export (inject [tools,
+  # subagents, agents]) so a deployment can deliver continuation
+  # without exposing discovery.  Its schema registers here, but
+  # every CALL also reads the sessionProjections registry — absent
+  # until dsh-session-projection (L10) — and fails cleanly with
+  # SUBAGENT_CONTROL_PROJECTIONS_UNAVAILABLE.  Mounting it now keeps
+  # the whole closure visible; it goes fully live at L10.
+- name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+  # The child-to-parent direction: NOT a global tool but a
+  # continuable-child setup contribution, so `report` and its
+  # tool:report prompt section exist only inside continuable
+  # in-process children — roots, one-shot children, and the parent
+  # never see them, and the registration survives the child's
+  # toolFilter so a delegation allow-list cannot strip the only
+  # return channel.  inject = [subagents, tools, systemPrompt], all
+  # satisfied in this graph.
+- name: '@deepseek-ai/dsh-tool-subagent-report'
+  config:
+    # Deployment scheduling policy for accepted reports (the schema
+    # default, written out for visibility): next-step delivers through
+    # parent.steer() — a running parent receives the report at its nearest
+    # step boundary, an idle parent starts a turn.  The alternative 'quiet'
+    # uses parent.inject() and never wakes a parked parent.  The
+    # model-facing schema cannot override this per call.
+    reportDelivery: next-step
+# ── workflow runtime (inherited from L9) ──────────────────────────────────────
 - name: '@deepseek-ai/dsh-workflow'
   disabled: true
-# The real engine: executes model-written orchestration scripts in a
-# worker thread, bridging agent() calls back to ctx.subagents.  Defaults
-# route every child through the spawn backend (provider: spawn).
+  # No config: inject ["subagents"] is satisfied; defaults — provider
+  # "spawn" (matches ralph's subagentProvider below), maxTotalAgents 1000,
+  # maxItemsPerCall 4096, syncTimeoutMs 5000, disposeGraceMs 5000.  This is
+  # the engine that gives ctx.workflowEngine a real start(): scripts run in
+  # a fresh worker thread.
 - name: '@deepseek-ai/dsh-workflow-worker-thread'
-- name: '@deepseek-ai/dsh-tool-ralph'
 # ctx.tokenMeter: replay-aware token measurement.  Both context-management
 # consumers below inject it.
+- name: '@deepseek-ai/dsh-tool-ralph'
+  # No config — the schema is empty and rejects every key ("no settings
+  # are supported").  The meter folds token usage from the session log and
+  # answers context-pressure queries for the compaction engine.
+# DISABLED — abstract seam: dsh-compaction is the Service Definition for
+# ctx.compaction.  Unlike dsh-jobs its constructor does not guard, but
+# mounting it alongside dsh-compaction-basic fails with duplicate service
+# "compaction" — exactly one implementation per context.  Listed for
+# closure visibility; the engine below carries the runtime.
 - name: '@deepseek-ai/dsh-token-meter'
-# DISABLED: dsh-compaction is the abstract seam declaration — same
-# one-service-per-name rule; the engine below provides ctx.compaction.
-# compaction-basic runs with schema defaults; automatic pressure/overflow
-# compaction stays off (auto defaults to false) because it needs a
-# summarization route configured.
 - name: '@deepseek-ai/dsh-compaction'
   disabled: true
-- name: '@deepseek-ai/dsh-compaction-basic'
 # Model-free head/middle/tail pruning of oversized tool results
 # (character budgets defaulted; injects tokenMeter).
+- name: '@deepseek-ai/dsh-compaction-basic'
+  # No config: deterministic pruning defaults — tool results over
+  # thresholdChars 8192 are replaced by head 4096 + marker + tail 1024.
 - name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
-# ── operability (new in L10) ─────────────────────────────────────────
-# Provider-routed retry on the agent loop's request-recovery extension
-# point.  Config is intentionally empty (the schema rejects every key):
-# the policy lives under each provider entry in dsh-llm-pi-ai, and a
-# provider without one resolves the default — mode normal, maxRetries 2 —
-# so mounting this plugin alone arms bounded retry for the frozen route.
+# ── workflow tool + code runtime (inherited from L9) ──────────────────────────
+  # The model-facing `workflow` tool: the model writes a plain-JS
+  # orchestration script (agent/pipeline/parallel/phase hooks) that runs
+  # on ctx.workflowEngine — the seam carried by dsh-workflow-worker-thread
+  # in the sibling L9 closure above, so inject [tools, workflowEngine,
+  # systemPrompt] is fully satisfied.  Where ralph loops one fixed
+  # fresh-agent pattern, this tool hands the ORCHESTRATION itself to the
+  # model.  Defaults kept: toolName "workflow", maxResultChars 50000.
+  # Collection is synchronous (the parent turn blocks until the run
+  # settles); top-level runs are recorded as durable tool-workflow/*
+  # events on the parent session log.
+- name: '@deepseek-ai/dsh-tool-workflow'
+  # DISABLED — abstract seam: dsh-code-runtime is the Service Definition
+  # for ctx.codeRuntime; its default export is the bare CodeRuntime class,
+  # which registers service "codeRuntime" with no run() of its own.
+  # Same rule as dsh-jobs / dsh-compaction / dsh-workflow: the concrete
+  # backend below subclasses it and registers the SAME service name, so
+  # mounting both duplicate-registers "codeRuntime" and fails the boot.
+  # Listed for closure visibility; the backend carries the runtime.
+- name: '@deepseek-ai/dsh-code-runtime'
+  disabled: true
+  # The shipped ctx.codeRuntime backend: each program runs in ONE fresh
+  # Node worker thread (TypeScript type-stripped host-side, bindings
+  # bridged over a hostile-peer-validated port, empty env, heap cap).
+  # Containment, not a security boundary — trust posture is
+  # bash-equivalent by design.  No config: every budget takes its schema
+  # default — computeMs 60000 busy-time (same 60s magnitude as the
+  # sandboxed bash timeout), maxWallMs 600000, maxOutputBytes 64 MiB,
+  # maxOldGenerationSizeMb 512.  Mounting the provider alone does NOT
+  # change the model's tool surface: the consumer is dsh-tools' Code
+  # Mode (`run_code`), gated by the tools config `mode` field, which
+  # stays "native" at this level — the seam is live for scoped
+  # presentAs("code") agents, the default presentation is unchanged.
+- name: '@deepseek-ai/dsh-code-runtime-worker-thread'
+# ── operability (inherited from L10) ──────────────────────────────────────────
+  # No config — the executor's schema is empty; policy lives in each
+  # provider profile's optional `retryPolicy` key (omitted above =
+  # "normal" mode: 2 retries on EMPTY_RESPONSE/RATE_LIMIT/SERVER/TIMEOUT/
+  # TRANSPORT, bounded 500ms→10s backoff + 10% jitter).  Hooks the loop's
+  # agent/request-error waterfall and appends durable llm/retry +
+  # llm/retry-started events — watch for them in --trace.
 - name: '@deepseek-ai/dsh-llm-retry'
-# Invariant registry (ctx.invariants).  The root service installs no
-# checks itself; each package's ./invariant companion registers them.
-# No companions are mounted in this stage, so the registry is armed but
-# silent.
+  # No config — defaults: enabled: true, empty allow/blocklists (every
+  # companion selected).  The registry alone installs NO checks; concrete
+  # runtime assertions come from per-package companions mountable as
+  # '@deepseek-ai/<pkg>/invariant' (not added here — the declared L10
+  # closure is the registry seam itself).
 - name: '@deepseek-ai/dsh-invariants'
-# DISABLED at rc.6: dsh-session-telemetry is a contract-only package — it
-# exports the SessionTelemetryBackend class and the capture coordinator as
-# named exports, with no plugin entry (no default export, no apply), so
-# the loader rejects it as "invalid plugin".  A concrete backend package
-# would compose the coordinator.
+  # DISABLED — still not a mountable plugin: the module exports only the
+  # abstract SessionTelemetryBackend class + SessionTelemetryCoordinator
+  # (no apply, no default plugin), so cordis rejects it as
+  # "invalid plugin".  The seam needs a backend implementation (e.g. an
+  # OTel package) that is not installed.  Entry kept for closure
+  # visibility in inspect/diff.
+# Session projection registry (ctx.sessionProjections): folds per-session
+# projection units from the durable log and serves them to consumers.
+# Mounted in L10 because its first consumer in this composition is
+# session-stats below; several earlier plugins (todo, plan-mode,
+# token-meter, subagent) also register their units here now that the
+# registry exists.
 - name: '@deepseek-ai/dsh-session-telemetry'
   disabled: true
-# The projection registry (ctx.sessionProjections) — the provider
-# dsh-session-stats injects, so the stats unit below now activates instead
-# of staying pending.
+# ACTIVE at this level: the `sessionProjections` inject is satisfied
+# above, so the `sessionStats` unit (turns, steps, llmMs, ttftMs,
+# decodeMs, toolMs folded from the whole log) actually registers and
+# folds live.  No config.
 - name: '@deepseek-ai/dsh-session-projection'
-# Whole-log counts/wall-times projection, registered as the sessionStats
-# unit on the projection registry.
 - name: '@deepseek-ai/dsh-session-stats'
-# ── product config (new in L11) ──────────────────────────────────────
-# The two abstract seams stay DISABLED under the one-service-per-name
-# rule: each provider below extends its abstract class and registers the
-# same service ("settings" / "credentials").  The entries remain in the
-# composition — visible to inspect/diff — as the Definition side of the
-# product-config seam.
-- name: '@deepseek-ai/dsh-settings'
+# ── session retrieval (inherited from L10) ────────────────────────────────────
+# DISABLED — abstract seam: SessionQueryEngine registers ctx.sessionQuery,
+# and the sqlite backend below extends it with the SAME service name;
+# mounting both crashes on duplicate registration (dsh-jobs pattern).
+- name: '@deepseek-ai/dsh-session-query'
   disabled: true
-- name: '@deepseek-ai/dsh-credentials'
+# ENABLED now that the abstract seam below is installed. Concrete
+# ctx.sessionQuery backend with SQLite FTS5 — a retrieval capability,
+# NOT a persistence backend (it watches the JSONL store from L2).
+- name: '@deepseek-ai/dsh-session-query-sqlite'
+  config:
+    # required: dedicated FTS5 index file — never point this at the
+    # JSONL persistence root; the README warns against sharing them
+    path: ./sessions/session-query.db
+# ENABLED: its inject [sessionQuery] is now served by the sqlite backend.
+# Cross-session snapshot references as durable (untrusted) model context.
+- name: '@deepseek-ai/dsh-session-reference'
+# ── guard policies (inherited from L10) ───────────────────────────────────────
+  # Advisory loop-breaker, not a tool: counts consecutive calls to the
+  # same tool with canonically identical arguments, keyed per live agent
+  # (WeakMap — subagents interleaving through the shared registry never
+  # trip each other), and at the configured run lengths injects an
+  # escalating reminder as a sourced user message.  It never vetoes or
+  # rewrites the call.  Defaults kept: thresholds [3, 5, 8], include []
+  # (track all tools), exclude [] — the README's example excludes
+  # bookkeeping tools like todo_write so they neither extend nor launder
+  # a chain — argumentsPreviewChars 500.  In-memory only: a resumed
+  # session starts with a fresh chain, later reminders accepted.
+- name: '@deepseek-ai/dsh-repeat-tool-reminder'
+  # Zero-config tools/execute wrapper (inject ["tools"], satisfied by L1):
+  # arms the per-call budget a tool declares as ToolDefinition.timeoutMs
+  # on a fused exec.signal and, when its own deadline wins, replaces the
+  # outcome with a structured TOOL_TIMEOUT result.  Cooperative, not a
+  # hard kill — a tool that ignores the signal never stops.  None of the
+  # tools in this composition declares a budget (bash / read / write /
+  # edit deliberately declare none), so the policy is armed but inert:
+  # the enforcement point is in place before the first budget-declaring
+  # tool (the reference examples are web_fetch / web_search) is mounted.
+- name: '@deepseek-ai/dsh-tool-call-timeout-policy'
+  # Per-step temporal context (inject ["agents"], satisfied by L1): an
+  # agent/pre-step listener appends one durable plugin-sourced user
+  # message with the zoned timestamp and the elapsed time since the
+  # previous model-visible message.  No config: timeZone omitted
+  # resolves the Node process zone once at load (this headless host
+  # attaches no browser zone, so the model is told to ask when a zone
+  # matters), refreshIntervalMs omitted/0 refreshes at every eligible
+  # pre-step.  Readings are durable session events, so replay and
+  # resume reconstruct the same timeline without a process-local cache.
+- name: '@deepseek-ai/dsh-time-context'
+# ── product config (new in L11) ───────────────────────────────────────────────
+- name: '@deepseek-ai/dsh-settings'
   disabled: true
 # The providers that make the seam real.  Both follow the persistence
 # convention (root: ./sessions): an explicit `path` inside the disposable
 # workspace instead of the $DSH_HOME default, and watch: true (default) so
 # an external edit re-resolves live.  dsh-home-paths and dsh-atomic-write
 # are libraries these providers import, not plugins — nothing to mount.
+- name: '@deepseek-ai/dsh-credentials'
+  disabled: true
 - name: '@deepseek-ai/dsh-settings-file'
   config:
     path: ./settings.yaml
 - name: '@deepseek-ai/dsh-credentials-local'
   config:
     path: ./.credentials.yaml
+# ── human entry points (new in L11) ───────────────────────────────────────────
+  # The human-command registry (ctx.commands).  Producers register global
+  # slash commands here; an interactive adapter discovers and dispatches
+  # them without a model turn.  This stage composes no adapter (the driver
+  # is headless), so the commands stay registered-but-uninvoked — the
+  # service is the product surface a UI plugs into, same contract as the
+  # dormant /plan command noted at L7.
+- name: '@deepseek-ai/dsh-commands'
+  # /compact: human-triggered manual compaction.  inject [commands,
+  # compaction] — the backend is L9's dsh-compaction-basic, so the
+  # command registers over the seam that already exists.
+- name: '@deepseek-ai/dsh-command-compact'
+  # /goal: human control over the L7 goal domain (show / create / edit /
+  # pause / resume / clear).  inject [commands, goals] — both satisfied.
+- name: '@deepseek-ai/dsh-command-goal'
+# ENABLED: dsh-anonymous-user-id peer is now installed.
+# /feedback: log-only session feedback producer + slash command.
+- name: '@deepseek-ai/dsh-command-feedback'
+  # ask_user_question: the model-facing Consumer for the L7
+  # user-questions seam (inject [tools, userQuestions] — both mounted).
+  # Headless there is still no UI provider, so a call fails with the
+  # seam's clear NO_PROVIDER error instead of hanging — the tool now
+  # EXISTS for the model, and mounting any UI provider later activates it
+  # with zero composition changes here.
+- name: '@deepseek-ai/dsh-tool-ask-user'
+# ── session UX (new in L11) ───────────────────────────────────────────────────
+  # Log-backed session titles (ctx.sessionTitle).  The first human
+  # message schedules a deterministic first-words fallback, persisted
+  # as a log-only session/title event (replayable, zero model tokens).
+  # With L10's projection registry mounted it also folds a 'title'
+  # projection unit.
+- name: '@deepseek-ai/dsh-session-title'
+  config:
+    # All three limits are REQUIRED — the library ships no defaults.
+    # fallbackMaxBytes must not exceed maxTitleBytes.
+    fallbackMaxWords: 8
+    fallbackMaxBytes: 48
+    maxTitleBytes: 96
+# ENABLED: the shared dsh-session-title-llm package is now installed.
+# First-message LLM title provider (falls back to first-words on error).
+- name: '@deepseek-ai/dsh-session-title-first-prompt-llm'
+  config:
+    # all keys required (shared SessionTitleLlm schema) — route matches
+    # the stage's own gateway, targets match dsh-session-title limits
+    provider: local-anthropic
+    model: deepseek-v4-flash
+    targetWords: 8
+    targetCjkCharacters: 16
+    maxInputBytes: 4096
+    maxOutputTokens: 32
+    timeoutMs: 30000
+# ── agent defaults (new in L11) ───────────────────────────────────────────────
+  # DISABLED — scope-only row: mounted at the global context its
+  # deployment:persona section collides with dsh-system-prompt's own
+  # unconditional registration and fails the boot ("prompt section ...
+  # is already registered").  It belongs inside an agent preset
+  # (agent.ctx scope), which this composition does not compose.  The
+  # deployment-level persona remains dsh-system-prompt's own `persona`
+  # config — frozen since L4 for the single-variable ladder.
+- name: '@deepseek-ai/dsh-persona'
+  disabled: true
+  # ctx.agentDefaultModel: the process-wide default an entry point
+  # reads when creating an Agent with no session-local selection — the
+  # model choice stops being hardcoded per entry point.
+- name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    # Both keys REQUIRED.  This is the composition base of the
+    # 'agent-default-model' Settings section — L11's settings-file provider
+    # layers a user's saved selection over it live.  The values name the
+    # exact route this stage already drives through dsh-llm-pi-ai.
+    provider: local-anthropic
+    model: deepseek-v4-pro
+  # DISABLED — scope-only like persona: tools.presentAs() throws on an
+  # unscoped context ("requires a scoped context (agent.ctx)").  The
+  # process-global presentation is the `mode` config field on the
+  # dsh-tools row itself; this row exists so an agent PRESET can
+  # declare native/code/both for its own agents.  Listed for closure
+  # visibility.
+- name: '@deepseek-ai/dsh-agent-tool-presentation'
+  disabled: true
 - name: ./driver.mjs

@@ -10,6 +10,7 @@
 #
 # This is the foundation for all later stages: L3–L6 inherit these two
 # plugins so the agent can always resume across process restarts.
+
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -24,6 +25,7 @@
             contextWindow: 1000000
           - id: deepseek-v4-flash
             contextWindow: 1000000
+# ── Agent spine (inherited from L1) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session'
 - name: '@deepseek-ai/dsh-system-prompt'
   config:
@@ -33,6 +35,7 @@
 - name: '@deepseek-ai/dsh-agent-loop'
   config:
     agents: []
+# ── persistence (new in L2) ───────────────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
     root: ./sessions

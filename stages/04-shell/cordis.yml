@@ -17,6 +17,7 @@
 # The persona is frozen from this stage onward (L4 → L5 → L6) so that the
 # L4→L5 A/B experiment is truly single-variable: only the safety layer
 # changes, not the system prompt.
+
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:
@@ -31,6 +32,7 @@
             contextWindow: 1000000
           - id: deepseek-v4-flash
             contextWindow: 1000000
+# ── Agent spine (inherited from L1) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session'
 - name: '@deepseek-ai/dsh-system-prompt'
   config:
@@ -41,27 +43,28 @@
 - name: '@deepseek-ai/dsh-agent-loop'
   config:
     agents: []
-# ── persistence (inherited from L2) ──────────────────────────────────
+# ── persistence (inherited from L2) ───────────────────────────────────────────
 - name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
     root: ./sessions
 - name: '@deepseek-ai/dsh-session-checkpoint-policy'
-# ── FS capability seam (inherited from L3) ───────────────────────────
+# ── FS capability seam (inherited from L3) ────────────────────────────────────
 - name: '@deepseek-ai/dsh-fs-local'
   config:
     cwd: !!js process.env.QA_WORKSPACE ?? process.cwd()
 - name: '@deepseek-ai/dsh-fs-observation-policy'
 - name: '@deepseek-ai/dsh-tool-fs'
-# ── Shell capability seam (new in L4) ────────────────────────────────
+# ── Shell capability seam (new in L4) ─────────────────────────────────────────
 - name: '@deepseek-ai/dsh-subprocess-local'
 - name: '@deepseek-ai/dsh-shell-env'
 - name: '@deepseek-ai/dsh-bash-local'
   config:
     cwd: !!js process.env.QA_WORKSPACE ?? process.cwd()
     timeoutMs: 60000
+# ── FS search tools (new in L4 — depends on ctx.subprocess) ──────────
 - name: '@deepseek-ai/dsh-tool-bash'
   disabled: !!js process.platform === 'win32'
-# ── FS search tools (new in L4 — depends on ctx.subprocess) ──────────
+# ── FS search tools (new in L4) ───────────────────────────────────────────────
 - name: '@deepseek-ai/dsh-tool-fs-search'
   config:
     # required key since 0.1.0-rc.6: sample over-cap glob results across

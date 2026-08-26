@@ -1,0 +1,168 @@
+{
+  "level": 8,
+  "order": 0,
+  "stageMeta": {
+    "dir": "08-multi-agent",
+    "title": "Multi-Agent",
+    "packageName": "stage-08-multi-agent",
+    "headerComment": [
+      "# Stage 08 — Multi-Agent",
+      "#",
+      "# L8 = L7 + Delegation.  Every plugin from Stage 06 is still here — sandbox,",
+      "# approval, FS, shell, search, persistence, resume — plus the two capability",
+      "# closures that grew in between:",
+      "#",
+      "#   L7 — Stateful Task Agent:",
+      "#     dsh-tool-todo        model-facing todo_write (whole-list replacement)",
+      "#     dsh-user-questions   user-questions seam (ctx.userQuestions) backing the",
+      "#                          exit_plan_mode review",
+      "#     dsh-plan-mode        logged plan/mode state + exit_plan_mode review",
+      "#     dsh-goal             event-sourced same-session goal domain (ctx.goals)",
+      "#     dsh-tool-goal        model-facing get/create/update_goal tools",
+      "#     dsh-storage          storage hub (ctx.storage) — backend registry",
+      "#     dsh-storage-sqlite   SQLite backend, registers as backend \"sqlite\"",
+      "#     dsh-storage-domain   domain data form, provides ctx.storageDomain",
+      "#     dsh-workspace        workspace entity registry (ctx.workspaceRegistry)",
+      "#",
+      "#   L8 — Multi-Agent:",
+      "#     dsh-subagent                  subagent registry: ctx.subagents, the",
+      "#                                   process-singleton seam (\"Agent as a provider\")",
+      "#     dsh-subagent-spawn-in-process provider \"spawn\": fresh child, no history",
+      "#     dsh-subagent-fork-in-process  provider \"fork\":  child seeded with the",
+      "#                                   parent's completed turns",
+      "#     dsh-tool-subagent             model-facing delegation tool; mounted twice",
+      "#                                   (subagent → spawn, subagent_fork → fork)",
+      "#     dsh-jobs                      ABSTRACT background-job registry seam —",
+      "#                                   its constructor throws by design when",
+      "#                                   mounted directly, so it is listed disabled",
+      "#     dsh-jobs-local                process-local ctx.jobs implementation",
+      "#     dsh-tool-jobs                 model-facing job control (job_list /",
+      "#                                   job_output / job_kill + completion notices)",
+      "#",
+      "# Architecture concept: Agent as a provider.  The subagent seam is a registry",
+      "# of named providers; spawn/fork decide HOW the child runs, the delegation",
+      "# tool decides THAT the model can ask for one.  Changing the provider changes",
+      "# transport without changing the execution contract.  Both in-process",
+      "# providers share @deepseek-ai/dsh-subagent-in-process-driver — a plain",
+      "# library (no plugin exports), so there is nothing to mount for it.",
+      "#",
+      "# Observable behavior (with --trace): a subagent delegation appears as",
+      "# tool/call (subagent) → the child's own session events (turn/start …) →",
+      "# tool/result carrying only the child's final message back to the parent.",
+      "# The child's intermediate steps never enter the parent's history.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the",
+      "# progression remains a true single-variable experiment.",
+      "#",
+      "# Second L8 closure — subagent control plane:",
+      "#   dsh-tool-subagent-control            global send_message / interrupt_agent",
+      "#   dsh-tool-subagent-control/list-agents  schema registers now, calls go live",
+      "#                                          when session-projection arrives (L10)",
+      "#   dsh-tool-subagent-report             child-scoped `report` over continuations",
+      "# The control plane is wired but inert until a subagent instance sets",
+      "# backgroundMode: continuable — one-shot children accept no follow-ups."
+    ],
+    "driverQuestion": "Use the subagent tool to delegate an investigation: have a subagent read src/calculator.js, find the bug in it, and report back. Then summarize what the subagent found."
+  },
+  "replace": [
+    {
+      "name": "@deepseek-ai/dsh-plan-mode",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-plan-mode",
+        "configYaml": "  config:\n    # Required, non-empty (unknown keys fail at load): the guidance section\n    # rendered at prompt order 50 while plan mode is active.\n    section: |\n      You are in plan mode. Explore and design before presenting the complete\n      plan through exit_plan_mode."
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-goal",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-goal",
+        "configYaml": "  config:\n    defaultMaxGoalRounds: 256   # the schema default, written out for visibility"
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-tool-goal",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-tool-goal",
+        "comments": [
+          "  # blockedAfterConsecutiveRounds defaults to 3; no override needed here."
+        ]
+      }
+    },
+    {
+      "name": "@deepseek-ai/dsh-storage-sqlite",
+      "occurrence": 1,
+      "entry": {
+        "name": "@deepseek-ai/dsh-storage-sqlite",
+        "configYaml": "  config:\n    # Backend registers on the hub under the fixed name \"sqlite\".  path is\n    # required (':memory:' allowed); a file keeps workspace records durable\n    # next to the session logs inside the disposable run root.\n    path: ./storage/domain.db\n    # journalMode defaults to 'wal'."
+      }
+    }
+  ],
+  "sections": [
+    {
+      "label": "multi-agent",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-subagent",
+          "comments": [
+            "  # The seam itself: registers ctx.subagents, the process-singleton registry",
+            "  # of named subagent providers, plus the delegation-depth vocabulary and the",
+            "  # subagent/start ↔ subagent/end lifecycle events."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-subagent-spawn-in-process",
+          "comments": [
+            "  # Provider \"spawn\" (default providerName): fresh child Agent in this",
+            "  # process — own session, inherits cwd/model, sees NO parent history."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-subagent-fork-in-process",
+          "comments": [
+            "  # Provider \"fork\" (default providerName): same in-process run mechanics as",
+            "  # spawn, but the child's session is seeded with the parent's completed",
+            "  # turns (the contiguous prefix ending at the last turn/end)."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-subagent",
+          "configYaml": "  config:\n    # First instance → the `subagent` tool over the spawn provider.\n    # Defaults kept: backgroundMode one-shot (foreground unless the model\n    # passes run_in_background), maxDepth 3, background calls enabled.\n    # The tool registers only while its provider exists — with spawn mounted\n    # above, the `subagent` schema appears in the parent's tool registry.\n    provider: spawn"
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-subagent",
+          "configYaml": "  config:\n    # Second instance → the `subagent_fork` tool over the fork provider.\n    # One plugin instance binds exactly one provider to one tool name, so\n    # exposing both transports requires two distinctly named instances.\n    provider: fork\n    toolName: subagent_fork"
+        },
+        {
+          "name": "@deepseek-ai/dsh-jobs",
+          "disabled": true,
+          "comments": [
+            "  # dsh-jobs is the ABSTRACT job-registry contract: mounting it directly",
+            "  # throws by design (\"load an implementation such as dsh-jobs-local",
+            "  # instead\").  It is listed here, disabled, so the closure stays visible",
+            "  # in inspect/diff; the concrete registry below provides ctx.jobs."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-jobs-local",
+          "comments": [
+            "  # Process-local JobRegistry (default maxConcurrentJobsPerOwner: 10)."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-jobs",
+          "comments": [
+            "  # Model-facing job control: job_list / job_output / job_kill plus",
+            "  # completion notices; also attaches the per-owner job controller that",
+            "  # ctx.jobs.start() requires, which is what makes one-shot BACKGROUND",
+            "  # subagent delegation (run_in_background: true) collectable.",
+            "  # Config defaults kept: waitTimeoutMs 30s, maxWaitTimeoutMs 600s,",
+            "  # completionDelivery 'wakeup', maxConsecutiveWakes 3."
+          ]
+        }
+      ]
+    }
+  ]
+}

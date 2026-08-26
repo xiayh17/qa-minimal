@@ -1,0 +1,84 @@
+{
+  "level": 10,
+  "order": 10,
+  "sections": [
+    {
+      "label": "session retrieval",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-session-query",
+          "disabled": true,
+          "comments": [
+            "# DISABLED — abstract seam: SessionQueryEngine registers ctx.sessionQuery,",
+            "# and the sqlite backend below extends it with the SAME service name;",
+            "# mounting both crashes on duplicate registration (dsh-jobs pattern)."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-query-sqlite",
+          "comments": [
+            "# ENABLED now that the abstract seam below is installed. Concrete",
+            "# ctx.sessionQuery backend with SQLite FTS5 — a retrieval capability,",
+            "# NOT a persistence backend (it watches the JSONL store from L2)."
+          ],
+          "configYaml": "  config:\n    # required: dedicated FTS5 index file — never point this at the\n    # JSONL persistence root; the README warns against sharing them\n    path: ./sessions/session-query.db"
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-reference",
+          "comments": [
+            "# ENABLED: its inject [sessionQuery] is now served by the sqlite backend.",
+            "# Cross-session snapshot references as durable (untrusted) model context."
+          ]
+        }
+      ]
+    },
+    {
+      "label": "guard policies",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+          "comments": [
+            "  # Advisory loop-breaker, not a tool: counts consecutive calls to the",
+            "  # same tool with canonically identical arguments, keyed per live agent",
+            "  # (WeakMap — subagents interleaving through the shared registry never",
+            "  # trip each other), and at the configured run lengths injects an",
+            "  # escalating reminder as a sourced user message.  It never vetoes or",
+            "  # rewrites the call.  Defaults kept: thresholds [3, 5, 8], include []",
+            "  # (track all tools), exclude [] — the README's example excludes",
+            "  # bookkeeping tools like todo_write so they neither extend nor launder",
+            "  # a chain — argumentsPreviewChars 500.  In-memory only: a resumed",
+            "  # session starts with a fresh chain, later reminders accepted."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+          "comments": [
+            "  # Zero-config tools/execute wrapper (inject [\"tools\"], satisfied by L1):",
+            "  # arms the per-call budget a tool declares as ToolDefinition.timeoutMs",
+            "  # on a fused exec.signal and, when its own deadline wins, replaces the",
+            "  # outcome with a structured TOOL_TIMEOUT result.  Cooperative, not a",
+            "  # hard kill — a tool that ignores the signal never stops.  None of the",
+            "  # tools in this composition declares a budget (bash / read / write /",
+            "  # edit deliberately declare none), so the policy is armed but inert:",
+            "  # the enforcement point is in place before the first budget-declaring",
+            "  # tool (the reference examples are web_fetch / web_search) is mounted."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-time-context",
+          "comments": [
+            "  # Per-step temporal context (inject [\"agents\"], satisfied by L1): an",
+            "  # agent/pre-step listener appends one durable plugin-sourced user",
+            "  # message with the zoned timestamp and the elapsed time since the",
+            "  # previous model-visible message.  No config: timeZone omitted",
+            "  # resolves the Node process zone once at load (this headless host",
+            "  # attaches no browser zone, so the model is told to ask when a zone",
+            "  # matters), refreshIntervalMs omitted/0 refreshes at every eligible",
+            "  # pre-step.  Readings are durable session events, so replay and",
+            "  # resume reconstruct the same timeline without a process-local cache."
+          ]
+        }
+      ]
+    }
+  ]
+}

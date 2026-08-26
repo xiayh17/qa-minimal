@@ -1,0 +1,56 @@
+{
+  "level": 9,
+  "order": 10,
+  "sections": [
+    {
+      "label": "workflow tool + code runtime",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-tool-workflow",
+          "comments": [
+            "  # The model-facing `workflow` tool: the model writes a plain-JS",
+            "  # orchestration script (agent/pipeline/parallel/phase hooks) that runs",
+            "  # on ctx.workflowEngine — the seam carried by dsh-workflow-worker-thread",
+            "  # in the sibling L9 closure above, so inject [tools, workflowEngine,",
+            "  # systemPrompt] is fully satisfied.  Where ralph loops one fixed",
+            "  # fresh-agent pattern, this tool hands the ORCHESTRATION itself to the",
+            "  # model.  Defaults kept: toolName \"workflow\", maxResultChars 50000.",
+            "  # Collection is synchronous (the parent turn blocks until the run",
+            "  # settles); top-level runs are recorded as durable tool-workflow/*",
+            "  # events on the parent session log."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-code-runtime",
+          "disabled": true,
+          "comments": [
+            "  # DISABLED — abstract seam: dsh-code-runtime is the Service Definition",
+            "  # for ctx.codeRuntime; its default export is the bare CodeRuntime class,",
+            "  # which registers service \"codeRuntime\" with no run() of its own.",
+            "  # Same rule as dsh-jobs / dsh-compaction / dsh-workflow: the concrete",
+            "  # backend below subclasses it and registers the SAME service name, so",
+            "  # mounting both duplicate-registers \"codeRuntime\" and fails the boot.",
+            "  # Listed for closure visibility; the backend carries the runtime."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+          "comments": [
+            "  # The shipped ctx.codeRuntime backend: each program runs in ONE fresh",
+            "  # Node worker thread (TypeScript type-stripped host-side, bindings",
+            "  # bridged over a hostile-peer-validated port, empty env, heap cap).",
+            "  # Containment, not a security boundary — trust posture is",
+            "  # bash-equivalent by design.  No config: every budget takes its schema",
+            "  # default — computeMs 60000 busy-time (same 60s magnitude as the",
+            "  # sandboxed bash timeout), maxWallMs 600000, maxOutputBytes 64 MiB,",
+            "  # maxOldGenerationSizeMb 512.  Mounting the provider alone does NOT",
+            "  # change the model's tool surface: the consumer is dsh-tools' Code",
+            "  # Mode (`run_code`), gated by the tools config `mode` field, which",
+            "  # stays \"native\" at this level — the seam is live for scoped",
+            "  # presentAs(\"code\") agents, the default presentation is unchanged."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "level": 11,
+  "order": 10,
+  "sections": [
+    {
+      "label": "human entry points",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-commands",
+          "comments": [
+            "  # The human-command registry (ctx.commands).  Producers register global",
+            "  # slash commands here; an interactive adapter discovers and dispatches",
+            "  # them without a model turn.  This stage composes no adapter (the driver",
+            "  # is headless), so the commands stay registered-but-uninvoked — the",
+            "  # service is the product surface a UI plugs into, same contract as the",
+            "  # dormant /plan command noted at L7."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-command-compact",
+          "comments": [
+            "  # /compact: human-triggered manual compaction.  inject [commands,",
+            "  # compaction] — the backend is L9's dsh-compaction-basic, so the",
+            "  # command registers over the seam that already exists."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-command-goal",
+          "comments": [
+            "  # /goal: human control over the L7 goal domain (show / create / edit /",
+            "  # pause / resume / clear).  inject [commands, goals] — both satisfied."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-command-feedback",
+          "comments": [
+            "# ENABLED: dsh-anonymous-user-id peer is now installed.",
+            "# /feedback: log-only session feedback producer + slash command."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-ask-user",
+          "comments": [
+            "  # ask_user_question: the model-facing Consumer for the L7",
+            "  # user-questions seam (inject [tools, userQuestions] — both mounted).",
+            "  # Headless there is still no UI provider, so a call fails with the",
+            "  # seam's clear NO_PROVIDER error instead of hanging — the tool now",
+            "  # EXISTS for the model, and mounting any UI provider later activates it",
+            "  # with zero composition changes here."
+          ]
+        }
+      ]
+    },
+    {
+      "label": "session UX",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-session-title",
+          "configYaml": "  config:\n    # All three limits are REQUIRED — the library ships no defaults.\n    # fallbackMaxBytes must not exceed maxTitleBytes.\n    fallbackMaxWords: 8\n    fallbackMaxBytes: 48\n    maxTitleBytes: 96",
+          "comments": [
+            "  # Log-backed session titles (ctx.sessionTitle).  The first human",
+            "  # message schedules a deterministic first-words fallback, persisted",
+            "  # as a log-only session/title event (replayable, zero model tokens).",
+            "  # With L10's projection registry mounted it also folds a 'title'",
+            "  # projection unit."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+          "comments": [
+            "# ENABLED: the shared dsh-session-title-llm package is now installed.",
+            "# First-message LLM title provider (falls back to first-words on error)."
+          ],
+          "configYaml": "  config:\n    # all keys required (shared SessionTitleLlm schema) — route matches\n    # the stage's own gateway, targets match dsh-session-title limits\n    provider: local-anthropic\n    model: deepseek-v4-flash\n    targetWords: 8\n    targetCjkCharacters: 16\n    maxInputBytes: 4096\n    maxOutputTokens: 32\n    timeoutMs: 30000"
+        }
+      ]
+    },
+    {
+      "label": "agent defaults",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-persona",
+          "disabled": true,
+          "comments": [
+            "  # DISABLED — scope-only row: mounted at the global context its",
+            "  # deployment:persona section collides with dsh-system-prompt's own",
+            "  # unconditional registration and fails the boot (\"prompt section ...",
+            "  # is already registered\").  It belongs inside an agent preset",
+            "  # (agent.ctx scope), which this composition does not compose.  The",
+            "  # deployment-level persona remains dsh-system-prompt's own `persona`",
+            "  # config — frozen since L4 for the single-variable ladder."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-agent-default-model",
+          "configYaml": "  config:\n    # Both keys REQUIRED.  This is the composition base of the\n    # 'agent-default-model' Settings section — L11's settings-file provider\n    # layers a user's saved selection over it live.  The values name the\n    # exact route this stage already drives through dsh-llm-pi-ai.\n    provider: local-anthropic\n    model: deepseek-v4-pro",
+          "comments": [
+            "  # ctx.agentDefaultModel: the process-wide default an entry point",
+            "  # reads when creating an Agent with no session-local selection — the",
+            "  # model choice stops being hardcoded per entry point."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-agent-tool-presentation",
+          "disabled": true,
+          "comments": [
+            "  # DISABLED — scope-only like persona: tools.presentAs() throws on an",
+            "  # unscoped context (\"requires a scoped context (agent.ctx)\").  The",
+            "  # process-global presentation is the `mode` config field on the",
+            "  # dsh-tools row itself; this row exists so an agent PRESET can",
+            "  # declare native/code/both for its own agents.  Listed for closure",
+            "  # visibility."
+          ]
+        }
+      ]
+    }
+  ]
+}

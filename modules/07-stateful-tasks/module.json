@@ -1,0 +1,100 @@
+{
+  "level": 7,
+  "order": 0,
+  "stageMeta": {
+    "dir": "07-stateful-tasks",
+    "title": "Stateful Task Agent",
+    "packageName": "stage-07-stateful-tasks",
+    "headerComment": [
+      "# Stage 07 — Stateful Task Agent",
+      "#",
+      "# L7 = L6 + Stateful Task Seams.  Every plugin from Stage 06 is still here —",
+      "# sandbox, approval, FS, shell, search, persistence, resume — plus the",
+      "# stateful-task closure:",
+      "#",
+      "#   dsh-user-questions   ctx.userQuestions seam (backs the plan-mode review)",
+      "#   dsh-tool-todo        todo_write tool: whole-list replacement, each call",
+      "#                        appends a durable todo/write event to the session log",
+      "#   dsh-plan-mode        plan/mode session state + exit_plan_mode tool",
+      "#   dsh-goal             ctx.goals: event-sourced same-session goal domain",
+      "#                        (durable goal/change events, CAS revisions)",
+      "#   dsh-tool-goal        get_goal / create_goal / update_goal tools + goal",
+      "#                        policy section in the system prompt",
+      "#   dsh-storage          ctx.storage hub service",
+      "#   dsh-storage-sqlite   \"sqlite\" storage backend (node:sqlite)",
+      "#   dsh-storage-domain   ctx.storageDomain: domain data form over the hub",
+      "#   dsh-workspace        ctx.workspaceRegistry: durable workspace records",
+      "#                        and a session index",
+      "#",
+      "# The architecture concept: prompt + state + tools are all plugins.  The",
+      "# todo list, the plan-mode flag, and the goal are not hardcoded in the",
+      "# agent loop — they are state seams hung on the session event log, and the",
+      "# model reads/writes them through ordinary tool calls.  Replay of the log",
+      "# reconstructs all of them.  The workspace registry is the same idea one",
+      "# level up: durable host-side state served from a storage backend, with no",
+      "# model-facing surface at all.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5/L6) so the",
+      "# progression remains a single-variable experiment.",
+      "#",
+      "# Second L7 closure — skills + task helpers:",
+      "#   dsh-skill              ctx.skills: scope-layered skill provider registry",
+      "#   dsh-skill-filesystem   provider \"filesystem\": project/custom/user roots",
+      "#   dsh-tool-skill         durable <available_skills> catalog + `skill` tool",
+      "#   dsh-skill-badge        DISABLED (upstream opt-in): bundled dsh-badge skill",
+      "#   dsh-goal-round-driver  goal-mode runtime: armed goals continue as rounds",
+      "#   dsh-agent-instructions AGENTS.md/CLAUDE.md chain into durable history",
+      "#   dsh-schedule           durable reminders on the session event log",
+      "#   dsh-tool-str-replace-editor  surgical literal-match edits over ctx.fs"
+    ],
+    "driverQuestion": "Fix the divide-by-zero bug in src/calculator.js. Track the work with the todo_write tool: create a list (reproduce the bug, fix it, run the tests to verify), mark each task in_progress while you work on it and completed when done."
+  },
+  "sections": [
+    {
+      "label": "stateful task seams",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-user-questions",
+          "comments": [
+            "# ── stateful task seams (new in L7) ──────────────────────────────────",
+            "# todo_write: the model replaces the WHOLE list on every call; each call",
+            "# appends a todo/write event to the session log (last-write-wins on",
+            "# replay).  allowParallelInProgress is a required deployment choice — true",
+            "# permits several in_progress tasks at once, aligned with the other",
+            "# stages in this repo."
+          ]
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-todo",
+          "configYaml": "  config:\n    allowParallelInProgress: true\n# plan mode: durable plan/mode session state + the always-registered\n# exit_plan_mode tool.  The /plan slash command stays dormant: it only\n# registers when ctx.commands is composed (@deepseek-ai/dsh-commands is\n# not mounted).  The exit review asks through ctx.userQuestions; with no\n# UI provider installed the review fails with a clear NO_PROVIDER error\n# and the session stays in plan mode.  Plan mode is soft guidance —\n# sandbox mode and approval policy enforce restrictions independently\n# and never read plan state."
+        },
+        {
+          "name": "@deepseek-ai/dsh-plan-mode",
+          "configYaml": "  config:\n    section: |\n      You are in plan mode. Explore and design before presenting the\n      complete plan through exit_plan_mode.\n# goal domain: event-sourced same-session goal state (ctx.goals).  Every\n# mutation appends a durable goal/change event with the complete\n# post-mutation snapshot; the session log is the only durable authority.\n# defaultMaxGoalRounds caps autonomous continuation rounds (256 is the\n# package default, made explicit here for the reader)."
+        },
+        {
+          "name": "@deepseek-ai/dsh-goal",
+          "configYaml": "  config:\n    defaultMaxGoalRounds: 256\n# goal tools: get_goal / create_goal / update_goal, plus a fixed goal\n# policy section in the system prompt.  inject = [agents, goals, tools,\n# systemPrompt] — all satisfied by this graph (goals comes from dsh-goal\n# above).  The advertised \"execution-time authority checks\" are NOT the\n# L6 approval gate: they are runtime checks against the AgentRegistry\n# (exact live agent, running status, open turn, direct-human message in\n# the current turn).  blockedAfterConsecutiveRounds sets the hard lower\n# bound before the model may self-report a goal as blocked."
+        },
+        {
+          "name": "@deepseek-ai/dsh-tool-goal",
+          "configYaml": "  config:\n    blockedAfterConsecutiveRounds: 3\n# ── workspace registry + storage chain (new in L7) ───────────────────\n# ctx.workspaceRegistry (inject [storageDomain, sessionPersistence]) is\n# served by a three-plugin chain:\n#   dsh-storage         hub service ctx.storage; backends register on it\n#                       by name — no config\n#   dsh-storage-sqlite  backend \"sqlite\": one node:sqlite DatabaseSync\n#                       connection; path is required, journalMode defaults\n#                       to wal.  The db file is co-located with the JSONL\n#                       session logs under ./sessions (same disposable\n#                       temp workspace convention as persistence root).\n#   dsh-storage-domain  domain data form: opens declared domains over a\n#                       named backend; backend: sqlite routes everything\n#                       to the SQLite backend (routes left at default).\n# The registry registers no tools and injects no prompts — it is durable\n# host-side state only."
+        },
+        {
+          "name": "@deepseek-ai/dsh-storage"
+        },
+        {
+          "name": "@deepseek-ai/dsh-storage-sqlite",
+          "configYaml": "  config:\n    path: ./sessions/workspace.db"
+        },
+        {
+          "name": "@deepseek-ai/dsh-storage-domain",
+          "configYaml": "  config:\n    backend: sqlite"
+        },
+        {
+          "name": "@deepseek-ai/dsh-workspace"
+        }
+      ]
+    }
+  ]
+}

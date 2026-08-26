@@ -3,6 +3,7 @@
 # 3 plugins: abstract LLM service + multi-provider adapter + local driver.
 # No agent-loop, no sessions, no tools. One ctx.llm.stream() call, one answer, exit.
 # This is the permanent control group — all later stages grow FROM here.
+
 - name: '@deepseek-ai/dsh-llm'
 - name: '@deepseek-ai/dsh-llm-pi-ai'
   config:

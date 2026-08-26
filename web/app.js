@@ -76,7 +76,9 @@ const tasks = [
   { id:'G', label:'跟踪多步任务', detail:'需要 todo / plan / goal 状态。' },
   { id:'H', label:'委派子 Agent', detail:'需要 subagent Provider 和委派工具。' },
   { id:'I', label:'长任务运行', detail:'需要 workflow / ralph / compaction。' },
-  { id:'J', label:'瞬时故障自愈 + 可测量', detail:'需要 retry 和 session stats。' }
+  { id:'J', label:'瞬时故障自愈 + 可测量', detail:'需要 retry 和 session stats。' },
+  { id:'K', label:'联网搜索', detail:'需要 web 访问闭包。' },
+  { id:'L', label:'接入外部 MCP 工具', detail:'需要 MCP client 桥。' }
 ]
 
 function outcomeFor(taskId, level){
@@ -91,18 +93,20 @@ function outcomeFor(taskId, level){
     case 'H': return level < 8 ? 'unsupported' : 'succeeds';
     case 'I': return level < 9 ? 'unsupported' : 'succeeds';
     case 'J': return level < 10 ? 'unsupported' : 'succeeds';
+    case 'K': return level < 12 ? 'unsupported' : 'succeeds';
+    case 'L': return level < 13 ? 'unsupported' : 'succeeds';
   }
 }
 
 function outcomeExplain(taskId, level, outcome){
   if(outcome === 'unsupported'){
-    const needs = {B:'Agent session', C:'session persistence', D:'Workspace FS', E:'Shell / Process', F:'Shell / Process', G:'Task state', H:'Subagent', I:'Workflow runtime', J:'Retry + stats'}[taskId];
+    const needs = {B:'Agent session', C:'session persistence', D:'Workspace FS', E:'Shell / Process', F:'Shell / Process', G:'Task state', H:'Subagent', I:'Workflow runtime', J:'Retry + stats', K:'Web access', L:'MCP client'}[taskId];
     return `当前组合还没有 ${needs} 这组能力。任务不会进入执行阶段。`;
   }
   if(outcome === 'persists') return '会话事件已经有持久化后端。退出进程后，下一次可以用同一个 session id 恢复。';
   if(outcome === 'denied-by-sandbox') return '模型仍然有 bash 工具，但 Provider 被 workspace-write 约束。越界写入在执行边界被拒绝。';
   if(outcome === 'asks-approval') return 'Sandbox 先拒绝。模型可以带 justification 请求更宽权限，approval seam 接住这次升级。';
-  const text = {A:'一次模型调用就够了。',B:'Session 把多轮消息放进同一条 Agent 历史。',D:'模型可以通过 read 工具拿到真实文件内容。',E:'模型既能改文件，也能启动真实程序验证结果。',G:'Todo / Plan / Goal 都有自己的持久状态。',H:'模型可以调用 subagent 或 subagent_fork，把任务交给子 Agent。',I:'长任务可以经过 workflow / ralph 循环，并在上下文压力升高时压缩历史。',J:'瞬时 Provider 错误进入 retry 路径，session projection 同时提供可测量统计。'}[taskId];
+  const text = {A:'一次模型调用就够了。',B:'Session 把多轮消息放进同一条 Agent 历史。',D:'模型可以通过 read 工具拿到真实文件内容。',E:'模型既能改文件，也能启动真实程序验证结果。',G:'Todo / Plan / Goal 都有自己的持久状态。',H:'模型可以调用 subagent 或 subagent_fork，把任务交给子 Agent。',I:'长任务可以经过 workflow / ralph 循环，并在上下文压力升高时压缩历史。',J:'瞬时 Provider 错误进入 retry 路径，session projection 同时提供可测量统计。',K:'web_search 可达公网。每次搜索是一次带原生搜索工具的辅助模型调用，答案带引用。',L:'MCP 桥已挂载。占位 server 连不上时走降级契约，Agent 靠内置工具继续跑。'}[taskId];
   return text || '当前组合已经具备这条能力路径。';
 }
 
@@ -127,7 +131,9 @@ function traceFor(taskId, level){
   if(taskId === 'H') lines.push(['event','tool/call · subagent'],['event','subagent/start'],['event','child turn/start … turn/end'],['event','subagent/end'],['result','child final message → parent']);
   if(taskId === 'I') lines.push(['event','tool/call · ralph'],['event','workflow worker started'],['event','fresh child round × N'],['event','token pressure measured'],['result','compaction keeps task moving']);
   if(taskId === 'J') lines.push(['error','provider returns transient error'],['event','llm/retry'],['event','llm/retry-started'],['event','request succeeds'],['result','sessionStats updated']);
-  if(!['C','D','E','F','G','H','I','J'].includes(taskId)) lines.push(['event','assistant/message']);
+  if(taskId === 'K') lines.push(['event','tool/call · web_search'],['event','web/deepseek-search-llm-request · auxiliary model turn'],['event','tool/result · search results + source URLs'],['result','answer with citations']);
+  if(taskId === 'L') lines.push(['error','spawn demo-mcp-server → ENOENT'],['event','mcp supervisor retry · bounded backoff, then gives up'],['event','activation completes · zero mcp__demo__* tools'],['event','tool list contains only built-ins'],['result','agent answers on built-in tools']);
+  if(!['C','D','E','F','G','H','I','J','K','L'].includes(taskId)) lines.push(['event','assistant/message']);
   lines.push(['event','step/end'],['result','turn/end']);
   return lines;
 }
@@ -270,7 +276,7 @@ function selectStage(level, { updateHash = true } = {}){
   state.task = stages[level].defaultTask;
   taskPicker.value = state.task;
   const stage = stages[level];
-  stageProgress.textContent = `L${level} / L11`;
+  stageProgress.textContent = `L${level} / L${stages[stages.length - 1].level}`;
   stageKicker.textContent = `Level ${level}`;
   stageTitle.textContent = stage.title;
   stageStory.textContent = stage.story;

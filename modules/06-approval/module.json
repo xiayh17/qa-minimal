@@ -1,0 +1,53 @@
+{
+  "level": 6,
+  "order": 0,
+  "stageMeta": {
+    "dir": "06-approval",
+    "title": "Approval & Permission Presets",
+    "packageName": "stage-06-approval",
+    "headerComment": [
+      "# Stage 06 — Approval & Permission Presets",
+      "#",
+      "# L6 = L5 + Approval.  Every plugin from Stage 05 is still here — sandbox,",
+      "# FS, shell, search, persistence, resume — plus the approval gate and",
+      "# permission preset switcher:",
+      "#",
+      "#   dsh-user-approval        approval gate: policy = ask",
+      "#   dsh-permission-presets   combines sandbox/mode + approval/policy into",
+      "#                            user-selectable presets (workspace-write,",
+      "#                            danger-full-access, etc.)",
+      "#",
+      "# The three-stage demonstration:",
+      "#   L4: write ../outside.txt → succeeds (no sandbox)",
+      "#   L5: write ../outside.txt → sandbox denies (no escalation path)",
+      "#   L6: write ../outside.txt → sandbox denies → model escalates with",
+      "#        justification → approval gate asks → allowed-once → executes",
+      "#",
+      "# dsh-tool-bash supports sandbox_permissions + justification in sandbox",
+      "# mode: after a sandbox denial, the model can retry with a broader",
+      "# permission request and a justification string.  The approval gate",
+      "# (ctx.approval) can then grant a one-time authorization.",
+      "#",
+      "# The persona is frozen (byte-for-byte identical to L4/L5) so the",
+      "# L4→L5→L6 progression is a true single-variable experiment."
+    ],
+    "driverQuestion": "Write the text \"hello\" to a file at ../outside.txt using the bash tool. If the sandbox denies it, explain why and report what happened."
+  },
+  "sections": [
+    {
+      "label": "approval + permission presets",
+      "entries": [
+        {
+          "name": "@deepseek-ai/dsh-user-approval",
+          "configYaml": "  config:\n    policy: ask"
+        },
+        {
+          "name": "@deepseek-ai/dsh-permission-presets",
+          "comments": [
+            "# ── sandboxed FS (inherited from L5) ─────────────────────────────────"
+          ]
+        }
+      ]
+    }
+  ]
+}
